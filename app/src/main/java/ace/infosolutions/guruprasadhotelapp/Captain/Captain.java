@@ -1,10 +1,10 @@
 package ace.infosolutions.guruprasadhotelapp.Captain;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
 
 import java.util.ArrayList;
 
@@ -21,6 +21,8 @@ public class Captain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_captain);
         customerListRecycler = findViewById(R.id.customerRecyclerView);
+
+        //dummy entries
         ArrayList<customerclass> customerclasses = new ArrayList<>();
         customerclasses.add(new customerclass(4,43.65));
         customerclasses.add(new customerclass(6,453.54));
@@ -31,6 +33,8 @@ public class Captain extends AppCompatActivity {
         customerclasses.add(new customerclass(21,453.54));
         customerclasses.add(new customerclass(16,453.54));
 
+
+        //setting up recyclerview
         customerListRecycler.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         customerListAdapter = new CustomerAdapter(customerclasses);
