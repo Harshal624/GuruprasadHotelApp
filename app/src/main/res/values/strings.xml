@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GuruprasadHotelApp</string>
+    <string name="Country">Country</string>
+    <string name="guruprasad">गुरुप्रसाद</string>
+    <string name="hotel">हॉटेल</string>
+    <string name="customer">ग्राहक</string>
+</resources>
