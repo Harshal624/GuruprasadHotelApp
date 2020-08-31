@@ -4,4 +4,14 @@
     <string name="guruprasad">गुरुप्रसाद</string>
     <string name="hotel">हॉटेल</string>
     <string name="customer">ग्राहक</string>
+
+    <string-array name="Tables">
+        <item>T-1</item><item>T-2</item><item>T-3</item>
+        <item>T-4</item><item>T-5</item><item>T-6</item>
+        <item>T-7</item><item>T-8</item><item>T-9</item>
+        <item>T-10</item><item>T-11</item><item>T-12</item>
+        <item>T-13</item><item>T-14</item><item>T-15</item>
+        <item>T-16</item><item>T-17</item><item>T-18</item>
+
+    </string-array>
 </resources>
