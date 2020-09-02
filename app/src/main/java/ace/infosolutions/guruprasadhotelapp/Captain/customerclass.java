@@ -1,14 +1,18 @@
 package ace.infosolutions.guruprasadhotelapp.Captain;
 
-import android.widget.TextView;
-
 public class customerclass {
     private int table_no;
     private double cost;
+    private String table_type;
 
-    public customerclass(int table_no, double cost) {
+    public customerclass() {
+
+    }
+
+    public customerclass(int table_no, double cost, String table_type) {
         this.table_no = table_no;
         this.cost = cost;
+        this.table_type = table_type;
     }
 
     public int getTable_no() {
@@ -17,5 +21,9 @@ public class customerclass {
 
     public double getCost() {
         return cost;
+    }
+
+    public String getTable_type() {
+        return table_type;
     }
 }

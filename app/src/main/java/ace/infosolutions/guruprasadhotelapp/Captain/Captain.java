@@ -11,18 +11,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class Captain extends AppCompatActivity {
-    private RecyclerView customerListRecycler;
-    private RecyclerView.Adapter customerListAdapter;
-    private RecyclerView.LayoutManager layoutManager;
+
     private FloatingActionButton add_customer;
     private  AlertDialog alertDialog1;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference collectionReference = db.collection("Cust1");
+    private CustomerFirestoreAdapter adapter;
 
 
 
@@ -31,26 +34,9 @@ public class Captain extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_captain);
-        customerListRecycler = findViewById(R.id.customerRecyclerView);
         add_customer = (FloatingActionButton)findViewById(R.id.add_customer);
         setupAlertdialog();
-        //dummy entries
-        ArrayList<customerclass> customerclasses = new ArrayList<>();
-        customerclasses.add(new customerclass(4,43.65));
-        customerclasses.add(new customerclass(6,453.54));
-        customerclasses.add(new customerclass(8,324.654));
-        customerclasses.add(new customerclass(1,453.54));
-        customerclasses.add(new customerclass(33,453.54));
-        customerclasses.add(new customerclass(23,453.54));
-        customerclasses.add(new customerclass(21,453.54));
-        customerclasses.add(new customerclass(16,453.54));
-
-        //setting up recyclerview
-        customerListRecycler.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        customerListAdapter = new CustomerAdapter(customerclasses);
-        customerListRecycler.setLayoutManager(layoutManager);
-        customerListRecycler.setAdapter(customerListAdapter);
+        setupReyclerview();
 
 
         //add customer
@@ -63,6 +49,20 @@ public class Captain extends AppCompatActivity {
         });
 
     }
+
+    private void setupReyclerview() {
+
+        Query query = collectionReference;
+        FirestoreRecyclerOptions<customerclass> cust = new FirestoreRecyclerOptions.Builder<customerclass>()
+                .setQuery(query,customerclass.class)
+                .build();
+        adapter = new CustomerFirestoreAdapter(cust);
+        RecyclerView recyclerView = findViewById(R.id.customerRecyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+    }
+
     public void setupAlertdialog(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Choose order type");
@@ -76,12 +76,24 @@ public class Captain extends AppCompatActivity {
                        // Toast.makeText(Captain.this, "Orders", Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
-                        Toast.makeText(Captain.this, "Table parcel", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Captain.this, "Parcel", Toast.LENGTH_SHORT).show();
                         break;
                 }
 
             }
         });
         alertDialog1 = alertDialog.create();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 }
