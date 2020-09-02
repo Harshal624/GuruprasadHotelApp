@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -24,7 +25,7 @@ public class Captain extends AppCompatActivity {
     private FloatingActionButton add_customer;
     private  AlertDialog alertDialog1;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference collectionReference = db.collection("Cust1");
+    private CollectionReference collectionReference = db.collection("Customers");
     private CustomerFirestoreAdapter adapter;
 
 
@@ -38,7 +39,6 @@ public class Captain extends AppCompatActivity {
         setupAlertdialog();
         setupReyclerview();
 
-
         //add customer
         add_customer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,8 +47,21 @@ public class Captain extends AppCompatActivity {
                 alertDialog1.show();
             }
         });
-
+        adapter.setOnItemClickListener(new CustomerFirestoreAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+                customerclass customerclass = documentSnapshot.toObject(customerclass.class);
+                String id = documentSnapshot.getId();
+                Intent i = new Intent(getApplicationContext(),AddFood.class);
+                i.putExtra("ID",id);
+                i.putExtra("TableType",customerclass.getTable_type());
+                i.putExtra("Table_no",String.valueOf(customerclass.getTable_no()));
+                startActivity(i);
+            }
+        });
     }
+
+
 
     private void setupReyclerview() {
 
@@ -63,6 +76,7 @@ public class Captain extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
+
     public void setupAlertdialog(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Choose order type");
@@ -73,7 +87,6 @@ public class Captain extends AppCompatActivity {
                 switch (i) {
                     case 0:
                         startActivity(new Intent(getApplicationContext(),AddCustomer.class));
-                       // Toast.makeText(Captain.this, "Orders", Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
                         Toast.makeText(Captain.this, "Parcel", Toast.LENGTH_SHORT).show();
@@ -84,6 +97,7 @@ public class Captain extends AppCompatActivity {
         });
         alertDialog1 = alertDialog.create();
     }
+
 
     @Override
     protected void onStart() {
@@ -96,4 +110,5 @@ public class Captain extends AppCompatActivity {
         super.onStop();
         adapter.stopListening();
     }
+
 }

@@ -1,24 +1,22 @@
 package ace.infosolutions.guruprasadhotelapp.Captain;
 
-
+//POJO to add a new customer
 
 public class CustomerInfo {
     private int table_no;
     private int no_of_cust;
     private String date_time;
-    private boolean order_complete;
     private boolean isorder;
     private String table_type;
 
-
+    //no-arg constructor is needed
     public CustomerInfo() {
     }
 
-    public CustomerInfo(int table_no, int no_of_cust, String date_time, boolean order_complete, boolean isorder, String table_type) {
+    public CustomerInfo(int table_no, int no_of_cust, String date_time, boolean isorder, String table_type) {
         this.table_no = table_no;
         this.no_of_cust = no_of_cust;
         this.date_time = date_time;
-        this.order_complete = order_complete;
         this.isorder = isorder;
         this.table_type = table_type;
     }
@@ -37,10 +35,6 @@ public class CustomerInfo {
 
     public String getDate_time() {
         return date_time;
-    }
-
-    public boolean isOrder_complete() {
-        return order_complete;
     }
 
     public boolean isIsorder() {

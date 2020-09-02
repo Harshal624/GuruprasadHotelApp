@@ -40,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(getApplicationContext(), Manager.class));
                 }
 
-
-
-
             }
         });
     }

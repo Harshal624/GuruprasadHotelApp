@@ -10,11 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import ace.infosolutions.guruprasadhotelapp.R;
 
 
 public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerclass, CustomerFirestoreAdapter.CustomerHolder > {
+    private OnItemClickListener listener;
+
 
     public CustomerFirestoreAdapter(@NonNull FirestoreRecyclerOptions<customerclass> options) {
         super(options);
@@ -45,6 +48,25 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
             table_no = itemView.findViewById(R.id.tableno);
             cost = itemView.findViewById(R.id.cost);
             table_type = itemView.findViewById(R.id.tabletype);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = getAdapterPosition();
+                    //if item is removed and it's in his remove animation
+                    if(pos != RecyclerView.NO_POSITION && listener!=null){
+                        listener.onItemClick(getSnapshots().getSnapshot(pos),pos);
+                    }
+                }
+            });
         }
+
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(DocumentSnapshot documentSnapshot,int position);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener = listener;
     }
 }

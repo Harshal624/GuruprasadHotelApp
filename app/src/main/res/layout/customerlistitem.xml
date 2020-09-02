@@ -47,7 +47,7 @@
                    app:layout_constraintBottom_toBottomOf="parent"
                    android:layout_marginEnd="@dimen/_5sdp"
                    android:text="Rs:"
-                   android:textSize="20sp"
+                   android:textSize="17sp"
                    android:textColor="@color/colorPrimary"
                    android:textStyle="italic"
                    app:layout_constraintEnd_toStartOf="@+id/cost" />
@@ -59,7 +59,7 @@
                    android:layout_marginEnd="@dimen/_10sdp"
                    android:text="141"
                    android:textColor="@color/colorPrimary"
-                   android:textSize="20sp"
+                   android:textSize="16sp"
                    android:textStyle="italic"
                    app:layout_constraintBottom_toBottomOf="parent"
                    app:layout_constraintEnd_toEndOf="parent" />
@@ -83,13 +83,7 @@
                android:textColor="@android:color/holo_green_light"
                android:textSize="15sp"
                android:textStyle="italic" />
-
-
-
        </LinearLayout>
-
-
-
    </LinearLayout>
 
 </androidx.cardview.widget.CardView>
