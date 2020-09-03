@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "487332078435",
+    "firebase_url": "https://guruprasad-hotel.firebaseio.com",
+    "project_id": "guruprasad-hotel",
+    "storage_bucket": "guruprasad-hotel.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487332078435:android:6c70d9093b6125e2f26956",
+        "android_client_info": {
+          "package_name": "ace.infosolutions.guruprasadhotelapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "487332078435-ofeqrnjj9jbtgqb2eq98vap9j26j3rid.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ace.infosolutions.guruprasadhotelapp",
+            "certificate_hash": "33adb43727c2886ec62d7f23b29cc8bd17389332"
+          }
+        },
+        {
+          "client_id": "487332078435-u3jmijiptp7vm8dmafi89jbtm45m1dsr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxjaDxbC_H-tEdBnpfqhN3ezESKRHg58g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "487332078435-u3jmijiptp7vm8dmafi89jbtm45m1dsr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
