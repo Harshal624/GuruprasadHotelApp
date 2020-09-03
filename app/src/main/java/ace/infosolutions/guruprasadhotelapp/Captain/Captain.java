@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,11 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import ace.infosolutions.guruprasadhotelapp.MainActivity;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class Captain extends AppCompatActivity {
@@ -27,6 +30,8 @@ public class Captain extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Customers");
     private CustomerFirestoreAdapter adapter;
+    private ImageButton signout;
+    private FirebaseAuth firebaseAuth;
 
 
 
@@ -35,15 +40,23 @@ public class Captain extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_captain);
+        firebaseAuth = FirebaseAuth.getInstance();
         add_customer = (FloatingActionButton)findViewById(R.id.add_customer);
+        signout = (ImageButton)findViewById(R.id.custsignout);
         setupAlertdialog();
         setupReyclerview();
+
+        signout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                custSignout();
+            }
+        });
 
         //add customer
         add_customer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // startActivity(new Intent(getApplicationContext(),SelectTable.class));
                 alertDialog1.show();
             }
         });
@@ -61,6 +74,12 @@ public class Captain extends AppCompatActivity {
         });
     }
 
+    private void custSignout() {
+        firebaseAuth.signOut();
+        finishAffinity();
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
+    }
 
 
     private void setupReyclerview() {
@@ -111,4 +130,10 @@ public class Captain extends AppCompatActivity {
         adapter.stopListening();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity();
+        finish();
+    }
 }
