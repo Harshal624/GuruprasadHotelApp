@@ -211,7 +211,7 @@ public class AddCustomer extends AppCompatActivity {
 
                    }
                });
-               finish();
+
 
            }
 
