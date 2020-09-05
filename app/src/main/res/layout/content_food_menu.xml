@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".Captain.FoodMenu"
+    android:background="#000"
+    tools:showIn="@layout/activity_food_menu">
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"
+       >
+
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="@dimen/_5sdp"
+           android:layout_marginLeft="@dimen/_5sdp"
+           android:layout_marginRight="@dimen/_5sdp"
+           app:cardCornerRadius="@dimen/_6sdp"
+           >
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical"
+               >
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:orientation="horizontal"
+                   android:layout_height="wrap_content">
+                   <ImageView
+                       android:layout_width="@dimen/_30sdp"
+                       android:layout_height="@dimen/_30sdp"
+                       android:src="@drawable/starters"
+                       android:scaleType="fitXY"
+                       android:layout_marginStart="@dimen/_10sdp"
+                       android:layout_marginTop="@dimen/_10sdp"
+                       android:background="@android:color/transparent"
+                       />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Starters"
+                       android:textStyle="bold"
+                       android:textColor="#FF6347"
+                       android:layout_marginStart="@dimen/_5sdp"
+                       android:layout_marginTop="@dimen/_5sdp"
+                       android:textSize="30sp" />
+
+               </LinearLayout>
+
+               <HorizontalScrollView
+                   android:layout_marginTop="@dimen/_10sdp"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   >
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_gravity="fill|center"
+                       android:orientation="horizontal">
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:text="@string/cold_drink_starters"/>
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:layout_height="wrap_content"
+                           android:text="Veg"/>
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:layout_height="wrap_content"
+                           android:text="Non-Veg"/>
+
+
+                   </LinearLayout>
+
+               </HorizontalScrollView>
+
+
+           </LinearLayout>
+
+       </androidx.cardview.widget.CardView>
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="@dimen/_5sdp"
+           android:layout_marginLeft="@dimen/_5sdp"
+           android:layout_marginRight="@dimen/_5sdp"
+           app:cardCornerRadius="@dimen/_6sdp"
+           >
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical"
+               >
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:orientation="horizontal"
+                   android:layout_height="wrap_content">
+                   <ImageView
+                       android:layout_width="@dimen/_30sdp"
+                       android:layout_height="@dimen/_30sdp"
+                       android:src="@drawable/veg"
+                       android:scaleType="fitXY"
+                       android:layout_marginStart="@dimen/_10sdp"
+                       android:layout_marginTop="@dimen/_10sdp"
+                       android:background="@android:color/transparent"
+                       />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Veg"
+                       android:textStyle="bold"
+                       android:textColor="#FF6347"
+                       android:layout_marginStart="@dimen/_5sdp"
+                       android:layout_marginTop="@dimen/_5sdp"
+                       android:textSize="30sp" />
+
+               </LinearLayout>
+
+               <HorizontalScrollView
+                   android:layout_marginTop="@dimen/_10sdp"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   >
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_gravity="fill"
+                       android:orientation="horizontal">
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:text="Daal"/>
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:layout_height="wrap_content"
+                           android:text="Paneer maincourse"/>
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:layout_height="wrap_content"
+                           android:text="Veg maincourse"/>
+
+
+                   </LinearLayout>
+
+               </HorizontalScrollView>
+
+
+           </LinearLayout>
+
+       </androidx.cardview.widget.CardView>
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="@dimen/_5sdp"
+           android:layout_marginLeft="@dimen/_5sdp"
+           android:layout_marginRight="@dimen/_5sdp"
+           app:cardCornerRadius="@dimen/_6sdp"
+           >
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical"
+               >
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:orientation="horizontal"
+                   android:layout_height="wrap_content">
+                   <ImageView
+                       android:layout_width="@dimen/_30sdp"
+                       android:layout_height="@dimen/_30sdp"
+                       android:src="@drawable/nonveg"
+                       android:scaleType="fitXY"
+                       android:layout_marginStart="@dimen/_10sdp"
+                       android:layout_marginTop="@dimen/_10sdp"
+                       android:background="@android:color/transparent"
+                       />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Non Veg"
+                       android:textStyle="bold"
+                       android:textColor="#FF6347"
+                       android:layout_marginStart="@dimen/_5sdp"
+                       android:layout_marginTop="@dimen/_5sdp"
+                       android:textSize="30sp" />
+
+               </LinearLayout>
+
+               <HorizontalScrollView
+                   android:layout_marginTop="@dimen/_10sdp"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   >
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_gravity="fill"
+                       android:orientation="horizontal">
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:text="Chicken maincourse"/>
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:layout_height="wrap_content"
+                           android:text="Egg"/>
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:layout_height="wrap_content"
+                           android:text="Matan maincourse"/>
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:layout_height="wrap_content"
+                           android:text="Fish maincourse"/>
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:layout_height="wrap_content"
+                           android:text="Special Thali"/>
+
+
+                   </LinearLayout>
+
+               </HorizontalScrollView>
+
+
+           </LinearLayout>
+
+       </androidx.cardview.widget.CardView>
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="@dimen/_5sdp"
+           android:layout_marginLeft="@dimen/_5sdp"
+           android:layout_marginRight="@dimen/_5sdp"
+           app:cardCornerRadius="@dimen/_6sdp"
+           >
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical"
+               >
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:orientation="horizontal"
+                   android:layout_height="wrap_content">
+                   <ImageView
+                       android:layout_width="@dimen/_30sdp"
+                       android:layout_height="@dimen/_30sdp"
+                       android:src="@drawable/rice"
+                       android:scaleType="fitXY"
+                       android:layout_marginStart="@dimen/_10sdp"
+                       android:layout_marginTop="@dimen/_10sdp"
+                       android:background="@android:color/transparent"
+                       />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Rice"
+                       android:textStyle="bold"
+                       android:textColor="#FF6347"
+                       android:layout_marginStart="@dimen/_5sdp"
+                       android:layout_marginTop="@dimen/_5sdp"
+                       android:textSize="30sp" />
+
+               </LinearLayout>
+
+               <HorizontalScrollView
+                   android:layout_marginTop="@dimen/_10sdp"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   >
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_gravity="fill"
+                       android:orientation="horizontal">
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:text="Main"/>
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:layout_height="wrap_content"
+                           android:text="Biryani Rice"/>
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:layout_height="wrap_content"
+                           android:text="@string/rice_noodlees"/>
+
+
+
+                   </LinearLayout>
+
+               </HorizontalScrollView>
+
+
+           </LinearLayout>
+
+       </androidx.cardview.widget.CardView>
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="@dimen/_5sdp"
+           android:layout_marginLeft="@dimen/_5sdp"
+           android:layout_marginRight="@dimen/_5sdp"
+           app:cardCornerRadius="@dimen/_6sdp"
+           >
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical"
+               >
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:orientation="horizontal"
+                   android:layout_height="wrap_content">
+                   <ImageView
+                       android:layout_width="@dimen/_30sdp"
+                       android:layout_height="@dimen/_30sdp"
+                       android:src="@drawable/springroll"
+                       android:scaleType="fitXY"
+                       android:layout_marginStart="@dimen/_10sdp"
+                       android:layout_marginTop="@dimen/_10sdp"
+                       android:background="@android:color/transparent"
+                       />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Spring-rolls"
+                       android:textStyle="bold"
+                       android:textColor="#FF6347"
+                       android:layout_marginStart="@dimen/_5sdp"
+                       android:layout_marginTop="@dimen/_5sdp"
+                       android:textSize="30sp" />
+
+               </LinearLayout>
+
+               <HorizontalScrollView
+                   android:layout_marginTop="@dimen/_10sdp"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   >
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_gravity="fill|center"
+                       android:orientation="horizontal">
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:text="Chicken Spring roll"/>
+
+                       <Button
+                           android:layout_width="wrap_content"
+                           android:layout_marginBottom="@dimen/_2sdp"
+                           android:layout_height="wrap_content"
+                           android:text="Veg Spring roll"/>
+
+
+                   </LinearLayout>
+
+               </HorizontalScrollView>
+
+
+           </LinearLayout>
+
+       </androidx.cardview.widget.CardView>
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="@dimen/_5sdp"
+           android:layout_marginLeft="@dimen/_5sdp"
+           android:layout_marginRight="@dimen/_5sdp"
+           app:cardCornerRadius="@dimen/_6sdp"
+           >
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical"
+               >
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:orientation="horizontal"
+                   android:layout_height="wrap_content">
+                   <ImageView
+                       android:layout_width="@dimen/_30sdp"
+                       android:layout_height="@dimen/_30sdp"
+                       android:src="@drawable/roti"
+                       android:scaleType="fitXY"
+                       android:layout_marginStart="@dimen/_10sdp"
+                       android:layout_marginTop="@dimen/_10sdp"
+                       android:background="@android:color/transparent"
+                       />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Roti"
+                       android:textStyle="bold"
+                       android:textColor="#FF6347"
+                       android:layout_marginStart="@dimen/_5sdp"
+                       android:layout_marginTop="@dimen/_5sdp"
+                       android:textSize="30sp" />
+               </LinearLayout>
+
+
+
+           </LinearLayout>
+
+       </androidx.cardview.widget.CardView>
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="@dimen/_5sdp"
+           android:layout_marginLeft="@dimen/_5sdp"
+           android:layout_marginRight="@dimen/_5sdp"
+           app:cardCornerRadius="@dimen/_6sdp"
+           >
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical"
+               >
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:orientation="horizontal"
+                   android:layout_height="wrap_content">
+                   <ImageView
+                       android:layout_width="@dimen/_30sdp"
+                       android:layout_height="@dimen/_30sdp"
+                       android:src="@drawable/soup"
+                       android:scaleType="fitXY"
+                       android:layout_marginStart="@dimen/_10sdp"
+                       android:layout_marginTop="@dimen/_10sdp"
+                       android:background="@android:color/transparent"
+                       />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Soup"
+                       android:textStyle="bold"
+                       android:textColor="#FF6347"
+                       android:layout_marginStart="@dimen/_5sdp"
+                       android:layout_marginTop="@dimen/_5sdp"
+                       android:textSize="30sp" />
+               </LinearLayout>
+
+
+
+           </LinearLayout>
+
+       </androidx.cardview.widget.CardView>
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="@dimen/_5sdp"
+           android:layout_marginLeft="@dimen/_5sdp"
+           android:layout_marginRight="@dimen/_5sdp"
+           app:cardCornerRadius="@dimen/_6sdp"
+           >
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical"
+               >
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:orientation="horizontal"
+                   android:layout_height="wrap_content">
+                   <ImageView
+                       android:layout_width="@dimen/_30sdp"
+                       android:layout_height="@dimen/_30sdp"
+                       android:src="@drawable/papad"
+                       android:scaleType="fitXY"
+                       android:layout_marginStart="@dimen/_10sdp"
+                       android:layout_marginTop="@dimen/_10sdp"
+                       android:background="@android:color/transparent"
+                       />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Papad"
+                       android:textStyle="bold"
+                       android:textColor="#FF6347"
+                       android:layout_marginStart="@dimen/_5sdp"
+                       android:layout_marginTop="@dimen/_5sdp"
+                       android:textSize="30sp" />
+               </LinearLayout>
+
+           </LinearLayout>
+
+       </androidx.cardview.widget.CardView>
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="@dimen/_5sdp"
+           android:layout_marginLeft="@dimen/_5sdp"
+           android:layout_marginRight="@dimen/_5sdp"
+           app:cardCornerRadius="@dimen/_6sdp"
+           >
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical"
+               >
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:orientation="horizontal"
+                   android:layout_height="wrap_content">
+                   <ImageView
+                       android:layout_width="@dimen/_30sdp"
+                       android:layout_height="@dimen/_30sdp"
+                       android:src="@drawable/salad"
+                       android:scaleType="fitXY"
+                       android:layout_marginStart="@dimen/_10sdp"
+                       android:layout_marginTop="@dimen/_10sdp"
+                       android:background="@android:color/transparent"
+                       />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="Salad"
+                       android:textStyle="bold"
+                       android:textColor="#FF6347"
+                       android:layout_marginStart="@dimen/_5sdp"
+                       android:layout_marginTop="@dimen/_5sdp"
+                       android:textSize="30sp" />
+               </LinearLayout>
+
+           </LinearLayout>
+
+       </androidx.cardview.widget.CardView>
+
+
+
+
+
+
+
+
+
+   </LinearLayout>
+</androidx.core.widget.NestedScrollView>
