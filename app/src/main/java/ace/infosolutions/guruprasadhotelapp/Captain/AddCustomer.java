@@ -1,5 +1,6 @@
 package ace.infosolutions.guruprasadhotelapp.Captain;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -192,7 +193,7 @@ public class AddCustomer extends AppCompatActivity {
         Log.e("doctable",doc_table_no);
         //creating customer info object
        CustomerInfo customerInfo = new CustomerInfo(table_no.getValue(),noofcustomers.getValue(),datetoday,true,selected_table);
-
+       //adding data to firebase
        db.collection(CUSTOMER_COLLECTION).document(doc_table_no).set(customerInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
            @Override
            public void onSuccess(Void aVoid) {
@@ -201,6 +202,7 @@ public class AddCustomer extends AppCompatActivity {
                    @Override
                    public void onSuccess(Void aVoid) {
                        Toast.makeText(AddCustomer.this, "Added", Toast.LENGTH_SHORT).show();
+                       startActivity(new Intent(getApplicationContext(),FoodMenu.class));
                    }
                }).addOnFailureListener(new OnFailureListener() {
                    @Override
