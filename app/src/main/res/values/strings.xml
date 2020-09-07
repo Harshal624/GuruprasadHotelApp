@@ -15,100 +15,632 @@
     <string name="tab_text_1">Orders</string>
     <string name="tab_text_2">Parcel</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
-    <string name="large_text">
-        "Material is the metaphor.\n\n"
-
-        "A material metaphor is the unifying theory of a rationalized space and a system of motion."
-        "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
-        "technologically advanced and open to imagination and magic.\n"
-        "Surfaces and edges of the material provide visual cues that are grounded in reality. The "
-        "use of familiar tactile attributes helps users quickly understand affordances. Yet the "
-        "flexibility of the material creates new affordances that supercede those in the physical "
-        "world, without breaking the rules of physics.\n"
-        "The fundamentals of light, surface, and movement are key to conveying how objects move, "
-        "interact, and exist in space and in relation to each other. Realistic lighting shows "
-        "seams, divides space, and indicates moving parts.\n\n"
-
-        "Bold, graphic, intentional.\n\n"
-
-        "The foundational elements of print based design typography, grids, space, scale, color, "
-        "and use of imagery guide visual treatments. These elements do far more than please the "
-        "eye. They create hierarchy, meaning, and focus. Deliberate color choices, edge to edge "
-        "imagery, large scale typography, and intentional white space create a bold and graphic "
-        "interface that immerse the user in the experience.\n"
-        "An emphasis on user actions makes core functionality immediately apparent and provides "
-        "waypoints for the user.\n\n"
-
-        "Motion provides meaning.\n\n"
-
-        "Motion respects and reinforces the user as the prime mover. Primary user actions are "
-        "inflection points that initiate motion, transforming the whole design.\n"
-        "All action takes place in a single environment. Objects are presented to the user without "
-        "breaking the continuity of experience even as they transform and reorganize.\n"
-        "Motion is meaningful and appropriate, serving to focus attention and maintain continuity. "
-        "Feedback is subtle yet clear. Transitions are efﬁcient yet coherent.\n\n"
-
-        "3D world.\n\n"
-
-        "The material environment is a 3D space, which means all objects have x, y, and z "
-        "dimensions. The z-axis is perpendicularly aligned to the plane of the display, with the "
-        "positive z-axis extending towards the viewer. Every sheet of material occupies a single "
-        "position along the z-axis and has a standard 1dp thickness.\n"
-        "On the web, the z-axis is used for layering and not for perspective. The 3D world is "
-        "emulated by manipulating the y-axis.\n\n"
-
-        "Light and shadow.\n\n"
-
-        "Within the material environment, virtual lights illuminate the scene. Key lights create "
-        "directional shadows, while ambient light creates soft shadows from all angles.\n"
-        "Shadows in the material environment are cast by these two light sources. In Android "
-        "development, shadows occur when light sources are blocked by sheets of material at "
-        "various positions along the z-axis. On the web, shadows are depicted by manipulating the "
-        "y-axis only. The following example shows the card with a height of 6dp.\n\n"
-
-        "Resting elevation.\n\n"
-
-        "All material objects, regardless of size, have a resting elevation, or default elevation "
-        "that does not change. If an object changes elevation, it should return to its resting "
-        "elevation as soon as possible.\n\n"
-
-        "Component elevations.\n\n"
-
-        "The resting elevation for a component type is consistent across apps (e.g., FAB elevation "
-        "does not vary from 6dp in one app to 16dp in another app).\n"
-        "Components may have different resting elevations across platforms, depending on the depth "
-        "of the environment (e.g., TV has a greater depth than mobile or desktop).\n\n"
-
-        "Responsive elevation and dynamic elevation offsets.\n\n"
-
-        "Some component types have responsive elevation, meaning they change elevation in response "
-        "to user input (e.g., normal, focused, and pressed) or system events. These elevation "
-        "changes are consistently implemented using dynamic elevation offsets.\n"
-        "Dynamic elevation offsets are the goal elevation that a component moves towards, relative "
-        "to the component’s resting state. They ensure that elevation changes are consistent "
-        "across actions and component types. For example, all components that lift on press have "
-        "the same elevation change relative to their resting elevation.\n"
-        "Once the input event is completed or cancelled, the component will return to its resting "
-        "elevation.\n\n"
-
-        "Avoiding elevation interference.\n\n"
-
-        "Components with responsive elevations may encounter other components as they move between "
-        "their resting elevations and dynamic elevation offsets. Because material cannot pass "
-        "through other material, components avoid interfering with one another any number of ways, "
-        "whether on a per component basis or using the entire app layout.\n"
-        "On a component level, components can move or be removed before they cause interference. "
-        "For example, a floating action button (FAB) can disappear or move off screen before a "
-        "user picks up a card, or it can move if a snackbar appears.\n"
-        "On the layout level, design your app layout to minimize opportunities for interference. "
-        "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
-        "when a user tries to pick up one of cards.\n\n"
-    </string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_food_menu">FoodMenu</string>
     <string name="cold_drink_starter"><![CDATA[Cold drink&starter]]></string>
     <string name="cold_drink_starters"><![CDATA[Cold drink & starters]]></string>
     <string name="rice_noodlees"><![CDATA[Rice & Noodlees]]></string>
+    <string name="rayta_salad"><![CDATA[Rayta/Salad]]></string>
+
+    <string-array name="starters_veg_title">
+        <item>व्हेज मंच्युररअन</item>
+       <item>व्हेज लॉलीपॉप</item>
+        <item>व्हेज क्रिस्पी</item>
+        <item>पनीर चिल्ली / पनीर ६५</item>
+        <item>मशरुम चिल्ली</item>
+        <item>व्हेज ६५</item>
+        <item>मशरुम गार्लिक</item>
+        <item>मशरूम ६५</item>
+        <item>पोटॅटो चिल्ली</item>
+        <item>व्हेज चिल्ली</item>
+        <item>पनीर कबाब</item>
+        <item>व्हेज सीख कबाब</item>
+        <item>पनीर कबाब</item>
+        <item>पनीर चीज द रटक्का</item>
+        <item>आलू पनीर</item>
+        <item>गोबी तंदुरी </item>
+        <item>तंदुरी स्टाफ</item>
+        <item>व्हेज हरभरा कबाब</item>
+        <item>पनीर अचारी टिक्का</item>
+        <item>पनीर अद्रकी टिक्का</item>
+        <item>पनीर पुदिना टिक्का</item>
+        <item>मशरुम टिक्का</item>
+        <item>मशरुम काळीमिरी टिक्का</item>
+        <item>मशरुम मलाई टिक्का</item>
+        <item>गुरुप्रसाद व्हेज प्लॅटर</item>
+    </string-array>
+    <string-array name="starters_veg_cost">
+        <item>120</item>
+        <item>100</item>
+        <item>120</item>
+        <item>120</item>
+        <item>140</item>
+        <item>120</item>
+        <item>150</item>
+        <item>150</item>
+        <item>150</item>
+        <item>150</item>
+        <item>150</item>
+        <item>150</item>
+        <item>150</item>
+        <item>180</item>
+        <item>130</item>
+        <item>130</item>
+        <item>130</item>
+        <item>160</item>
+        <item>160</item>
+        <item>160</item>
+        <item>150</item>
+        <item>170</item>
+        <item>160</item>
+        <item>180</item>
+        <item>360</item>
+    </string-array>
+
+
+    <string-array name="starters_nonveg_title">
+
+        <item>तंदुरी चिकन</item>
+        <item>तंदुरी चिकन</item>
+        <item>चिकन तंगडी कबाब</item>
+        <item>चिकन रटक्का</item>
+        <item>चिकन बंजारा कबाब</item>
+        <item>चिकन मलाई कबाब</item>
+        <item>चिकन लसुनी कबाब</item>
+        <item>चिकन शेख कबाब</item>
+        <item>चिकन कालीचमरी कबाब</item>
+        <item>चिकन छोले कबाब</item>
+        <item>चिकन पहाडी कबाब</item>
+        <item>मस्तानी कबाब</item>
+        <item>चिकन अंगारा कबाब</item>
+        <item>चिकन माँगनेट</item>
+        <item>दमदार कबाब</item>
+        <item>ठेचा कबाब</item>
+        <item>चिकन लॉलीपॉप  </item>
+        <item>अंडा चिल्ली</item>
+        <item>चिकन चिल्ली</item>
+        <item>चिकन ६५</item>
+        <item>चिकन मंच्युररयन</item>
+        <item>चिकन क्रिस्पी</item>
+        <item>चिकन क्रिस्पी बबग्स</item>
+        <item>चिकन लॉलीपॉप  मसाला</item>
+        <item>चिकन गार्लीक </item>
+    </string-array>
+
+    <string-array name="starters_nonveg_cost">
+        <item>220</item>
+        <item>390</item>
+        <item>210</item>
+        <item>200</item>
+        <item>200</item>
+        <item>210</item>
+        <item>190</item>
+        <item>210</item>
+        <item>200</item>
+        <item>210</item>
+        <item>210</item>
+        <item>200</item>
+        <item>200</item>
+        <item>220</item>
+        <item>200</item>
+        <item>180</item>
+        <item>130</item>
+        <item>120</item>
+        <item>150</item>
+        <item>150</item>
+        <item>170</item>
+        <item>170</item>
+        <item>150</item>
+        <item>150</item>
+        <item>180</item>
+    </string-array>
+
+
+
+    <string-array name="starters_colddrink_title">
+
+        <item>लस्सी </item>
+        <item>ताक</item>
+        <item>स्पेशल मसाला ताक</item>
+        <item>कोल्ड ड्रिंक </item>
+        <item>मिनरल वॉटर </item>
+        <item>सोलकडी </item>
+
+    </string-array>
+    <string-array name="starters_colddrink_cost">
+        <item>30</item>
+        <item>25</item>
+        <item>30</item>
+        <item>25</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+
+
+    <string-array name="veg_nonveg_soup_title">
+        <item>मनच्याव सूप</item>
+        <item>मनच्याव सूप</item>
+        <item>कॉर्न सूप</item>
+        <item>कॉर्न सूप</item>
+        <item>हॉट अँड सौर सूप</item>
+        <item>हॉट अँड सौर सूप</item>
+        <item>लेमन कारिएंडर सूप</item>
+        <item>लेमन कारिएंडर सूप</item>
+        <item>क्रीम ऑफ टोमॅटो सूप</item>
+        <item>क्रीम ऑफ मशरूम सूप</item>
+        <item>चिकन क्लिअर सूप</item>
+
+    </string-array>
+    <string-array name="veg_nonveg_soup_cost">
+        <item>60</item>
+        <item>70</item>
+        <item>70</item>
+        <item>90</item>
+        <item>60</item>
+        <item>80</item>
+        <item>70</item>
+        <item>90</item>
+        <item>60</item>
+        <item>80</item>
+        <item>80</item>
+    </string-array>
+    <string-array name="papad_title">
+        <item>रोस्टेड पापड</item>
+        <item>फ्राईड पापड </item>
+        <item>मसाला पापड</item>
+    </string-array>
+    <string-array name="papad_cost">
+        <item>20</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+    <string-array name="Rayata_Salad_title">
+
+        <item>पायनॅपल रायता</item>
+        <item>मिक्स व्हेज रायता</item>
+        <item>बुंदी रायता</item>
+        <item>ग्रीन सॅलेड</item>
+        <item>टोमॅटो सॅलेड</item>
+        <item>ककुंबर सॅलेड</item>
+    </string-array>
+    <string-array name="Rayata_Salad_cost">
+        <item>60</item>
+        <item>50</item>
+        <item>60</item>
+        <item>50</item>
+        <item>50</item>
+        <item>50</item>
+    </string-array>
+
+
+
+    <string-array name = "daal_title">
+        <item>डाळ कोल्हापुरी</item>
+        <item>डाळ पालक</item>
+        <item>बटर डाळ</item>
+        <item>मेथी डाळ</item>
+        <item>डाळ फ्राय</item>
+        <item>डाळ तडका</item>
+        <item>डाळ मखणी</item>
+
+    </string-array>
+    <string-array name = "daal_cost">
+        <item>120</item>
+        <item>130</item>
+        <item>110</item>
+        <item>110</item>
+        <item>100</item>
+        <item>100</item>
+        <item>170</item>
+
+    </string-array>
+
+    <string-array name = "paneer_maincourse_title">
+        <item>पनीर टिक्का मसाला</item>
+        <item>पनीर कोल्हापुरी</item>
+        <item>पनीर तवा</item>
+        <item>पनीर पसंदा</item>
+        <item >पनीर मसाला</item>
+        <item>पनीर ताहोरी</item>
+        <item>पनीर कडाई</item>
+        <item>पनीर बटर मसाला</item>
+        <item>पनीर बुर्जी</item>
+        <item>मटर पनीर /पालक पनीर</item>
+        <item>गुरुप्रसाद स्पे.पनीर मिक्स</item>
+        <item>पनीर लबाबदार</item>
+        <item>पनीर बंजारा मसाला</item>
+        <item>पनीर काजु मसाला</item>
+        <item>पनीर थटपटा</item>
+        <item>पनीर अंगारा मसाला</item>
+        <item>पनीर लसूणी</item>
+        <item>पनीर जोशीला</item>
+        <item>पनीर दिवाणी हंडी</item>
+        <item>पनीर पीज मसाला</item>
+        <item>पनीर तुफानी</item>
+    </string-array>
+
+    <string-array name = "paneer_maincourse_cost">
+        <item>170</item>
+        <item>160</item>
+        <item>160</item>
+        <item>180</item>
+        <item>150</item>
+        <item>160</item>
+        <item>160</item>
+        <item>180</item>
+        <item>170</item>
+        <item>160</item>
+        <item>200</item>
+        <item>180</item>
+        <item>180</item>
+        <item>180</item>
+        <item>180</item>
+        <item>170</item>
+        <item>160</item>
+        <item>180</item>
+        <item>230</item>
+        <item>220</item>
+        <item>180</item>
+
+    </string-array>
+    <string-array name = "veg_maincourse_title">
+        <item> मिक्स व्हेज  </item>
+        <item> व्हेज हंडी  </item>
+        <item> व्हेज कडई  </item>
+        <item> व्हेज मकख्खणवला   </item>
+        <item > व्हेज मालवणी हंडी  </item>
+        <item> व्हेज पटीयाला  </item>
+        <item> व्हेज कोल्हापुरी/व्हेज भुनी  </item>
+        <item> व्हेज मराठा  </item>
+        <item> व्हेज खीमा  मसाला </item>
+        <item> दम आलु  पंजाबी   </item>
+        <item> भिंडी  मसाला /फ्राय </item>
+        <item> बैगन  मसाला  /भरता </item>
+        <item>  व्हेज लसुणी  </item>
+        <item> व्हेज कोप्ता करी </item>
+        <item> काजू मसाला करी </item>
+        <item> मशरूम दो  पायजा </item>
+        <item> ग्रीन पीस मसाला </item>
+        <item> गोबी मसाला/गोबी मटर </item>
+        <item>आलु गोबी  </item>
+        <item> छोले मसाला  </item>
+        <item> आलु  मेथी  </item>
+        <item> मेथीं मटर मसाला </item>
+        <item>मशरूम काजु मसाला </item>
+        <item> पिटल   </item>
+        <item> व्हेज जालफ्रायजी  </item>
+        <item> व्हेज जयपुरी </item >
+        <item> व्हेज कोप्ता  </item>
+        <item>व्हेज नवरत्न कूर्मा  </item >
+        <item>  व्हेज हैद्राबादी </item >
+        <item> मशरूम मसाला </item>
+        <item> व्हेज भु ना </item>
+        <item> चिकन  स्प्रिंग रोल </item>
+        <item> व्हेज स्प्रिंग रोल </item>
+    </string-array>
+    <string-array name = "veg_maincourse_cost">
+        <item>140 </item>
+        <item>260 </item>
+        <item>150 </item>
+        <item>150 </item>
+        <item>280 </item>
+        <item>170</item>
+        <item>160</item>
+        <item>170</item>
+        <item>160 </item>
+        <item>170</item>
+        <item>140</item>
+        <item>140</item>
+        <item>150</item>
+        <item>160</item>
+        <item>180 </item>
+        <item>170 </item>
+        <item>160 </item>
+        <item>130 </item>
+        <item>140 </item>
+        <item>140 </item>
+        <item>140</item>
+        <item>140</item>
+        <item>180</item>
+        <item>120</item>
+        <item>150</item>
+        <item>140 </item>
+        <item>180</item>
+        <item>150</item>
+        <item>150</item>
+        <item>160</item>
+        <item>160</item>
+
+    </string-array>
+
+    <string-array name = "chicken_maincourse_title">
+        <item> चिकन सुखा फ्राय </item>
+        <item> चिकन करी</item>
+        <item>चिकन मसाला</item>
+        <item> चिकन कडाई /तवा</item>
+        <item > चिकन पटियाला</item>
+        <item> वचिकन अफगाणी</item>
+        <item> वचिकन लसूणी पुरी</item>
+        <item> वचिकेन आदरफी मसाला </item>
+        <item>चिकन दो पायजा</item >
+        <item> मुर्ग मुसल्लम हंडी हाफ /फूल</item>
+        <item>चिकन खीमा मसाला</item>
+        <item> चिकन टिक्का मसाला</item>
+        <item>चिकन मराठा</item>
+        <item>चिकन नवाब हद्दी  हा्फ/फूल</item >
+        <item>चि कन भुना  हद्दी हाफ /फूल</item>
+        <item>मटर चिकन हड्डी हाफ /फूल</item>
+        <item>चिकन रांगण जोश</item>
+        <item>चिकन हंडी हाफ /फूल</item>
+        <item>चिकन  तंदुरी  हड्डी  हाफ /फूल</item>
+        <item>चिकन मालवणी हंडी हाफ /फूल</item>
+        <item>चिकन महाराजा</item>
+        <item> किकण बनजारा मसाला</item>
+        <item>चिकन अंगारा मसाला</item>
+        <item>चिकन महाराणी</item >
+        <item>चिकन मख्खनवाला हाफ /फुल</item>
+        <item>व्हेज जयपुरी</item >
+        <item>हेज कोप्ता</item>
+        <item>व्हेज नवरत्न कूर्मा</item >
+        <item>व्हेज हैद्राबादी</item >
+        <item>मशरूम मसाला</item>
+        <item>व्हेज भु ना </item>
+        <item>चिकन स्प्रिंग रोल</item>
+        <item>व्हेज स्प्रिंग रोल</item>
+    </string-array>
+
+    <string-array name = "chicken_maincourse_cost">
+        <item>120</item>
+        <item>110</item >
+        <item>110 </item>
+        <item>160 </item>
+        <item>220</item>
+        <item>190</item >
+        <item>180</item >
+        <item>160</item>
+        <item>160</item>
+        <item>320/580</item>
+        <item>200</item>
+        <item>200</item>
+        <item>200</item>
+        <item> 250/450</item >
+        <item> 180/350</item >
+        <item>300/520</item >
+        <item>180</item>
+        <item>210/400</item >
+        <item>200/380</item >
+        <item>250/450</item >
+        <item>220</item>
+        <item>200</item>
+        <item>200</item>
+        <item>190</item >
+        <item>270/470 </item >
+    </string-array>
+
+    <string-array name ="egg_title">
+        <item>अंडा मसाला आमलेट</item >
+        <item> अंडा भुर्जी</item >
+        <item>अंडा मसाला</item>
+        <item>अंडा करी</item>
+        <item>अंडा तवा</item>
+        <item>अंडा पकोडा</item>
+        <item>अंडा पिली</item>
+        <item>बॉईल अंडा</item >
+    </string-array>
+
+    <string-array name = "egg_cost">
+        <item>60</item >
+        <item>60</item>
+        <item>80</item>
+        <item>80</item >
+        <item>120</item >
+        <item>120</item>
+        <item>120</item>
+        <item>120</item >
+        <item>25</item >
+    </string-array>
+
+    <string-array name="nonveg_matanmaincourse_title">
+        <item>मटण करी /मसाला </item>
+        <item>मटण रारा /मसाला </item>
+        <item>मटण हंडी हाफ/फुल</item>
+        <item>मटण मालवणी हंडी हाफ/फुल</item>
+        <item>मटण सुखा </item>
+        <item>मटण मराठा हंडी हाफ/फुल</item>
+        <item>मटण महाराणी</item>
+        <item>मटण कोल्हापुरी</item>
+        <item>मटण हैदराबादी</item>
+    </string-array>
+
+    <string-array name="nonveg_matanmaincourse_cost">
+        <item>180</item>
+        <item>220</item>
+        <item>350/600</item>
+        <item>380/650</item>
+        <item>190</item>
+        <item>350/600</item>
+        <item>220</item>
+        <item>400/750</item>
+        <item>400/750</item>
+    </string-array>
+
+    <string-array name="nonveg_fishmaincourse_title">
+        <item>फिश फ्राय</item>
+        <item>फिश करी</item>
+        <item>फिश मसाला</item>
+        <item>पापलेट फ्राय</item>
+        <item>पापलेट तंदुरी</item>
+        <item>पापलेट तवा/रवा</item>
+        <item>पापलेट करी/मसाला</item>
+        <item>सुरमई तवा/रवा</item>
+        <item>सुरमई कोळीवाडा</item>
+        <item>सुरमई करी/मसाला</item>
+        <item>कोळंबी तवा/रवा</item>
+        <item>कोळंबी करी/मसाला</item>
+        <item>कोळंबी कोळीवाडा</item>
+        <item>सुरमई थाळी</item>
+        <item>पापलेट थाळी</item>
+        <item>बांगडा थाळी</item>
+    </string-array>
+
+    <string-array name="nonveg_fishmaincourse_cost">
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+        <item>100</item>
+    </string-array>
+
+    <string-array name="nonveg_specialthali_title">
+        <item>गुरुप्रसाद स्पे. व्हेज थाळी</item>
+        <item>गुरुप्रसाद स्पे. अंडा थाळी</item>
+        <item>गुरुप्रसाद स्पे. चिकन थाळी</item>
+        <item>गुरुप्रसाद स्पे. मटण थाळी</item>
+        <item>व्हेज थाळी</item>
+        <item>अंडा थाळी</item>
+        <item>चिकन थाळी</item>
+        <item>मटण थाळी</item>
+    </string-array>
+
+    <string-array name="nonveg_specialthali_cost">
+        <item>180</item>
+        <item>150</item>
+        <item>200</item>
+        <item>250</item>
+        <item>140</item>
+        <item>110</item>
+        <item>150</item>
+        <item>200</item>
+    </string-array>
+
+    <string-array name="roti_title">
+        <item>चपाती</item>
+        <item>रोटी</item>
+        <item>बटर रोटी</item>
+        <item>नान</item>
+        <item>बटर नान</item>
+        <item>बटर गारलिक नान</item>
+        <item>चीज गारलिक नान</item>
+        <item>चीज नान</item>
+        <item>कुलछा</item>
+        <item>बटर कुलछा</item>
+        <item>कुलछा पराठा</item>
+        <item>आलू पराठा</item>
+        <item>मेथी पराठा</item>
+        <item>गोबी पराठा</item>
+        <item>पनीर पराठा</item>
+        <item>ज्वारी भाकरी</item>
+        <item>बाजरी भाकरी</item>
+        <item>मिरसी रोटी</item>
+    </string-array>
+
+    <string-array name="roti_cost">
+        <item>15</item>
+        <item>15</item>
+        <item>25</item>
+        <item>30</item>
+        <item>35</item>
+        <item>40</item>
+        <item>50</item>
+        <item>40</item>
+        <item>25</item>
+        <item>30</item>
+        <item>30</item>
+        <item>60</item>
+        <item>60</item>
+        <item>60</item>
+        <item>80</item>
+        <item>20</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+
+    <string-array name="rice_main_title">
+        <item>प्लेन राईस</item>
+        <item>जीरा राईस</item>
+        <item>डाल खिचडी</item>
+        <item>पालक खिचडी</item>
+        <item>कर्ड राईस</item>
+        <item>घी राईस</item>
+        <item>टोमॅटो राईस</item>
+        <item>व्हेज पुलाव</item>
+        <item>व्हेज काश्मिरी पुलाव</item>
+    </string-array>
+
+    <string-array name="rice_main_cost">
+        <item>40/70</item>
+        <item>40/70</item>
+        <item>120</item>
+        <item>120</item>
+        <item>120</item>
+        <item>90</item>
+        <item>110</item>
+        <item>130</item>
+        <item>130</item>
+    </string-array>
+
+    <string-array name="rice_biryani_title">
+        <item>अंडा बिर्याणी</item>
+        <item>चिकन बिर्याणी</item>
+        <item>व्हेज बिर्याणी</item>
+        <item>मटण बिर्याणी</item>
+        <item>पनीर टिक्का बिर्याणी</item>
+        <item>चिकन टिक्का बिर्याणी</item>
+        <item>बिर्याणी राईस</item>
+    </string-array>
+
+    <string-array name="rice_biryani_cost">
+        <item>110</item>
+        <item>150</item>
+        <item>130</item>
+        <item>220</item>
+        <item>180</item>
+        <item>200</item>
+        <item>110</item>
+    </string-array>
+
+    <string-array name="rice_ricenoodles_title">
+        <item>चिकन फ्राईड राईस</item>
+        <item>शेजवान फ्राईड राईस</item>
+        <item>हक्का नूडल्स</item>
+        <item>शेजवान नूडल्स</item>
+        <item>टिपल राईस</item>
+        <item>पनीर फ्राईड राईस</item>
+        <item>पनीर नूडल्स</item>
+        <item>अंडा फ्राईड राईस</item>
+        <item>अंडा नूडल्स</item>
+        <item>व्हेज/चिकन सिंगापूरी राईस</item>
+        <item>व्हेज/चिकन बन गार्लिक राईस</item>
+        <item>व्हेज/चिकन चिल्ली गार्लिक राईस</item>
+        <item>थॉपर राईस</item>
+    </string-array>
+
+    <string-array name="rice_ricenoodles_cost">
+        <item>130</item>
+        <item>130</item>
+        <item>130</item>
+        <item>140</item>
+        <item>150</item>
+        <item>130</item>
+        <item>130</item>
+        <item>120</item>
+        <item>130</item>
+        <item>160</item>
+        <item>160</item>
+        <item>160</item>
+        <item>150</item>
+    </string-array>
 
 
 </resources>

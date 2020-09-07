@@ -17,4 +17,5 @@ public class ParcelFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.parcel_fragment,container,false);
     }
+
 }

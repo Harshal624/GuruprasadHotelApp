@@ -12,10 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Captain.ItemList"></activity>
         <activity
             android:name=".Captain.FoodMenu"
             android:label="@string/title_activity_food_menu"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Captain.CaptainMainFragment"
             android:label="@string/title_activity_captain_main_fragment"

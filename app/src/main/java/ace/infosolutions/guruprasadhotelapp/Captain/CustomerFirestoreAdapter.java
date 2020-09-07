@@ -17,6 +17,7 @@ import ace.infosolutions.guruprasadhotelapp.R;
 
 public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerclass, CustomerFirestoreAdapter.CustomerHolder > {
     private OnItemClickListener listener;
+    private OnItemLongClickListener listener1;
 
 
     public CustomerFirestoreAdapter(@NonNull FirestoreRecyclerOptions<customerclass> options) {
@@ -37,6 +38,7 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.customerlistitem,parent,false);
         return new CustomerHolder(view);
     }
+
 
     public class CustomerHolder extends RecyclerView.ViewHolder{
         private TextView table_no;
@@ -59,7 +61,20 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
                     }
                 }
             });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int pos = getAdapterPosition();
+                    //if item is removed and it's in his remove animation
+                    if(pos != RecyclerView.NO_POSITION && listener!=null){
+                        listener1.onItemLongClick(getSnapshots().getSnapshot(pos),getAdapterPosition());
+                    }
+                    return false;
+                }
+            });
         }
+
 
     }
 
@@ -69,4 +84,13 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
     public void setOnItemClickListener(OnItemClickListener listener){
         this.listener = listener;
     }
+
+
+    public interface OnItemLongClickListener{
+        void onItemLongClick(DocumentSnapshot documentSnapshot,int pos);
+    }
+    public void setOnItemLongClickListener(OnItemLongClickListener listener1){
+        this.listener1 = listener1;
+    }
 }
+

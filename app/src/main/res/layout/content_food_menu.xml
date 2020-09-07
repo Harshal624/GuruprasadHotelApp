@@ -66,21 +66,36 @@
                        android:orientation="horizontal">
 
                        <Button
+                           android:id="@+id/starters_colddrink"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="@string/cold_drink_starters"/>
 
                        <Button
+                           android:id="@+id/starters_veg"
                            android:layout_width="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
                            android:layout_height="wrap_content"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Veg"/>
 
                        <Button
+                           android:id="@+id/starters_nonveg"
                            android:layout_width="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
                            android:layout_height="wrap_content"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Non-Veg"/>
 
 
@@ -143,21 +158,36 @@
                        android:orientation="horizontal">
 
                        <Button
+                           android:id="@+id/veg_daal"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Daal"/>
 
                        <Button
+                           android:id="@+id/veg_paneermaincourse"
                            android:layout_width="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
                            android:layout_height="wrap_content"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Paneer maincourse"/>
 
                        <Button
+                           android:id="@+id/veg_vegmaincourse"
                            android:layout_width="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
                            android:layout_height="wrap_content"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Veg maincourse"/>
 
 
@@ -220,35 +250,58 @@
                        android:orientation="horizontal">
 
                        <Button
+                           android:id="@+id/nonveg_chickenmaincourse"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Chicken maincourse"/>
 
                        <Button
+                           android:id="@+id/nonveg_egg"
                            android:layout_width="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
                            android:layout_height="wrap_content"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Egg"/>
 
                        <Button
+                           android:id="@+id/nonveg_matanmaincourse"
                            android:layout_width="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
                            android:layout_height="wrap_content"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Matan maincourse"/>
 
                        <Button
+                           android:id="@+id/nonveg_fishmaincourse"
                            android:layout_width="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
                            android:layout_height="wrap_content"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Fish maincourse"/>
                        <Button
+                           android:id="@+id/nonveg_specialthali"
                            android:layout_width="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
                            android:layout_height="wrap_content"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Special Thali"/>
-
-
                    </LinearLayout>
 
                </HorizontalScrollView>
@@ -308,21 +361,36 @@
                        android:orientation="horizontal">
 
                        <Button
+                           android:id="@+id/rice_main"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Main"/>
 
                        <Button
+                           android:id="@+id/rice_biryani"
                            android:layout_width="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
                            android:layout_height="wrap_content"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Biryani Rice"/>
 
                        <Button
+                           android:id="@+id/rice_ricenoodles"
                            android:layout_width="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
                            android:layout_height="wrap_content"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="@string/rice_noodlees"/>
 
 
@@ -386,15 +454,25 @@
                        android:orientation="horizontal">
 
                        <Button
+                           android:id="@+id/springroll_chicken"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Chicken Spring roll"/>
 
                        <Button
+                           android:id="@+id/springroll_veg"
                            android:layout_width="wrap_content"
                            android:layout_marginBottom="@dimen/_2sdp"
                            android:layout_height="wrap_content"
+                           android:padding="@dimen/_5sdp"
+                           android:layout_marginStart="@dimen/_5sdp"
+                           android:textColor="#ffffff"
+                           android:background="@drawable/custom_food_button"
                            android:text="Veg Spring roll"/>
 
 
@@ -407,6 +485,7 @@
 
        </androidx.cardview.widget.CardView>
        <androidx.cardview.widget.CardView
+           android:id="@+id/roti"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:layout_marginTop="@dimen/_5sdp"
@@ -435,7 +514,7 @@
 
                    <TextView
                        android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
+                       android:layout_height="@dimen/_60sdp"
                        android:text="Roti"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
@@ -450,6 +529,7 @@
 
        </androidx.cardview.widget.CardView>
        <androidx.cardview.widget.CardView
+           android:id="@+id/soup"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:layout_marginTop="@dimen/_5sdp"
@@ -478,7 +558,7 @@
 
                    <TextView
                        android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
+                       android:layout_height="@dimen/_60sdp"
                        android:text="Soup"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
@@ -493,6 +573,7 @@
 
        </androidx.cardview.widget.CardView>
        <androidx.cardview.widget.CardView
+           android:id="@+id/papad"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:layout_marginTop="@dimen/_5sdp"
@@ -521,7 +602,7 @@
 
                    <TextView
                        android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
+                       android:layout_height="@dimen/_60sdp"
                        android:text="Papad"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
@@ -534,6 +615,7 @@
 
        </androidx.cardview.widget.CardView>
        <androidx.cardview.widget.CardView
+           android:id="@+id/raytasalad"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:layout_marginTop="@dimen/_5sdp"
@@ -562,8 +644,8 @@
 
                    <TextView
                        android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:text="Salad"
+                       android:layout_height="@dimen/_60sdp"
+                       android:text="@string/rayta_salad"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
                        android:layout_marginStart="@dimen/_5sdp"
@@ -574,14 +656,6 @@
            </LinearLayout>
 
        </androidx.cardview.widget.CardView>
-
-
-
-
-
-
-
-
 
    </LinearLayout>
 </androidx.core.widget.NestedScrollView>

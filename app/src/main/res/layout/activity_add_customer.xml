@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".Captain.AddCustomer">
 
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:title="Add Customer"
+        app:titleTextColor="#ffffff"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <Spinner
         android:id="@+id/table_type"
@@ -30,6 +38,8 @@
         android:text="Table type"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -43,6 +53,8 @@
         android:text="Table No:"
         android:textSize="15sp"
         android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/colorPrimary"
         android:layout_marginStart="@dimen/_10sdp"
         app:layout_constraintVertical_bias="0.45"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -72,6 +84,8 @@
         android:text="No. of customers"
         android:textSize="15sp"
         android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/colorPrimary"
         android:layout_marginEnd="@dimen/_3sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/noofcustomer"
@@ -97,6 +111,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cancel"
+        android:textColor="#ffffff"
+        android:background="@drawable/circular_imgbutton_cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
@@ -109,6 +125,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Confirm"
+        android:textColor="#ffffff"
+        android:background="@drawable/circular_imgbutton_confirm"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.8"
@@ -116,13 +134,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.8" />
 
-    <TextView
-        android:id="@+id/istablefree"
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:textColor="@android:color/holo_red_dark"
-        app:layout_constraintEnd_toStartOf="@+id/table_no"
+        android:id="@+id/isoccupied"
+        android:src="@drawable/ic_occupied"
+        app:layout_constraintHorizontal_bias="0.5"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="@+id/textView6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 

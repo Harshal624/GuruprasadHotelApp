@@ -1,12 +1,16 @@
 package ace.infosolutions.guruprasadhotelapp.Captain;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -34,9 +38,9 @@ public class AddCustomer extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String KOT_NO;
     private String Bill_NO;
-    private TextView istablefreeT;
     private static final String TABLE_COLLECTION = "Tables";
     private static final String CUSTOMER_COLLECTION = "Customers";
+    private ImageButton isoccupied;
 
 
     @Override
@@ -48,7 +52,8 @@ public class AddCustomer extends AppCompatActivity {
         noofcustomers = (NumberPicker) findViewById(R.id.noofcustomer);
         cancelcust = (Button) findViewById(R.id.cancelcust);
         confirmcust = (Button) findViewById(R.id.confirmcust);
-        istablefreeT = (TextView)findViewById(R.id.istablefree);
+        isoccupied = (ImageButton)findViewById(R.id.isoccupied);
+
 
         //setting up the spinner adapter
         ArrayAdapter<CharSequence> tabletypeadapter = ArrayAdapter.createFromResource(AddCustomer.this,R.array.Tabletype,android.R.layout.simple_spinner_item);
@@ -102,7 +107,14 @@ public class AddCustomer extends AppCompatActivity {
         confirmcust.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(haveNetworkConnection()){
                     addDatatoFirebase();
+                }
+                else{
+
+                    Toast.makeText(AddCustomer.this, "No internet connection", Toast.LENGTH_SHORT).show();
+                }
+
                 }
 
         });
@@ -139,7 +151,6 @@ public class AddCustomer extends AppCompatActivity {
 
         }
         catch (NullPointerException e){
-            istablefreeT.setText("Checking");
             Log.e("Nullpointeroutsideloop",e.toString());
         }
     }
@@ -151,18 +162,18 @@ public class AddCustomer extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         try{
                             boolean istablefree = documentSnapshot.getBoolean(table_no);
-                            Log.e("istablefree", String.valueOf(istablefree));
+                            //Log.e("istablefree", String.valueOf(istablefree));
                             if(!istablefree){
-                                istablefreeT.setText("Occupied");
+                                isoccupied.setImageResource(R.drawable.ic_occupied);
                                 confirmcust.setEnabled(false);
                             }
                             else{
-                                istablefreeT.setText("Free");
+                                isoccupied.setImageResource(R.drawable.ic_free);
                                 confirmcust.setEnabled(true);
                             }
                         }
                         catch (NullPointerException e){
-                            istablefreeT.setText("Checking");
+                           // istablefreeT.setText("Checking");
                             confirmcust.setEnabled(false);
                             Log.e("Nullpointer",e.toString());
                         }
@@ -189,7 +200,7 @@ public class AddCustomer extends AppCompatActivity {
         String datetoday = format.format(date);
         String day = datetoday.substring(0,2).concat(datetoday.substring(3,5)).concat(datetoday.substring(6,8));
         String time = datetoday.substring(datetoday.length() - 8);
-        String doc_table_no = day.concat(time).concat(tableno);
+        final String doc_table_no = day.concat(time).concat(tableno);
         Log.e("doctable",doc_table_no);
         //creating customer info object
        CustomerInfo customerInfo = new CustomerInfo(table_no.getValue(),noofcustomers.getValue(),datetoday,true,selected_table);
@@ -202,7 +213,9 @@ public class AddCustomer extends AppCompatActivity {
                    @Override
                    public void onSuccess(Void aVoid) {
                        Toast.makeText(AddCustomer.this, "Added", Toast.LENGTH_SHORT).show();
-                       startActivity(new Intent(getApplicationContext(),FoodMenu.class));
+                       Intent intent = new Intent(getApplicationContext(),FoodMenu.class);
+                       intent.putExtra("DocumentId",doc_table_no);
+                       startActivity(intent);
                    }
                }).addOnFailureListener(new OnFailureListener() {
                    @Override
@@ -231,7 +244,6 @@ public class AddCustomer extends AppCompatActivity {
         long timelilli = date.getTime();
         String timeString = String.valueOf(timelilli);
         String randomMilli = timeString.substring(timeString.length() - 3);
-
         char c = (char)(r.nextInt(26) + 'a');
         String c1 = String.valueOf(c).toUpperCase();
         KOT_NO = c1.concat(randomMilli);
@@ -250,4 +262,20 @@ public class AddCustomer extends AppCompatActivity {
         Bill_NO = String.valueOf(a).concat(String.valueOf(b)).toUpperCase().concat(randomMilli);
         Log.e("billno", Bill_NO);
     }*/
+   private boolean haveNetworkConnection() {
+       boolean haveConnectedWifi = false;
+       boolean haveConnectedMobile = false;
+
+       ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+       NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+       for (NetworkInfo ni : netInfo) {
+           if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+               if (ni.isConnected())
+                   haveConnectedWifi = true;
+           if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+               if (ni.isConnected())
+                   haveConnectedMobile = true;
+       }
+       return haveConnectedWifi || haveConnectedMobile;
+   }
 }
