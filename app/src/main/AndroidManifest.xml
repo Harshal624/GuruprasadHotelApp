@@ -12,7 +12,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Captain.ItemList"></activity>
+        <activity
+            android:name=".Captain.ViewCart.ViewCart"
+            android:label="@string/title_activity_view_cart"
+            android:theme="@style/AppTheme.NoActionBar">
+
+
+
+        </activity>
+        <activity android:name=".Captain.ItemList" />
         <activity
             android:name=".Captain.FoodMenu"
             android:label="@string/title_activity_food_menu"
@@ -22,7 +30,6 @@
             android:label="@string/title_activity_captain_main_fragment"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".CheckRole" />
-        <activity android:name=".Captain.AddFood" />
         <activity android:name=".Captain.AddCustomer" />
         <activity android:name=".Manager.Manager" />
         <activity android:name=".MainActivity">
@@ -31,6 +38,8 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+
         </activity>
     </application>
 

@@ -2,6 +2,7 @@ package ace.infosolutions.guruprasadhotelapp.Captain;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -19,13 +20,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.R;
 
@@ -42,6 +48,12 @@ public class AddCustomer extends AppCompatActivity {
     private static final String CUSTOMER_COLLECTION = "Customers";
     private ImageButton isoccupied;
 
+    public static final String PREF_DOCID = "PREF_DOCID";
+    public static final String DOC_ID_KEY = "DOC_ID_KEY";
+    private SharedPreferences sharedPreferences;
+
+    private Map<String,Double> cost_map;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +65,9 @@ public class AddCustomer extends AppCompatActivity {
         cancelcust = (Button) findViewById(R.id.cancelcust);
         confirmcust = (Button) findViewById(R.id.confirmcust);
         isoccupied = (ImageButton)findViewById(R.id.isoccupied);
-
+        cost_map = new HashMap<>();
+        sharedPreferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
+        cost_map.put("cost",0.0);
 
         //setting up the spinner adapter
         ArrayAdapter<CharSequence> tabletypeadapter = ArrayAdapter.createFromResource(AddCustomer.this,R.array.Tabletype,android.R.layout.simple_spinner_item);
@@ -108,10 +122,11 @@ public class AddCustomer extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(haveNetworkConnection()){
+                    confirmcust.setEnabled(false);
                     addDatatoFirebase();
                 }
                 else{
-
+                    confirmcust.setEnabled(false);
                     Toast.makeText(AddCustomer.this, "No internet connection", Toast.LENGTH_SHORT).show();
                 }
 
@@ -162,7 +177,6 @@ public class AddCustomer extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         try{
                             boolean istablefree = documentSnapshot.getBoolean(table_no);
-                            //Log.e("istablefree", String.valueOf(istablefree));
                             if(!istablefree){
                                 isoccupied.setImageResource(R.drawable.ic_occupied);
                                 confirmcust.setEnabled(false);
@@ -193,75 +207,58 @@ public class AddCustomer extends AppCompatActivity {
     }
 
     private void addDatatoFirebase() {
-        //creating unique document id for table number
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
         Date date = new Date();
-        final String tableno = "T"+table_no.getValue();
         String datetoday = format.format(date);
-        String day = datetoday.substring(0,2).concat(datetoday.substring(3,5)).concat(datetoday.substring(6,8));
-        String time = datetoday.substring(datetoday.length() - 8);
-        final String doc_table_no = day.concat(time).concat(tableno);
-        Log.e("doctable",doc_table_no);
         //creating customer info object
-       CustomerInfo customerInfo = new CustomerInfo(table_no.getValue(),noofcustomers.getValue(),datetoday,true,selected_table);
+       CustomerInfo customerInfo = new CustomerInfo(table_no.getValue(),noofcustomers.getValue(),datetoday,selected_table);
        //adding data to firebase
-       db.collection(CUSTOMER_COLLECTION).document(doc_table_no).set(customerInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
+       db.collection(CUSTOMER_COLLECTION).add(customerInfo).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
            @Override
-           public void onSuccess(Void aVoid) {
+           public void onSuccess(DocumentReference documentReference) {
+               final String doc_id = documentReference.getId();
+               SharedPreferences.Editor editor = sharedPreferences.edit();
+               editor.putString(DOC_ID_KEY,doc_id);
+               editor.commit();
 
                db.collection(TABLE_COLLECTION).document(selected_table).update(String.valueOf(table_no.getValue()),false).addOnSuccessListener(new OnSuccessListener<Void>() {
                    @Override
                    public void onSuccess(Void aVoid) {
-                       Toast.makeText(AddCustomer.this, "Added", Toast.LENGTH_SHORT).show();
-                       Intent intent = new Intent(getApplicationContext(),FoodMenu.class);
-                       intent.putExtra("DocumentId",doc_table_no);
-                       startActivity(intent);
+                       db.collection(CUSTOMER_COLLECTION).document(doc_id).collection("COST")
+                               .document("COST")
+                               .set(cost_map).addOnSuccessListener(new OnSuccessListener<Void>() {
+                           @Override
+                           public void onSuccess(Void aVoid) {
+                               Toast.makeText(AddCustomer.this, "Successfully added", Toast.LENGTH_SHORT).show();
+                               Intent intent = new Intent(getApplicationContext(),FoodMenu.class);
+                               startActivity(intent);
+
+                           }
+                       }).addOnFailureListener(new OnFailureListener() {
+                           @Override
+                           public void onFailure(@NonNull Exception e) {
+                               Toast.makeText(AddCustomer.this, "Failed to add", Toast.LENGTH_SHORT).show();
+                           }
+                       });
+
                    }
                }).addOnFailureListener(new OnFailureListener() {
                    @Override
                    public void onFailure(@NonNull Exception e) {
-                       Toast.makeText(AddCustomer.this, "Failed", Toast.LENGTH_SHORT).show();
-
+                       Toast.makeText(AddCustomer.this, "Failed to add", Toast.LENGTH_SHORT).show();
                    }
                });
 
 
            }
-
        }).addOnFailureListener(new OnFailureListener() {
            @Override
            public void onFailure(@NonNull Exception e) {
-               Toast.makeText(AddCustomer.this, "Failed", Toast.LENGTH_SHORT).show();
 
            }
        });
-
     }
-   //Logic of generating KOT number
-   /* public void generateKOT() {
-        Date date = new Date();
-        Random r = new Random();
-        long timelilli = date.getTime();
-        String timeString = String.valueOf(timelilli);
-        String randomMilli = timeString.substring(timeString.length() - 3);
-        char c = (char)(r.nextInt(26) + 'a');
-        String c1 = String.valueOf(c).toUpperCase();
-        KOT_NO = c1.concat(randomMilli);
-        Log.e("random", KOT_NO);
 
-    }
-    //Logic of generating Bill no of the customer
-    public void generateBillNO(){
-        Random r = new Random();
-        Date date = new Date();
-        char a = (char)(r.nextInt(26) + 'a');
-        char b = (char)(r.nextInt(26) + 'a');
-        long timelilli = date.getTime();
-        String timeString = String.valueOf(timelilli);
-        String randomMilli = timeString.substring(timeString.length() - 5);
-        Bill_NO = String.valueOf(a).concat(String.valueOf(b)).toUpperCase().concat(randomMilli);
-        Log.e("billno", Bill_NO);
-    }*/
    private boolean haveNetworkConnection() {
        boolean haveConnectedWifi = false;
        boolean haveConnectedMobile = false;
@@ -278,4 +275,5 @@ public class AddCustomer extends AppCompatActivity {
        }
        return haveConnectedWifi || haveConnectedMobile;
    }
+
 }

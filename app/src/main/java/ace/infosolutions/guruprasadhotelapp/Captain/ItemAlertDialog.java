@@ -3,20 +3,16 @@ package ace.infosolutions.guruprasadhotelapp.Captain;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-
-import org.w3c.dom.Text;
 
 import ace.infosolutions.guruprasadhotelapp.R;
 
@@ -126,6 +122,6 @@ public class ItemAlertDialog extends DialogFragment {
     }
 
     public interface ItemAlertDialogListener{
-        void applyText(String item_title,int item_cost,int qty);
+        void applyText(String item_title, long item_cost, int qty);
     }
 }

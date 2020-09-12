@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view"
+    >
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/requested_kot"
+            android:title="Requested KOTs"
+            />
+
+        <item
+            android:id="@+id/table_status"
+            android:title="Table Status"
+            />
+        <item
+            android:id="@+id/confirm_order"
+            android:title="Confirm Order"
+            />
+        <item android:id="@+id/update_fishprices"
+            android:title="Update Fish Prices">
+        </item>
+
+    </group>
+    <item android:title="@string/order_parcel" >
+        <menu>
+        <item android:title="Take Order"
+            android:id="@+id/take_order"/>
+        <item
+            android:title="Parcel"
+            android:id="@+id/parcel"
+            />
+        </menu>
+    </item>
+
+    <item android:title="Social">
+        <menu>
+            <item
+                android:id="@+id/feedback"
+                android:title="Feedback" />
+        </menu>
+    </item>
+    <item android:title="Device">
+
+        <menu>
+            <item android:title="Signout"
+                android:id="@+id/manager_signout"
+                />
+        </menu>
+    </item>
+</menu>

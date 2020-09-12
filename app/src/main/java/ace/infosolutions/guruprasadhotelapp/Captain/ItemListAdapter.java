@@ -13,10 +13,12 @@ import java.util.ArrayList;
 
 import ace.infosolutions.guruprasadhotelapp.R;
 
+
 public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
     private ArrayList<String> itemtitle;
     private ArrayList<String> itemcost;
     OnItemClickListener2 onItemClickListener2;
+
 
 
     public ItemListAdapter(ArrayList<String> itemtitle, ArrayList<String> itemcost) {
@@ -37,6 +39,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.item_name.setText(itemtitle.get(position));
         holder.item_cost.setText("Rs."+itemcost.get(position));
+
 
     }
 
