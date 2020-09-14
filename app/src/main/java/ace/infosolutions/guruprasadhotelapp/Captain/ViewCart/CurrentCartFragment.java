@@ -85,7 +85,7 @@ public class CurrentCartFragment extends Fragment {
                 ViewCartPOJO cartPOJO = documentSnapshot.toObject(ViewCartPOJO.class);
                 final String foodTitle = cartPOJO.getItem_title();
                 final int foodQty = cartPOJO.getItem_qty();
-                final double cost = documentSnapshot.getDouble("food_cost");
+                final double cost = documentSnapshot.getDouble("item_cost");
 
                 //TODO Update the FINAL_BILL Collection
                 builder.setTitle("Delete current item!")
