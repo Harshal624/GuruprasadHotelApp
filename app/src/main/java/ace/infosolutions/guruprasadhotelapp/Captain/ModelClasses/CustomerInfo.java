@@ -1,4 +1,4 @@
-package ace.infosolutions.guruprasadhotelapp.Captain;
+package ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses;
 
 //POJO to add a new customer
 
@@ -9,6 +9,8 @@ public class CustomerInfo {
     private int no_of_cust;
     private String date_time;
     private String table_type;
+    private double cost;
+    private boolean kotrequested;
 
 
     //no-arg constructor is needed
@@ -31,10 +33,20 @@ public class CustomerInfo {
         return table_type;
     }
 
-    public CustomerInfo(int table_no, int no_of_cust, String date_time, String table_type) {
+    public double getCost() {
+        return cost;
+    }
+
+    public boolean isKotrequested() {
+        return kotrequested;
+    }
+
+    public CustomerInfo(int table_no, int no_of_cust, String date_time, String table_type, double cost, boolean kotrequested) {
         this.table_no = table_no;
         this.no_of_cust = no_of_cust;
         this.date_time = date_time;
         this.table_type = table_type;
+        this.cost = cost;
+        this.kotrequested = kotrequested;
     }
 }

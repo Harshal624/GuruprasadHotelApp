@@ -14,16 +14,13 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.CustomerInfo;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class AddCustomer extends AppCompatActivity {
@@ -50,7 +48,10 @@ public class AddCustomer extends AppCompatActivity {
 
     public static final String PREF_DOCID = "PREF_DOCID";
     public static final String DOC_ID_KEY = "DOC_ID_KEY";
+    private static final String TABLE_TYPE_KEY = "TABLE_TYPE_KEY";
+    private static final String TABLE_NO_KEY = "TABLE_NO_KEY";
     private SharedPreferences sharedPreferences;
+    private boolean kotrequested = false;;
 
     private Map<String,Double> cost_map;
 
@@ -210,15 +211,19 @@ public class AddCustomer extends AppCompatActivity {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
         Date date = new Date();
         String datetoday = format.format(date);
+        double cost = 0;
         //creating customer info object
-       CustomerInfo customerInfo = new CustomerInfo(table_no.getValue(),noofcustomers.getValue(),datetoday,selected_table);
+       CustomerInfo customerInfo = new CustomerInfo(table_no.getValue(),noofcustomers.getValue(),datetoday,selected_table,cost,kotrequested);
        //adding data to firebase
        db.collection(CUSTOMER_COLLECTION).add(customerInfo).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
            @Override
            public void onSuccess(DocumentReference documentReference) {
+               //TODO ALSO TABLE_TYPE AND TABLE NO IN SHAREDPREFERENCES
                final String doc_id = documentReference.getId();
                SharedPreferences.Editor editor = sharedPreferences.edit();
                editor.putString(DOC_ID_KEY,doc_id);
+               editor.putInt(TABLE_NO_KEY,table_no.getValue());
+               editor.putString(TABLE_TYPE_KEY,selected_table);
                editor.commit();
 
                db.collection(TABLE_COLLECTION).document(selected_table).update(String.valueOf(table_no.getValue()),false).addOnSuccessListener(new OnSuccessListener<Void>() {

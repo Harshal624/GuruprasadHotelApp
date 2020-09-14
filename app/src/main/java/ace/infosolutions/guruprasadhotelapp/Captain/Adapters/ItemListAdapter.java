@@ -1,4 +1,4 @@
-package ace.infosolutions.guruprasadhotelapp.Captain;
+package ace.infosolutions.guruprasadhotelapp.Captain.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,8 +39,6 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.item_name.setText(itemtitle.get(position));
         holder.item_cost.setText("Rs."+itemcost.get(position));
-
-
     }
 
     @Override

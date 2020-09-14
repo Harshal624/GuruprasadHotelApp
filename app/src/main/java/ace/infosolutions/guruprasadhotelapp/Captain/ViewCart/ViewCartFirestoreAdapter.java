@@ -26,9 +26,9 @@ public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartP
 
     @Override
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull ViewCartPOJO model) {
-        holder.food_title.setText(model.getFood_title()+" - ");
-        holder.food_cost.setText("Rs."+model.getFood_cost());
-        holder.food_qty.setText(""+model.getFood_qty());
+        holder.food_title.setText(model.getItem_title()+" - ");
+        holder.food_cost.setText("Rs."+model.getItem_cost());
+        holder.food_qty.setText(""+model.getItem_qty());
     }
 
     @NonNull

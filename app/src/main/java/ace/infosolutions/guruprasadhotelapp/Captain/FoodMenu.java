@@ -19,7 +19,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,6 +33,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCart;
@@ -50,7 +54,18 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
 
     public static final String PREF_DOCID = "PREF_DOCID";
     public static final String DOC_ID_KEY = "DOC_ID_KEY";
+    private static final String TABLE_TYPE_KEY = "TABLE_TYPE_KEY";
+    private static final String TABLE_NO_KEY = "TABLE_NO_KEY";
     private SharedPreferences sharedPreferences;
+
+    private static final String KOT = "KOT";
+    private static final String COST = "COST";
+    private static final String CUSTOMERS = "Customers";
+    private String doc_id,table_type;
+    private int table_no;
+    private Map<String,Object> isrequested_map;
+    private Map<String,Object> update_reqKOT;
+    private Map<String,Object> update_parentKOT;
 
 
     @Override
@@ -60,7 +75,17 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         db = FirebaseFirestore.getInstance();
         sharedPreferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
-      //  String doc_id = sharedPreferences.getString(DOC_ID_KEY,"");
+        doc_id = sharedPreferences.getString(DOC_ID_KEY,"");
+        isrequested_map = new HashMap<>();
+        update_reqKOT = new HashMap<>();
+        update_parentKOT = new HashMap<>();
+
+        isrequested_map.put("isrequested",true);
+        table_no = sharedPreferences.getInt(TABLE_NO_KEY,0);
+        table_type = sharedPreferences.getString(TABLE_TYPE_KEY,"");
+        update_reqKOT.put(String.valueOf(table_no),true);
+        update_parentKOT.put("kotrequested",true);
+
 
         view_food_cart = (ImageButton) findViewById(R.id.view_cart);
         generate_KOT = (ImageButton) findViewById(R.id.save_cart);
@@ -128,18 +153,68 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
         generate_KOT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                geenrateKOT();
-                /*Toast.makeText(FoodMenu.this, "KOT Request sent", Toast.LENGTH_SHORT).show();
-                finishAffinity();
-                startActivity(new Intent(getApplicationContext(), CaptainMainFragment.class));*/
+                generate_KOT.setEnabled(false);
+                requestKOT();
+
             }
         });
     }
 
-    private void geenrateKOT() {
-        //TODO Clear KOT Document
-        //TODO pass the cost value to final cost and reset the cost value to zero
-        //TODO Iterate through all documents in FINAL_BILL collection and set "isconfirmed"="true"
+    private void requestKOT() {
+        //TODO SET isrequested field to true
+
+        db.collection(CUSTOMERS).document(doc_id).collection(KOT).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for(QueryDocumentSnapshot snapshot:task.getResult()){
+                                String KOT_doc_id = snapshot.getId();
+                                db.collection(CUSTOMERS).document(doc_id).collection(KOT).document(KOT_doc_id)
+                                        .update(isrequested_map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+
+                                        }
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(FoodMenu.this, "Failed to request KOT", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                            updateparentdocKOT();
+
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(FoodMenu.this, "Cannot request KOT for the given items", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+
+    private void updateparentdocKOT() {
+      db.collection(CUSTOMERS).document(doc_id).update(update_parentKOT).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(FoodMenu.this, "KOT Request sent successfully", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(FoodMenu.this, "Unable to generate KOT", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
 
@@ -262,4 +337,26 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        db.collection(CUSTOMERS).document(doc_id).collection(COST).document(COST)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                double cost = documentSnapshot.getDouble("cost");
+                if(cost == 0){
+                    generate_KOT.setEnabled(false);
+                }
+                else{
+                    generate_KOT.setEnabled(true);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                generate_KOT.setEnabled(false);
+            }
+        });
+    }
 }

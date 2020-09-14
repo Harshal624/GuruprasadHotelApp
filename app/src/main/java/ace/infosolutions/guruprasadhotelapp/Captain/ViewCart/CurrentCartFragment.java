@@ -1,6 +1,7 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.ViewCart;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -52,6 +54,8 @@ public class CurrentCartFragment extends Fragment {
     private final String KOT = "KOT";
     private final String FINAL_BILL = "FINAL_BILL";
     private final String COST = "COST";
+    private AlertDialog.Builder builder;
+    private AlertDialog alertDialog;
 
 
     @Nullable
@@ -61,6 +65,7 @@ public class CurrentCartFragment extends Fragment {
         recyclerView = view.findViewById(R.id.currentcart_recycler);
         layoutManager = new LinearLayoutManager(view.getContext());
         total_cost_order = view.findViewById(R.id.total_cost_order);
+        builder = new AlertDialog.Builder(getContext());
         sharedPreferences= getContext().getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
         DOC_ID = sharedPreferences.getString(DOC_ID_KEY,"");
         return view;
@@ -76,29 +81,44 @@ public class CurrentCartFragment extends Fragment {
         adapter.setOnItemCartClickListener(new ViewCartFirestoreAdapter.OnItemClickListenerCart() {
             @Override
             public void onItemClickCart(DocumentSnapshot documentSnapshot, final int position) {
+                final String id = documentSnapshot.getId();
+                ViewCartPOJO cartPOJO = documentSnapshot.toObject(ViewCartPOJO.class);
+                final String foodTitle = cartPOJO.getItem_title();
+                final int foodQty = cartPOJO.getItem_qty();
+                final double cost = documentSnapshot.getDouble("food_cost");
 
                 //TODO Update the FINAL_BILL Collection
+                builder.setTitle("Delete current item!")
+                        .setIcon(R.drawable.ic_delete)
+                        .setMessage("Are you sure want to delete the item?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                collectionReference.document(DOC_ID)
+                                        .collection(KOT).document(id)
+                                        .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        updateCost(cost,position,foodTitle,foodQty);
 
-                String id = documentSnapshot.getId();
-                ViewCartPOJO cartPOJO = documentSnapshot.toObject(ViewCartPOJO.class);
-                final String foodTitle = cartPOJO.getFood_title();
-                final int foodQty = cartPOJO.getFood_qty();
-                final double cost = documentSnapshot.getDouble("food_cost");
-                collectionReference.document(DOC_ID)
-                        .collection(KOT).document(id)
-                        .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    }
+                                })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(getContext(), "Cannot delete order", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                            }
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        updateCost(cost,position,foodTitle,foodQty);
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
-                })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getContext(), "Cannot delete order", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                });
+                alertDialog = builder.create();
+                alertDialog.show();
             }
         });
     }
@@ -117,7 +137,6 @@ public class CurrentCartFragment extends Fragment {
                             .document(id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
                             adapter.notifyItemRemoved(position);
                             adapter.notifyDataSetChanged();
                         }

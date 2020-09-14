@@ -643,10 +643,11 @@
         <item>150</item>
     </string-array>
     <string name="title_activity_view_cart">ViewCart</string>
-    
+
     <string name="navigation_drawer_open">Open Navigation Drawer</string>
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
     <string name="order_parcel"><![CDATA[Order & Parcel]]></string>
+    <string name="confirm_print_kot"><![CDATA[Confirm & Print KOT]]></string>
 
 
 </resources>

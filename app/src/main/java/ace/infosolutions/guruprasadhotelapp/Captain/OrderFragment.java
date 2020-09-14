@@ -7,11 +7,9 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,6 +33,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 
+import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.CustomerFirestoreAdapter;
+import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class OrderFragment extends Fragment {
@@ -51,6 +51,8 @@ public class OrderFragment extends Fragment {
 
     public static final String PREF_DOCID = "PREF_DOCID";
     public static final String DOC_ID_KEY = "DOC_ID_KEY";
+    private static final String TABLE_TYPE_KEY = "TABLE_TYPE_KEY";
+    private static final String TABLE_NO_KEY = "TABLE_NO_KEY";
     private SharedPreferences sharedPreferences;
     private final String FINAL_BILL = "FINAL_BILL";
     private final String KOT = "KOT";
@@ -90,9 +92,15 @@ public class OrderFragment extends Fragment {
         adapter.setOnItemClickListener(new CustomerFirestoreAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+                //TODO ALSO TABLE_TYPE AND TABLE NO IN SHAREDPREFERENCES
+                customerclass customerclass = documentSnapshot.toObject(customerclass.class);
+                String table_type = customerclass.getTable_type();
+                int table_no = customerclass.getTable_no();
                 String docid = documentSnapshot.getId();
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(DOC_ID_KEY,docid);
+                editor.putString(TABLE_TYPE_KEY,table_type);
+                editor.putInt(TABLE_NO_KEY,table_no);
                 editor.commit();
                 Intent i = new Intent(getContext(),FoodMenu.class);
                 startActivity(i);
@@ -106,7 +114,7 @@ public class OrderFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.customerclass.class);
+                                customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass.class);
                                 final String id = customerclass.getTable_type();
                                 final String doc_id = documentSnapshot.getId();
                                 final String table_no = String.valueOf(customerclass.getTable_no());
@@ -124,7 +132,6 @@ public class OrderFragment extends Fragment {
                 alertDialog.show();
             }
         });
-
     }
 
     private void checkanddeleteOrder(final String id, final String doc_id, final String table_no, final int pos) {

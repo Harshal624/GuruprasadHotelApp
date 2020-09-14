@@ -66,14 +66,14 @@ public class MainActivity extends AppCompatActivity {
                 username = usernameEdittext.getText().toString().trim();
                 password = passwordEdittext.getText().toString().trim();
                 if(username.equals("") && password.equals("")){
-                    /*alertemail.setVisibility(View.VISIBLE);
+                    alertemail.setVisibility(View.VISIBLE);
                     alertpass.setVisibility(View.VISIBLE);
                     usernameEdittext.getBackground().mutate().setColorFilter(getResources().
                             getColor(android.R.color.holo_red_light), PorterDuff.Mode.SRC_ATOP);
                     passwordEdittext.getBackground().mutate().
                             setColorFilter(getResources().getColor(android.R.color.holo_red_light),
-                                    PorterDuff.Mode.SRC_ATOP);*/
-                    startActivity(new Intent(getApplicationContext(),CaptainMainFragment.class));
+                                    PorterDuff.Mode.SRC_ATOP);
+
 
                 }
                 else if(username.equals("") && !password.equals("")){

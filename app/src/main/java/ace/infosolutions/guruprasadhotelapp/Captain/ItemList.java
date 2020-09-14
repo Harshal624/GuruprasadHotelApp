@@ -22,14 +22,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
-import com.google.gson.internal.$Gson$Preconditions;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.ItemListAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCart;
 import ace.infosolutions.guruprasadhotelapp.R;
 
@@ -148,8 +147,9 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
         //TODO 1.Add items to KOT Collection and FINAL_BILL Collection
         //TODO 2.Update Cost Collection
+        boolean isrequested = false;
 
-        FoodItemPOJO items= new FoodItemPOJO(item_title,item_cost,qty);
+        FoodItemPOJO items= new FoodItemPOJO(item_title,item_cost,qty,isrequested);
 
         db.collection(CUSTOMER).document(DOC_ID)
                 .collection(KOT)
@@ -175,8 +175,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
     private void addToFinalBill(String itemtitle,double itemcost,int itmeqty) {
         //TODO Adding confirmed food items to final bill
-        boolean isconfirmed = false;
-        FinalBillPOJO finalBillPOJO = new FinalBillPOJO(itemtitle,itemcost,itmeqty,isconfirmed);
+        FinalBillPOJO finalBillPOJO = new FinalBillPOJO(itemtitle,itemcost,itmeqty);
         db.collection(CUSTOMER).document(DOC_ID)
                 .collection(FINAL_BILL).add(finalBillPOJO)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -223,52 +222,23 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
             }
         });
-
-
     }
 
     public class FoodItemPOJO{
-        private String food_title;
-        private double food_cost;
-        private int food_qty;
+        private String item_title;
+        private double item_cost;
+        private int item_qty;
+        private boolean isrequested;
 
         public FoodItemPOJO() {
 
         }
 
-        public FoodItemPOJO(String food_title, double food_cost, int food_qty) {
-            this.food_title = food_title;
-            this.food_cost = food_cost;
-            this.food_qty = food_qty;
-        }
-
-        public String getFood_title() {
-            return food_title;
-        }
-
-        public double getFood_cost() {
-            return food_cost;
-        }
-
-        public int getFood_qty() {
-            return food_qty;
-        }
-    }
-
-    public class FinalBillPOJO {
-        private String item_title;
-        private double item_cost;
-        private int item_qty;
-        private boolean isconfirmed;
-
-        FinalBillPOJO(){}
-
-
-        public FinalBillPOJO(String item_title, double item_cost, int item_qty, boolean isconfirmed) {
+        public FoodItemPOJO(String item_title, double item_cost, int item_qty, boolean isrequested) {
             this.item_title = item_title;
             this.item_cost = item_cost;
             this.item_qty = item_qty;
-            this.isconfirmed = isconfirmed;
+            this.isrequested = isrequested;
         }
 
         public String getItem_title() {
@@ -283,9 +253,37 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
             return item_qty;
         }
 
-        public boolean isIsconfirmed() {
-            return isconfirmed;
+        public boolean isIsrequested() {
+            return isrequested;
         }
+    }
+
+    public class FinalBillPOJO {
+        private String item_title;
+        private double item_cost;
+        private int item_qty;
+
+        FinalBillPOJO(){}
+
+
+        public FinalBillPOJO(String item_title, double item_cost, int item_qty) {
+            this.item_title = item_title;
+            this.item_cost = item_cost;
+            this.item_qty = item_qty;
+        }
+
+        public String getItem_title() {
+            return item_title;
+        }
+
+        public double getItem_cost() {
+            return item_cost;
+        }
+
+        public int getItem_qty() {
+            return item_qty;
+        }
+
     }
 
 }

@@ -8,7 +8,10 @@
             android:id="@+id/requested_kot"
             android:title="Requested KOTs"
             />
-
+        <item
+            android:id="@+id/customer_list"
+            android:title="Customer List"
+            />
         <item
             android:id="@+id/table_status"
             android:title="Table Status"

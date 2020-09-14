@@ -1,4 +1,4 @@
-package ace.infosolutions.guruprasadhotelapp.Captain;
+package ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses;
 
 //POJO to read firestore data
 
