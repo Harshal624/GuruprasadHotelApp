@@ -16,7 +16,6 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import ace.infosolutions.guruprasadhotelapp.MainActivity;
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.ConfirmOrderFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.CustomerListFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.RequestedKOT.RequestedKOTFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.TableStatusFragment;
@@ -88,11 +87,6 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
             case R.id.update_fishprices:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
                         , new UpdateFishPricesFragment()).commit();
-                break;
-
-            case R.id.confirm_order:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                        , new ConfirmOrderFragment()).commit();
                 break;
             case R.id.manager_signout:
                 managerSignout();

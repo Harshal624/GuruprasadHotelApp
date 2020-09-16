@@ -44,6 +44,15 @@ public class CustomerListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupRecyclerview();
+        adapter.setOnItemClickListener(new CustomerFirestoreAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+                String document_id = documentSnapshot.getId();
+                Intent intent = new Intent(getContext(),ConfirmFinalBill.class);
+                intent.putExtra("FinalDOCID",document_id);
+                startActivity(intent);
+            }
+        });
 
     }
 

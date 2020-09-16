@@ -12,11 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Manager.NavFragments.RequestedKOT.Confirm_Cancel_Order"></activity>
+        <activity android:name=".Manager.NavFragments.CustomerList.ConfirmFinalBill"></activity>
+        <activity android:name=".Manager.NavFragments.RequestedKOT.Confirm_Cancel_Order" />
         <activity
             android:name=".Captain.ViewCart.ViewCart"
             android:label="@string/title_activity_view_cart"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Captain.ItemList" />
         <activity
             android:name=".Captain.FoodMenu"

@@ -16,10 +16,6 @@
             android:id="@+id/table_status"
             android:title="Table Status"
             />
-        <item
-            android:id="@+id/confirm_order"
-            android:title="Confirm Order"
-            />
         <item android:id="@+id/update_fishprices"
             android:title="Update Fish Prices">
         </item>
