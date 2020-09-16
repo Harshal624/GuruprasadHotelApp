@@ -148,6 +148,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         //TODO 1.Add items to KOT Collection and FINAL_BILL Collection
         //TODO 2.Update Cost Collection
         boolean isrequested = false;
+        check_cart.setEnabled(false);
 
         FoodItemPOJO items= new FoodItemPOJO(item_title,item_cost,qty,isrequested);
 
@@ -159,7 +160,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     addToFinalBill(item_title,item_cost,qty);
-                    updateCost(item_cost);
+
                 }
             }
 
@@ -173,15 +174,17 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
     }
 
-    private void addToFinalBill(String itemtitle,double itemcost,int itmeqty) {
+    private void addToFinalBill(String itemtitle, final double itemcost, int itmeqty) {
+        boolean isconfirmed = false;
+        boolean isrequested = false;
         //TODO Adding confirmed food items to final bill
-        FinalBillPOJO finalBillPOJO = new FinalBillPOJO(itemtitle,itemcost,itmeqty);
+        FinalBillPOJO finalBillPOJO = new FinalBillPOJO(itemtitle,itemcost,itmeqty,isrequested,isconfirmed);
         db.collection(CUSTOMER).document(DOC_ID)
                 .collection(FINAL_BILL).add(finalBillPOJO)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-
+                        updateCost(itemcost);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -214,6 +217,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
                             .document(COST).set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            check_cart.setEnabled(true);
                             Toast.makeText(ItemList.this, "Added", Toast.LENGTH_SHORT).show();
 
                         }
@@ -262,15 +266,11 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         private String item_title;
         private double item_cost;
         private int item_qty;
+        private boolean isrequested;
+        private boolean isconfirmed;
 
         FinalBillPOJO(){}
 
-
-        public FinalBillPOJO(String item_title, double item_cost, int item_qty) {
-            this.item_title = item_title;
-            this.item_cost = item_cost;
-            this.item_qty = item_qty;
-        }
 
         public String getItem_title() {
             return item_title;
@@ -284,6 +284,21 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
             return item_qty;
         }
 
+        public boolean isIsrequested() {
+            return isrequested;
+        }
+
+        public boolean isIsconfirmed() {
+            return isconfirmed;
+        }
+
+        public FinalBillPOJO(String item_title, double item_cost, int item_qty, boolean isrequested, boolean isconfirmed) {
+            this.item_title = item_title;
+            this.item_cost = item_cost;
+            this.item_qty = item_qty;
+            this.isrequested = isrequested;
+            this.isconfirmed = isconfirmed;
+        }
     }
 
 }

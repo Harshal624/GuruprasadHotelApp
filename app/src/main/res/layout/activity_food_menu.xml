@@ -44,21 +44,11 @@
         android:layout_height="@dimen/_50sdp"
         android:src="@drawable/ic_shopping_cart"
         android:background="@drawable/circular_imgbutton_confirm"
-        android:layout_marginBottom="@dimen/_100sdp"
+        android:layout_marginBottom="@dimen/_30sdp"
         android:layout_marginEnd="@dimen/_10sdp"
         android:layout_gravity="bottom|right"
         />
 
-    <ImageButton
-        android:id="@+id/save_cart"
-        android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_50sdp"
-        android:src="@drawable/ic_save"
-        android:layout_gravity="bottom|right"
-        android:background="@drawable/circular_imgbutton_cancel"
-        android:layout_marginBottom="@dimen/_30sdp"
-        android:layout_marginEnd="@dimen/_10sdp"
-        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

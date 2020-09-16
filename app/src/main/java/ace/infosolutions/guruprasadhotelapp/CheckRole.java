@@ -10,8 +10,8 @@ import ace.infosolutions.guruprasadhotelapp.Captain.CaptainMainFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 
 public class CheckRole extends AppCompatActivity {
-    private static final String MANAGER_UID="fQklFOKhkmRI0oCoKy4WY1sWeEp1";
-    private static final String CAPTAIN_UID="Agmw1Q6RHtT1hgETt8I29n6SSyy2";
+    private static final String MANAGER_UID="AGYYthgpCKRAxTdQFGUEBvnkPgl1";
+    private static final String CAPTAIN_UID="YdecB8sBOGMP65JcIgQeHFVRQQe2";
 
 
     @Override

@@ -53,11 +53,27 @@
         android:id="@+id/total_cost_order"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:gravity="center"
-        android:text="Total Cost"
+        android:gravity="start"
+        android:paddingStart="@dimen/_10sdp"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/tomatored"
+        android:text="Loading..."
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.1" />
+
+    <ImageButton
+        android:id="@+id/sendkotreq"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_save"
+        android:background="@color/tomatored"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/total_cost_order"
+        app:layout_constraintTop_toBottomOf="@+id/currentcart_recycler" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

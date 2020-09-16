@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.CustomerInfo;
+import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class AddCustomer extends AppCompatActivity {
@@ -51,7 +52,8 @@ public class AddCustomer extends AppCompatActivity {
     private static final String TABLE_TYPE_KEY = "TABLE_TYPE_KEY";
     private static final String TABLE_NO_KEY = "TABLE_NO_KEY";
     private SharedPreferences sharedPreferences;
-    private boolean kotrequested = false;;
+    private boolean kotrequested = false;
+    InternetConn internetConn;
 
     private Map<String,Double> cost_map;
 
@@ -69,6 +71,8 @@ public class AddCustomer extends AppCompatActivity {
         cost_map = new HashMap<>();
         sharedPreferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
         cost_map.put("cost",0.0);
+
+        internetConn = new InternetConn(this);
 
         //setting up the spinner adapter
         ArrayAdapter<CharSequence> tabletypeadapter = ArrayAdapter.createFromResource(AddCustomer.this,R.array.Tabletype,android.R.layout.simple_spinner_item);
@@ -122,7 +126,7 @@ public class AddCustomer extends AppCompatActivity {
         confirmcust.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(haveNetworkConnection()){
+                if(internetConn.haveNetworkConnection()){
                     confirmcust.setEnabled(false);
                     addDatatoFirebase();
                 }
@@ -264,21 +268,5 @@ public class AddCustomer extends AppCompatActivity {
        });
     }
 
-   private boolean haveNetworkConnection() {
-       boolean haveConnectedWifi = false;
-       boolean haveConnectedMobile = false;
-
-       ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-       NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-       for (NetworkInfo ni : netInfo) {
-           if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-               if (ni.isConnected())
-                   haveConnectedWifi = true;
-           if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-               if (ni.isConnected())
-                   haveConnectedMobile = true;
-       }
-       return haveConnectedWifi || haveConnectedMobile;
-   }
 
 }

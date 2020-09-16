@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,11 +26,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
+import ace.infosolutions.guruprasadhotelapp.Captain.ItemList;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartPOJO;
+import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class Confirm_Cancel_Order extends AppCompatActivity {
+    private static final String FINAL_BILL = "FINAL_BILL";
     private ViewCartFirestoreAdapter adapter;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -43,6 +47,7 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
     Map<String,Object> update_costmap;
     Map<String,Object> reset_costcoll;
     Map<String,Object> update_kotrequestedmap;
+    Map<String,Object> confirm_itemmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +60,11 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
         //
         update_costmap = new HashMap<>();
         reset_costcoll = new HashMap<>();
+        confirm_itemmap = new HashMap<>();
         reset_costcoll.put("cost",0);
         update_kotrequestedmap = new HashMap<>();
         update_kotrequestedmap.put("kotrequested",false);
+        confirm_itemmap.put("isconfirmed",true);
         //
         collectionReference = db.collection("Customers").document(doc_id).collection("KOT");
         setupRecyclerView();
@@ -105,21 +112,7 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                     DocumentSnapshot snapshot = task.getResult();
                     double cost = snapshot.getDouble("cost");
                     if(cost!=0){
-                        update_costmap.put("cost",cost);
-                        db.collection(CUSTOMERS).document(doc_id)
-                                .update(update_costmap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    resetCostsubcollection();
-                                }
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        getParentDocCostandAdd(cost);
                     }
                 }
             }
@@ -127,6 +120,42 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(Confirm_Cancel_Order.this, "Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void getParentDocCostandAdd(final double cost) {
+        db.collection(CUSTOMERS).document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot snapshot = task.getResult();
+                    double total_cost_doc = snapshot.getDouble("cost");
+                    double final_cost = cost + total_cost_doc;
+                    update_costmap.put("cost",final_cost);
+                    db.collection(CUSTOMERS).document(doc_id)
+                            .update(update_costmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                resetCostsubcollection();
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
             }
         });
 
@@ -155,13 +184,40 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    Toast.makeText(Confirm_Cancel_Order.this, "KOT Confirmed", Toast.LENGTH_SHORT).show();
+                    updateFinalBillisconfirmed();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order!!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateFinalBillisconfirmed() {
+        db.collection(CUSTOMERS).document(doc_id).collection(FINAL_BILL).whereEqualTo("isrequested",true)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot snapshot:task.getResult()){
+                        String finalDocId = snapshot.getId();
+                        db.collection(CUSTOMERS).document(doc_id).collection(FINAL_BILL).document(finalDocId)
+                                .update(confirm_itemmap);
+                       }
+
+                    Toast.makeText(Confirm_Cancel_Order.this, "KOT Generated", Toast.LENGTH_SHORT).show();
+                    finishAffinity();
+                    startActivity(new Intent(getApplicationContext(), Manager.class));
+
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Confirm_Cancel_Order.this, "Failed!", Toast.LENGTH_SHORT).show();
             }
         });
     }

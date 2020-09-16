@@ -35,6 +35,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.CustomerFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass;
+import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class OrderFragment extends Fragment {
@@ -57,6 +58,7 @@ public class OrderFragment extends Fragment {
     private final String FINAL_BILL = "FINAL_BILL";
     private final String KOT = "KOT";
     private final String COST = "COST";
+    private InternetConn internetConn;
 
 
 
@@ -67,6 +69,7 @@ public class OrderFragment extends Fragment {
         add_customer = (FloatingActionButton)view.findViewById(R.id.customerAdd);
         recyclerView= view.findViewById(R.id.orderRecyclerview);
         builder = new AlertDialog.Builder(getContext());
+        internetConn = new InternetConn(getContext());
         sharedPreferences = getContext().getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
         return view;
 
@@ -81,7 +84,7 @@ public class OrderFragment extends Fragment {
         add_customer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(haveNetworkConnection()){
+                if(internetConn.haveNetworkConnection()){
                     startActivity(new Intent(getContext(),AddCustomer.class));
                 }
                 else{
@@ -114,11 +117,13 @@ public class OrderFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                //TODO IF PARENT DOCUMENT COST IS ZERO, CAPTAIN CAN DELETE THE ORDER, ELSE HE CANNOT
                                 customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass.class);
                                 final String id = customerclass.getTable_type();
                                 final String doc_id = documentSnapshot.getId();
                                 final String table_no = String.valueOf(customerclass.getTable_no());
-                                checkanddeleteOrder(id,doc_id,table_no,pos);
+                                checkparentcost(id,doc_id,table_no,pos);
+
 
                             }
 
@@ -130,6 +135,27 @@ public class OrderFragment extends Fragment {
                 }).setMessage("Are you sure want to delete the order?");
                 alertDialog = builder.create();
                 alertDialog.show();
+            }
+        });
+    }
+
+    private void checkparentcost(final String id, final String doc_id, final String table_no, final int pos) {
+
+        db.collection(CUSTOMER_COLLECTION).document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot snapshot = task.getResult();
+                    double cost = snapshot.getDouble("cost");
+                    if(cost == 0){
+                        checkanddeleteOrder(id,doc_id,table_no,pos);
+                    }
+                    else{
+                        alertDialog.dismiss();
+                        Toast.makeText(getContext(), "Cannot delete order", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
             }
         });
     }
@@ -247,7 +273,7 @@ public class OrderFragment extends Fragment {
                         new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Toast.makeText(getContext(), "Order successfully deleted", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getContext(), "Order successfully deleted", Toast.LENGTH_SHORT).show();
                                 adapter.notifyItemRemoved(pos);
                                 adapter.notifyDataSetChanged();
                             }
@@ -291,22 +317,7 @@ public class OrderFragment extends Fragment {
         super.onStop();
         adapter.stopListening();
     }
-    private boolean haveNetworkConnection() {
-        boolean haveConnectedWifi = false;
-        boolean haveConnectedMobile = false;
 
-        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
-        }
-        return haveConnectedWifi || haveConnectedMobile;
-    }
 
     @Override
     public void onDestroyView() {

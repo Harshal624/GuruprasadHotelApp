@@ -47,25 +47,11 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
     private Button rice_main, rice_biryani, rice_ricenoodles;
     private Button springroll_chicken, springroll_veg;
     private CardView roti, soup, papad, raytasalad;
-    private ImageButton view_food_cart, generate_KOT;
+    private ImageButton view_food_cart;
     private AlertDialog.Builder builder;
     private AlertDialog alertDialog;
-    private FirebaseFirestore db;
 
-    public static final String PREF_DOCID = "PREF_DOCID";
-    public static final String DOC_ID_KEY = "DOC_ID_KEY";
-    private static final String TABLE_TYPE_KEY = "TABLE_TYPE_KEY";
-    private static final String TABLE_NO_KEY = "TABLE_NO_KEY";
-    private SharedPreferences sharedPreferences;
 
-    private static final String KOT = "KOT";
-    private static final String COST = "COST";
-    private static final String CUSTOMERS = "Customers";
-    private String doc_id,table_type;
-    private int table_no;
-    private Map<String,Object> isrequested_map;
-    private Map<String,Object> update_reqKOT;
-    private Map<String,Object> update_parentKOT;
 
 
     @Override
@@ -73,22 +59,8 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        db = FirebaseFirestore.getInstance();
-        sharedPreferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
-        doc_id = sharedPreferences.getString(DOC_ID_KEY,"");
-        isrequested_map = new HashMap<>();
-        update_reqKOT = new HashMap<>();
-        update_parentKOT = new HashMap<>();
-
-        isrequested_map.put("isrequested",true);
-        table_no = sharedPreferences.getInt(TABLE_NO_KEY,0);
-        table_type = sharedPreferences.getString(TABLE_TYPE_KEY,"");
-        update_reqKOT.put(String.valueOf(table_no),true);
-        update_parentKOT.put("kotrequested",true);
-
 
         view_food_cart = (ImageButton) findViewById(R.id.view_cart);
-        generate_KOT = (ImageButton) findViewById(R.id.save_cart);
         //
         starters_veg = (Button) findViewById(R.id.starters_veg);
         starters_veg.setOnClickListener(this);
@@ -149,74 +121,7 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Food Menu");
 
-
-        generate_KOT.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                generate_KOT.setEnabled(false);
-                requestKOT();
-
-            }
-        });
     }
-
-    private void requestKOT() {
-        //TODO SET isrequested field to true
-
-        db.collection(CUSTOMERS).document(doc_id).collection(KOT).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for(QueryDocumentSnapshot snapshot:task.getResult()){
-                                String KOT_doc_id = snapshot.getId();
-                                db.collection(CUSTOMERS).document(doc_id).collection(KOT).document(KOT_doc_id)
-                                        .update(isrequested_map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
-
-                                        }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(FoodMenu.this, "Failed to request KOT", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                            updateparentdocKOT();
-
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(FoodMenu.this, "Cannot request KOT for the given items", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
-
-
-    private void updateparentdocKOT() {
-      db.collection(CUSTOMERS).document(doc_id).update(update_parentKOT).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Toast.makeText(FoodMenu.this, "KOT Request sent successfully", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(FoodMenu.this, "Unable to generate KOT", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-
 
     private void setUpAlertDialog() {
         builder = new AlertDialog.Builder(this);
@@ -337,26 +242,5 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        db.collection(CUSTOMERS).document(doc_id).collection(COST).document(COST)
-                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                double cost = documentSnapshot.getDouble("cost");
-                if(cost == 0){
-                    generate_KOT.setEnabled(false);
-                }
-                else{
-                    generate_KOT.setEnabled(true);
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                generate_KOT.setEnabled(false);
-            }
-        });
-    }
+
 }
