@@ -190,7 +190,7 @@ public class OrderFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
-                            //TODO UNCOMPLETE DELETE OPERATION
+                            //TODO INCOMPLETE DELETE OPERATION
                             for(QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()){
                                 final String idDoc = queryDocumentSnapshot.getId();
                                 db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(FINAL_BILL)

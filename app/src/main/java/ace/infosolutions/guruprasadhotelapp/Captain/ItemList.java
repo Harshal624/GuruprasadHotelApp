@@ -110,6 +110,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
     }
 
+
     private void hideViewCartButton() {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

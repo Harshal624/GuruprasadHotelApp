@@ -85,6 +85,8 @@ public class AddCustomer extends AppCompatActivity {
         table_no.setMaxValue(12);
         //check table availablility when nothing is selected
         checkTableAvailability(selected_table, String.valueOf(table_no.getValue()));
+
+
         //check table availability when the numpicker value is changed
         checkOnValuechanged();
 
@@ -176,6 +178,8 @@ public class AddCustomer extends AppCompatActivity {
     }
 
     private void checkTableAvailability(String selectedtable, final String table_no) {
+
+        //tables collections bnaya hei
         db.collection("Tables").document(selectedtable).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override

@@ -237,7 +237,7 @@ public class CurrentCartFragment extends Fragment {
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                //TODO UNCOMPLETE CODE
+                //TODO INCOMPLETE CODE
                 QuerySnapshot querySnapshot = task.getResult();
                 for(QueryDocumentSnapshot snapshot: querySnapshot){
                     String id = snapshot.getId();

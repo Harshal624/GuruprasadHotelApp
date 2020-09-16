@@ -29,6 +29,8 @@
             android:title="Parcel"
             android:id="@+id/parcel"
             />
+            <item  android:title="History"
+                android:id="@+id/cust_history"/>
         </menu>
     </item>
 

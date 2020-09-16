@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +31,7 @@ public class CustomerListFragment extends Fragment {
     private CustomerFirestoreAdapter adapter;
     private FirebaseFirestore db= FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Customers");
+    private TextView emptyrecycler;
 
     @Nullable
     @Override
@@ -37,6 +40,7 @@ public class CustomerListFragment extends Fragment {
         ((Manager) getActivity() ).toolbar.setTitle("List of current customers");
         recyclerView = view.findViewById(R.id.customerlist_recycler);
         layoutManager = new LinearLayoutManager(getContext());
+        emptyrecycler = (TextView)view.findViewById(R.id.emptyrecycler);
         return view;
     }
 
@@ -66,6 +70,14 @@ public class CustomerListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+        if(adapter.getItemCount() == 0){
+            emptyrecycler.setVisibility(View.VISIBLE);
+        }
+        else{
+            //INCOMPLETE CODE
+            emptyrecycler.setVisibility(View.GONE);
+        }
     }
 
     @Override
