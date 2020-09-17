@@ -59,6 +59,7 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
         firebaseAuth.signOut();
         finishAffinity();
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        overridePendingTransition(0,0);
     }
 
     @Override

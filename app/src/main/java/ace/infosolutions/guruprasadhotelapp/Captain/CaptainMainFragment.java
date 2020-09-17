@@ -65,6 +65,7 @@ public class CaptainMainFragment extends AppCompatActivity {
             firebaseAuth.signOut();
             finishAffinity();
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            overridePendingTransition(0,0);
         }
         return super.onOptionsItemSelected(item);
     }

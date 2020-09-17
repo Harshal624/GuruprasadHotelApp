@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.w3c.dom.Text;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.CustomerFirestoreAdapter;
+import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class ConfirmFinalBill extends AppCompatActivity {
@@ -35,6 +37,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
     private static final String CUSTOMERS = "Customers";
     private static final String KOT = "KOT";
     private static final String COST = "COST";
+    private static final String TABLES = "Tables";
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private ConfirmFinalBillFirestoreAdapter adapter;
@@ -93,16 +96,11 @@ public class ConfirmFinalBill extends AppCompatActivity {
     }
 
     private void deleteCostsub() {
-        db.collection(CUSTOMERS).document(doc_id).collection(COST).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection(CUSTOMERS).document(doc_id).collection(COST).document(COST).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot snapshot: task.getResult()){
-                        String DOCID= snapshot.getId();
-                        db.collection(CUSTOMERS).document(doc_id).collection(COST).document(DOCID).delete();
-                    }
-                    deleteParentdoc();
-                }
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful())
+                    updatetableColl();
             }
         });
     }
@@ -112,8 +110,10 @@ public class ConfirmFinalBill extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    updatetableColl();
-                   // Toast.makeText(ConfirmFinalBill.this, "Final bill generated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ConfirmFinalBill.this, "Final bill generated", Toast.LENGTH_SHORT).show();
+                    finishAffinity();
+                    startActivity(new Intent(getApplicationContext(), Manager.class));
+                    overridePendingTransition(0,0);
                 }
 
             }
@@ -121,7 +121,24 @@ public class ConfirmFinalBill extends AppCompatActivity {
     }
 
     private void updatetableColl() {
-        //TODO REMAINING
+        db.collection(CUSTOMERS).document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    String table_type = task.getResult().getString("table_type");
+                    String table_no = String.valueOf(task.getResult().getLong("table_no").intValue());
+                    db.collection(TABLES).document(table_type).update(table_no,true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                deleteParentdoc();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
 
     }
 

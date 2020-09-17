@@ -8,14 +8,6 @@
         android:layout_height="match_parent"
         android:id="@+id/customerlist_recycler"
         />
-    <TextView
-        android:id="@+id/emptyrecycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:text="There are no customers"
-        android:textSize="35sp"
-        android:gravity="center"
-        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

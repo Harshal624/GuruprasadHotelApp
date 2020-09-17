@@ -210,6 +210,7 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                     Toast.makeText(Confirm_Cancel_Order.this, "KOT Generated", Toast.LENGTH_SHORT).show();
                     finishAffinity();
                     startActivity(new Intent(getApplicationContext(), Manager.class));
+                    overridePendingTransition(0,0);
 
                 }
 

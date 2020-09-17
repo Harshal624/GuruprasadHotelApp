@@ -33,6 +33,11 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
 
     }
 
+    @Override
+    public int getItemCount() {
+        return super.getItemCount();
+    }
+
     @NonNull
     @Override
     public CustomerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
