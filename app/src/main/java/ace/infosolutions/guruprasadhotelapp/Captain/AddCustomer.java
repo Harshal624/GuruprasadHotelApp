@@ -197,7 +197,7 @@ public class AddCustomer extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(AddCustomer.this, "Added", Toast.LENGTH_SHORT).show();
                 finishAffinity();
-                startActivity(new Intent(getApplicationContext(),CaptainMainFragment.class));
+                startActivity(new Intent(getApplicationContext(),FoodMenu.class));
                 overridePendingTransition(0,0);
 
             }
