@@ -48,10 +48,6 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
     private Button springroll_chicken, springroll_veg;
     private CardView roti, soup, papad, raytasalad;
     private ImageButton view_food_cart;
-    private AlertDialog.Builder builder;
-    private AlertDialog alertDialog;
-
-
 
 
     @Override
@@ -116,35 +112,15 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
             }
         });
 
-        setUpAlertDialog();
         //setting up the toolbar
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Food Menu");
 
     }
 
-    private void setUpAlertDialog() {
-        builder = new AlertDialog.Builder(this);
-        builder.setTitle("Are you sure want to cancel the order?")
-                .setMessage("All items will be removed")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        finishAffinity();
-                        startActivity(new Intent(getApplicationContext(), CaptainMainFragment.class));
-                    }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        }).setIcon(R.drawable.ic_shopping_cart2);
-    }
-
     @Override
     public void onBackPressed() {
-        alertDialog = builder.create();
-        alertDialog.show();
+        super.onBackPressed();
     }
 
     @Override
@@ -224,7 +200,6 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
         i.putExtra("Type", id);
         i.putExtra("Title", food_title);
         startActivity(i);
-
     }
 
     @Override
@@ -236,11 +211,10 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.cancel_order) {
-            alertDialog = builder.create();
-            alertDialog.show();
+            finishAffinity();
+            startActivity(new Intent(getApplicationContext(),CaptainMainFragment.class));
+            overridePendingTransition(0,0);
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 }

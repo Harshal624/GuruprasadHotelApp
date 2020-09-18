@@ -199,7 +199,6 @@ public class AddCustomer extends AppCompatActivity {
                 finishAffinity();
                 startActivity(new Intent(getApplicationContext(),FoodMenu.class));
                 overridePendingTransition(0,0);
-
             }
         });
     }

@@ -43,7 +43,6 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
     private TextView food_menu_t;
     private FirebaseFirestore db;
     private ImageButton check_cart;
-    //String doc_id = "XETFYhw96vAF2BM18Pqe";
 
     public static final String PREF_DOCID = "PREF_DOCID";
     public static final String DOC_ID_KEY = "DOC_ID_KEY";
@@ -161,16 +160,12 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     addToFinalBill(item_title,item_cost,qty);
-
+                }
+                else{
+                    Toast.makeText(ItemList.this, "Failed to add", Toast.LENGTH_SHORT).show();
                 }
             }
 
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(ItemList.this, "Failed", Toast.LENGTH_SHORT).show();
-
-            }
         });
 
     }
@@ -182,17 +177,15 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         FinalBillPOJO finalBillPOJO = new FinalBillPOJO(itemtitle,itemcost,itmeqty,isrequested,isconfirmed);
         db.collection(CUSTOMER).document(DOC_ID)
                 .collection(FINAL_BILL).add(finalBillPOJO)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        updateCost(itemcost);
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        if(task.isSuccessful())
+                            updateCost(itemcost);
+                        else
+                            Toast.makeText(ItemList.this, "Failed to add", Toast.LENGTH_SHORT).show();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(ItemList.this, "Failed", Toast.LENGTH_SHORT).show();
-            }
-        });
+                });
     }
 
     private void updateCost(final double item_cost) {
@@ -211,16 +204,17 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
                         e.printStackTrace();
                     }
                     cost = cost + item_cost;
-                    Map<String,Double> map = new HashMap<>();
+                    Map<String,Object> map = new HashMap<>();
                     map.put("cost",cost);
                     db.collection(CUSTOMER).document(DOC_ID)
                             .collection(COST)
-                            .document(COST).set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            .document(COST).update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onSuccess(Void aVoid) {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
                             check_cart.setEnabled(true);
                             Toast.makeText(ItemList.this, "Added", Toast.LENGTH_SHORT).show();
-
+                        }
                         }
                     });
                 }
