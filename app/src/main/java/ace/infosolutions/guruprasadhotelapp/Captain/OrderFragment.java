@@ -165,19 +165,25 @@ public class OrderFragment extends Fragment {
                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                double cost = documentSnapshot.getDouble("cost");
-                if(cost == 0.0){
-                    deleteCOSTSubcollection(id,doc_id,table_no,pos);
+                double cost = 0;
+                try {
+                    cost = documentSnapshot.getDouble("cost");
+                    if(cost == 0.0){
+                        deleteCOSTSubcollection(id,doc_id,table_no,pos);
+                    }
+                    else if(cost != 0.0){
+                        deleteFinalBill(id,doc_id,table_no,pos);
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
                 }
-                else if(cost != 0.0){
-                    deleteFinalBill(id,doc_id,table_no,pos);
-                }
+
 
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "STFU", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT);
 
             }
         });

@@ -29,6 +29,7 @@ import java.util.Map;
 import ace.infosolutions.guruprasadhotelapp.Captain.ItemList;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartPOJO;
+import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 
@@ -48,6 +49,7 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
     Map<String,Object> reset_costcoll;
     Map<String,Object> update_kotrequestedmap;
     Map<String,Object> confirm_itemmap;
+    private InternetConn conn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         print_order = (Button) findViewById(R.id.print_kot);
         doc_id = getIntent().getStringExtra("DOCID");
+        conn = new InternetConn(this);
         //
         update_costmap = new HashMap<>();
         reset_costcoll = new HashMap<>();
@@ -72,7 +75,13 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
         print_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                print_kot();
+                if(conn.haveNetworkConnection()){
+                    print_kot();
+                }
+                else{
+                    Toast.makeText(Confirm_Cancel_Order.this, "No internet connection", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
@@ -162,6 +171,7 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
     }
 
     private void resetCostsubcollection() {
+        //TODO change the logic, in slower connections ,the cost suncollection doesn't get reset
         db.collection(CUSTOMERS).document(doc_id).collection(COST).document(COST)
                 .update(reset_costcoll).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

@@ -263,6 +263,7 @@ public class CurrentCartFragment extends Fragment {
     }
 
     private void setTotalCost() {
+
         db.collection(CUSTOMER).document(DOC_ID)
                 .collection(COST)
                 .document(COST).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

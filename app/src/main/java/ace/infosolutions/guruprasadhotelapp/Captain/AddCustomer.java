@@ -7,20 +7,27 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,242 +42,166 @@ import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class AddCustomer extends AppCompatActivity {
-    private Spinner table_type;
-    private String selected_table="Family";
-    private NumberPicker noofcustomers;
-    private NumberPicker table_no;
-    private Button confirmcust,cancelcust;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private String KOT_NO;
-    private String Bill_NO;
-    private static final String TABLE_COLLECTION = "Tables";
-    private static final String CUSTOMER_COLLECTION = "Customers";
-    private ImageButton isoccupied;
+    private static final String TABLES ="Tables";
+    private static final String CUSTOMERS = "Customers";
+    private static final String COST = "COST";
+    private Button confirm_button, cancel_button;
+    private NumberPicker table_noNP, noofcustNP;
+    private RadioGroup table_typeRG;
+    private ImageButton isavailable;
+    private InternetConn conn;
+    private FirebaseFirestore db;
+    private RadioButton radioButton;
+    private Map<String,Object> cost;
 
     public static final String PREF_DOCID = "PREF_DOCID";
     public static final String DOC_ID_KEY = "DOC_ID_KEY";
-    private static final String TABLE_TYPE_KEY = "TABLE_TYPE_KEY";
-    private static final String TABLE_NO_KEY = "TABLE_NO_KEY";
-    private SharedPreferences sharedPreferences;
-    private boolean kotrequested = false;
-    InternetConn internetConn;
-
-    private Map<String,Double> cost_map;
+    private SharedPreferences preferences;
+    private String doc_id;
+    private String table_typeString = "VIP Dining";
+    private int table_noInt = 1;
+    private CollectionReference customerRef,tableRef;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_customer);
-        table_type = (Spinner)findViewById(R.id.table_type);
-        table_no = (NumberPicker) findViewById(R.id.table_no);
-        noofcustomers = (NumberPicker) findViewById(R.id.noofcustomer);
-        cancelcust = (Button) findViewById(R.id.cancelcust);
-        confirmcust = (Button) findViewById(R.id.confirmcust);
-        isoccupied = (ImageButton)findViewById(R.id.isoccupied);
-        cost_map = new HashMap<>();
-        sharedPreferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
-        cost_map.put("cost",0.0);
+        db = FirebaseFirestore.getInstance();
+        confirm_button = (Button) findViewById(R.id.confirmcust);
+        cancel_button = (Button) findViewById(R.id.cancelcust);
+        table_noNP = (NumberPicker) findViewById(R.id.tablenonumpicker);
+        noofcustNP = (NumberPicker)findViewById(R.id.noofcustnumpicker);
+        table_typeRG = (RadioGroup) findViewById(R.id.radiogroup);
+        isavailable = (ImageButton) findViewById(R.id.tableavailimgbtn);
+        conn = new InternetConn(this);
+        cost = new HashMap<>();
+        cost.put("cost",0);
 
-        internetConn = new InternetConn(this);
+        preferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
+        customerRef= db.collection(CUSTOMERS);
+        tableRef = db.collection(TABLES);
 
-        //setting up the spinner adapter
-        ArrayAdapter<CharSequence> tabletypeadapter = ArrayAdapter.createFromResource(AddCustomer.this,R.array.Tabletype,android.R.layout.simple_spinner_item);
-        tabletypeadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        table_type.setAdapter(tabletypeadapter);
-        //max and min values for the numpicker
-        noofcustomers.setMaxValue(6);
-        noofcustomers.setMinValue(1);
-        table_no.setMinValue(1);
-        table_no.setMaxValue(12);
-        //check table availablility when nothing is selected
-        checkTableAvailability(selected_table, String.valueOf(table_no.getValue()));
+        table_noNP.setMaxValue(5);
+        table_noNP.setMinValue(1);
+        noofcustNP.setMaxValue(6);
+        noofcustNP.setMinValue(1);
 
+        checkIfTableisAvail(table_typeString,table_noInt);
 
-        //check table availability when the numpicker value is changed
-        checkOnValuechanged();
-
-
-        table_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        table_typeRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selected_table =adapterView.getItemAtPosition(i).toString();
-                if(selected_table.equals("Family")){
-                    table_no.setMinValue(1);
-                    table_no.setMaxValue(12);
-                }
-                else if(selected_table.equals("AC Family")){
-                    table_no.setMinValue(1);
-                    table_no.setMaxValue(5);
-                    checkTableAvailability(selected_table, String.valueOf(table_no.getValue()));
-                }
-               else if(selected_table.equals("Bar Dining")){
-                    table_no.setMinValue(1);
-                    table_no.setMaxValue(12);
-                    checkTableAvailability(selected_table, String.valueOf(table_no.getValue()));
-                }
-                else if(selected_table.equals("VIP Dining")){
-                    table_no.setMinValue(1);
-                    table_no.setMaxValue(5);
-                    checkTableAvailability(selected_table, String.valueOf(table_no.getValue()));
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                selected_table = "Family";
-                table_no.setMinValue(1);
-                table_no.setMaxValue(12);
-
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                radioButton = (RadioButton) findViewById(i);
+                table_typeString = radioButton.getText().toString();
+                if(table_typeString.equals("Family"))
+                    table_noNP.setMaxValue(12);
+                else if(table_typeString.equals("AC Family"))
+                    table_noNP.setMaxValue(5);
+                else if(table_typeString.equals("Bar Dining"))
+                    table_noNP.setMaxValue(12);
+                else if(table_typeString.equals("VIP Dining"))
+                    table_noNP.setMaxValue(5);
+                checkIfTableisAvail(table_typeString,table_noInt);
             }
         });
 
-        confirmcust.setOnClickListener(new View.OnClickListener() {
+
+        confirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(internetConn.haveNetworkConnection()){
-                    confirmcust.setEnabled(false);
-                    addDatatoFirebase();
-                }
-                else{
-                    confirmcust.setEnabled(false);
-                    Toast.makeText(AddCustomer.this, "No internet connection", Toast.LENGTH_SHORT).show();
+                if(conn.haveNetworkConnection()){
+                    confirm_button.setEnabled(false);
+                    addCustomer();
                 }
 
-                }
+                else
+                    Toast.makeText(AddCustomer.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
 
-        });
-
-        cancelcust.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-                Toast.makeText(AddCustomer.this, "Cancelled", Toast.LENGTH_SHORT).show();
             }
         });
+
+        table_noNP.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                 table_noInt = numberPicker.getValue();
+                 checkIfTableisAvail(table_typeString,table_noInt);
+            }
+        });
+
     }
 
-    private void checkOnValuechanged() {
-        try{
-            table_no.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                @Override
-                public void onValueChange(final NumberPicker numberPicker, int i, int i1) {
-                    db.collection("Tables").document(selected_table).get()
-                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    String table_noFree = String.valueOf(numberPicker.getValue());
-                                    checkTableAvailability(selected_table,table_noFree);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e("Failed ",e.toString());
-                        }
-                    });
-                }
-            });
-
-        }
-        catch (NullPointerException e){
-            Log.e("Nullpointeroutsideloop",e.toString());
-        }
-    }
-
-    private void checkTableAvailability(String selectedtable, final String table_no) {
-
-        //tables collections bnaya hei
-        db.collection("Tables").document(selectedtable).get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        try{
-                            boolean istablefree = documentSnapshot.getBoolean(table_no);
-                            if(!istablefree){
-                                isoccupied.setImageResource(R.drawable.ic_occupied);
-                                confirmcust.setEnabled(false);
-                            }
-                            else{
-                                isoccupied.setImageResource(R.drawable.ic_free);
-                                confirmcust.setEnabled(true);
-                            }
-                        }
-                        catch (NullPointerException e){
-                           // istablefreeT.setText("Checking");
-                            confirmcust.setEnabled(false);
-                            Log.e("Nullpointer",e.toString());
-                        }
-                        catch (RuntimeException e){
-                            Log.e("Runtime",e.toString());
-                        }
-
+    private void checkIfTableisAvail(final String table_type, final int table_no) {
+        db.collection(TABLES).document(table_type).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    boolean isavail= false;
+                    try {
+                        isavail = task.getResult().getBoolean(String.valueOf(table_no));
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        checkIfTableisAvail(table_type,5);
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("Failed ",e.toString());
-
+                    if(isavail){
+                        confirm_button.setEnabled(true);
+                        isavailable.setImageResource(R.drawable.ic_free);
+                    }
+                    else{
+                        confirm_button.setEnabled(false);
+                        isavailable.setImageResource(R.drawable.ic_occupied);
+                    }
+                }
             }
         });
 
     }
 
-    private void addDatatoFirebase() {
+    private void addCustomer() {
+        double cost=0;
+        boolean kotreqested = false;
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
         Date date = new Date();
         String datetoday = format.format(date);
-        double cost = 0;
-        //creating customer info object
-       CustomerInfo customerInfo = new CustomerInfo(table_no.getValue(),noofcustomers.getValue(),datetoday,selected_table,cost,kotrequested);
-       //adding data to firebase
-       db.collection(CUSTOMER_COLLECTION).add(customerInfo).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-           @Override
-           public void onSuccess(DocumentReference documentReference) {
-               //TODO ALSO TABLE_TYPE AND TABLE NO IN SHAREDPREFERENCES
-               final String doc_id = documentReference.getId();
-               SharedPreferences.Editor editor = sharedPreferences.edit();
-               editor.putString(DOC_ID_KEY,doc_id);
-               editor.putInt(TABLE_NO_KEY,table_no.getValue());
-               editor.putString(TABLE_TYPE_KEY,selected_table);
-               editor.commit();
+        int no_cust = noofcustNP.getValue();
+        CustomerInfo customerInfo = new CustomerInfo(table_noInt,no_cust,datetoday,table_typeString,cost,kotreqested);
+        customerRef.add(customerInfo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if(task.isSuccessful()){
+                    doc_id = task.getResult().getId();
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(DOC_ID_KEY,doc_id);
+                    editor.commit();
+                    updateTableStatus(doc_id);
+                }
+            }
+        });
 
-               db.collection(TABLE_COLLECTION).document(selected_table).update(String.valueOf(table_no.getValue()),false).addOnSuccessListener(new OnSuccessListener<Void>() {
-                   @Override
-                   public void onSuccess(Void aVoid) {
-                       db.collection(CUSTOMER_COLLECTION).document(doc_id).collection("COST")
-                               .document("COST")
-                               .set(cost_map).addOnSuccessListener(new OnSuccessListener<Void>() {
-                           @Override
-                           public void onSuccess(Void aVoid) {
-                               Toast.makeText(AddCustomer.this, "Successfully added", Toast.LENGTH_SHORT).show();
-                               Intent intent = new Intent(getApplicationContext(),FoodMenu.class);
-                               startActivity(intent);
-
-                           }
-                       }).addOnFailureListener(new OnFailureListener() {
-                           @Override
-                           public void onFailure(@NonNull Exception e) {
-                               Toast.makeText(AddCustomer.this, "Failed to add", Toast.LENGTH_SHORT).show();
-                           }
-                       });
-
-                   }
-               }).addOnFailureListener(new OnFailureListener() {
-                   @Override
-                   public void onFailure(@NonNull Exception e) {
-                       Toast.makeText(AddCustomer.this, "Failed to add", Toast.LENGTH_SHORT).show();
-                   }
-               });
-
-
-           }
-       }).addOnFailureListener(new OnFailureListener() {
-           @Override
-           public void onFailure(@NonNull Exception e) {
-
-           }
-       });
     }
 
+    private void updateTableStatus(final String id) {
+       tableRef.document(table_typeString).update(String.valueOf(table_noInt),false).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    addCostSubcollection(id);
+                }
+            }
+        });
+    }
+
+    private void addCostSubcollection(String id) {
+        customerRef.document(id).collection(COST).document(COST).set(cost).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(AddCustomer.this, "Added", Toast.LENGTH_SHORT).show();
+                finishAffinity();
+                startActivity(new Intent(getApplicationContext(),CaptainMainFragment.class));
+                overridePendingTransition(0,0);
+
+            }
+        });
+    }
 
 }
