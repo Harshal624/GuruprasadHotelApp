@@ -194,7 +194,7 @@ public class OrderFragment extends Fragment {
                                 });
                             }
                             deleteKOTSubCollection(id, doc_id, table_no, pos);
-                        } else if (task.isCanceled())
+                        } else
                             Toast.makeText(getContext(), "Failed to delete the order", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -221,7 +221,7 @@ public class OrderFragment extends Fragment {
                             }
                             deleteCOSTSubcollection(id, doc_id, table_no, pos);
 
-                        } else if (task.isCanceled())
+                        } else
                             Toast.makeText(getContext(), "Failed to delete the order", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -235,7 +235,7 @@ public class OrderFragment extends Fragment {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     deleteParentDocument(id, doc_id, table_no, pos);
-                } else if (task.isCanceled())
+                } else
                     Toast.makeText(getContext(), "Failed to delete the order", Toast.LENGTH_SHORT).show();
 
             }

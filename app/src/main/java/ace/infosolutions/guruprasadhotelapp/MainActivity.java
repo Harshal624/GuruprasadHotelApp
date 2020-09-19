@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener authStateListener;
     private TextView alertemail;
     private TextView alertpass;
+    private ProgressBar progressBar;
+    private InternetConn conn;
 
 
     @Override
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         firebaseAuth = FirebaseAuth.getInstance();
+        conn = new InternetConn(this);
+        progressBar = (ProgressBar)findViewById(R.id.progressBar_main);
         login = (Button) findViewById(R.id.login);
         usernameEdittext = (EditText) findViewById(R.id.username);
         passwordEdittext = (EditText) findViewById(R.id.password);
@@ -58,9 +63,11 @@ public class MainActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setVisibility(View.VISIBLE);
                 username = usernameEdittext.getText().toString().trim();
                 password = passwordEdittext.getText().toString().trim();
                 if (username.equals("") && password.equals("")) {
+                    progressBar.setVisibility(View.GONE);
                     alertemail.setVisibility(View.VISIBLE);
                     alertpass.setVisibility(View.VISIBLE);
                     usernameEdittext.getBackground().mutate().setColorFilter(getResources().
@@ -71,12 +78,14 @@ public class MainActivity extends AppCompatActivity {
 
 
                 } else if (username.equals("") && !password.equals("")) {
+                    progressBar.setVisibility(View.GONE);
                     alertemail.setVisibility(View.VISIBLE);
                     alertpass.setVisibility(View.GONE);
                     usernameEdittext.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.holo_red_light), PorterDuff.Mode.SRC_ATOP);
                     passwordEdittext.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
                 }
                 if (!username.equals("") && password.equals("")) {
+                    progressBar.setVisibility(View.GONE);
                     alertemail.setVisibility(View.GONE);
                     alertpass.setVisibility(View.VISIBLE);
                     usernameEdittext.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
@@ -86,7 +95,12 @@ public class MainActivity extends AppCompatActivity {
                     alertpass.setVisibility(View.GONE);
                     usernameEdittext.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
                     passwordEdittext.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-                    usersignin(username, password);
+                    if(conn.haveNetworkConnection())
+                        usersignin(username, password);
+                    else{
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(MainActivity.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -99,18 +113,18 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            progressBar.setVisibility(View.GONE);
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             Intent intent = new Intent(getApplicationContext(), CheckRole.class);
                             intent.putExtra("User", user.getUid());
                             startActivity(intent);
                         }
+                        else{
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(MainActivity.this, "Wrong credentials", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(MainActivity.this, "Wrong credentials", Toast.LENGTH_SHORT).show();
-            }
-        });
+                });
     }
 
     @Override

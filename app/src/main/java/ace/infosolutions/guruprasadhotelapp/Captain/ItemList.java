@@ -223,7 +223,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         });
     }
 
-    public class FoodItemPOJO{
+    public static class FoodItemPOJO{
         private String item_title;
         private double item_cost;
         private int item_qty;
@@ -257,7 +257,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         }
     }
 
-    public class FinalBillPOJO {
+    public static class FinalBillPOJO {
         private String item_title;
         private double item_cost;
         private int item_qty;
@@ -266,6 +266,13 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
         FinalBillPOJO(){}
 
+        public FinalBillPOJO(String item_title, double item_cost, int item_qty, boolean isrequested, boolean isconfirmed) {
+            this.item_title = item_title;
+            this.item_cost = item_cost;
+            this.item_qty = item_qty;
+            this.isrequested = isrequested;
+            this.isconfirmed = isconfirmed;
+        }
 
         public String getItem_title() {
             return item_title;
@@ -285,14 +292,6 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
         public boolean isIsconfirmed() {
             return isconfirmed;
-        }
-
-        public FinalBillPOJO(String item_title, double item_cost, int item_qty, boolean isrequested, boolean isconfirmed) {
-            this.item_title = item_title;
-            this.item_cost = item_cost;
-            this.item_qty = item_qty;
-            this.isrequested = isrequested;
-            this.isconfirmed = isconfirmed;
         }
     }
 

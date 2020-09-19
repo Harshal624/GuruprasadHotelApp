@@ -128,6 +128,14 @@ public class AddCustomer extends AppCompatActivity {
                  checkIfTableisAvail(table_typeString,table_noInt);
             }
         });
+        cancel_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finishAffinity();
+                startActivity(new Intent(getApplicationContext(),CaptainMainFragment.class));
+                overridePendingTransition(0,0);
+            }
+        });
 
     }
 

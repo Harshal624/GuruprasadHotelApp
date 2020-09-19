@@ -465,44 +465,6 @@
         <item>400/750</item>
     </string-array>
 
-    <string-array name="nonveg_fishmaincourse_title">
-        <item>फिश फ्राय</item>
-        <item>फिश करी</item>
-        <item>फिश मसाला</item>
-        <item>पापलेट फ्राय</item>
-        <item>पापलेट तंदुरी</item>
-        <item>पापलेट तवा/रवा</item>
-        <item>पापलेट करी/मसाला</item>
-        <item>सुरमई तवा/रवा</item>
-        <item>सुरमई कोळीवाडा</item>
-        <item>सुरमई करी/मसाला</item>
-        <item>कोळंबी तवा/रवा</item>
-        <item>कोळंबी करी/मसाला</item>
-        <item>कोळंबी कोळीवाडा</item>
-        <item>सुरमई थाळी</item>
-        <item>पापलेट थाळी</item>
-        <item>बांगडा थाळी</item>
-    </string-array>
-
-    <string-array name="nonveg_fishmaincourse_cost">
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-        <item>100</item>
-    </string-array>
-
     <string-array name="nonveg_specialthali_title">
         <item>गुरुप्रसाद स्पे. व्हेज थाळी</item>
         <item>गुरुप्रसाद स्पे. अंडा थाळी</item>

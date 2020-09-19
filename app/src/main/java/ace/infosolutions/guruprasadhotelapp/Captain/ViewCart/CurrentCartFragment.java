@@ -210,7 +210,7 @@ public class CurrentCartFragment extends Fragment {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful())
                     Toast.makeText(getContext(), "KOT Request sent successfully", Toast.LENGTH_SHORT).show();
-                else if (task.isCanceled())
+                else
                     Toast.makeText(getContext(), "Unable to generate KOT", Toast.LENGTH_SHORT).show();
             }
         });
@@ -255,7 +255,7 @@ public class CurrentCartFragment extends Fragment {
                                     adapter.notifyDataSetChanged();
                                     sendkotreq.setEnabled(true);
                                     progressbar.setVisibility(View.GONE);
-                                } else if (task.isCanceled())
+                                } else
                                     Toast.makeText(getContext(), "Cannot delete item", Toast.LENGTH_SHORT).show();
                             }
                         });

@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 
+import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishList;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCart;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartPOJO;
 import ace.infosolutions.guruprasadhotelapp.R;
@@ -161,7 +162,7 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
                 gotolistActivity("nonveg_egg", "Egg");
                 break;
             case R.id.nonveg_fishmaincourse:
-                gotolistActivity("nonveg_fishmaincourse", "Fish Maincourse");
+                startActivity(new Intent(getApplicationContext(), FishList.class));
                 break;
             case R.id.nonveg_matanmaincourse:
                 gotolistActivity("nonveg_matanmaincourse", "Matan Maincourse");
