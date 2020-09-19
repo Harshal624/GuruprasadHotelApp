@@ -171,7 +171,6 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
     }
 
     private void resetCostsubcollection() {
-        //TODO change the logic, in slower connections ,the cost suncollection doesn't get reset
         db.collection(CUSTOMERS).document(doc_id).collection(COST).document(COST)
                 .update(reset_costcoll).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

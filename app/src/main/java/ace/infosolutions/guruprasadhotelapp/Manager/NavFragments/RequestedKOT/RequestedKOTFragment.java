@@ -73,6 +73,7 @@ public class RequestedKOTFragment extends Fragment {
     public void onStart() {
         super.onStart();
         adapter.startListening();
+
     }
     @Override
     public void onStop() {

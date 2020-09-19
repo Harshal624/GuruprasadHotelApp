@@ -148,7 +148,6 @@ public class CustomerListFragment extends Fragment {
                         }
                     });
                 }
-
             }
         });
 

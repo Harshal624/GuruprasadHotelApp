@@ -19,6 +19,10 @@ import ace.infosolutions.guruprasadhotelapp.R;
 public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartPOJO, ViewCartFirestoreAdapter.CustomerHolder > {
     private OnItemClickListenerCart listener;
 
+    @Override
+    public int getItemCount() {
+        return super.getItemCount();
+    }
 
     public ViewCartFirestoreAdapter(@NonNull FirestoreRecyclerOptions<ViewCartPOJO> options) {
         super(options);
