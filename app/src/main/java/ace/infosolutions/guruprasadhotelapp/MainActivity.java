@@ -70,31 +70,19 @@ public class MainActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     alertemail.setVisibility(View.VISIBLE);
                     alertpass.setVisibility(View.VISIBLE);
-                    usernameEdittext.getBackground().mutate().setColorFilter(getResources().
-                            getColor(android.R.color.holo_red_light), PorterDuff.Mode.SRC_ATOP);
-                    passwordEdittext.getBackground().mutate().
-                            setColorFilter(getResources().getColor(android.R.color.holo_red_light),
-                                    PorterDuff.Mode.SRC_ATOP);
-
 
                 } else if (username.equals("") && !password.equals("")) {
                     progressBar.setVisibility(View.GONE);
                     alertemail.setVisibility(View.VISIBLE);
                     alertpass.setVisibility(View.GONE);
-                    usernameEdittext.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.holo_red_light), PorterDuff.Mode.SRC_ATOP);
-                    passwordEdittext.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
                 }
                 if (!username.equals("") && password.equals("")) {
                     progressBar.setVisibility(View.GONE);
                     alertemail.setVisibility(View.GONE);
                     alertpass.setVisibility(View.VISIBLE);
-                    usernameEdittext.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-                    passwordEdittext.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.holo_red_light), PorterDuff.Mode.SRC_ATOP);
                 } else if (!username.equals("") && !password.equals("")) {
                     alertemail.setVisibility(View.GONE);
                     alertpass.setVisibility(View.GONE);
-                    usernameEdittext.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-                    passwordEdittext.getBackground().mutate().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
                     if(conn.haveNetworkConnection())
                         usersignin(username, password);
                     else{

@@ -25,12 +25,16 @@
         <menu>
         <item android:title="Take Order"
             android:id="@+id/take_order"/>
+
+            <item android:title="Food Menu"
+                android:id="@+id/food_menu"/>
         <item
             android:title="Parcel"
             android:id="@+id/parcel"
             />
             <item  android:title="History"
                 android:id="@+id/cust_history"/>
+
         </menu>
     </item>
 

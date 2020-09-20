@@ -57,7 +57,6 @@ public class RequestedKOTFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        
         Query query = collectionReference.whereEqualTo("kotrequested",true);
         FirestoreRecyclerOptions<requestedkotmodel> cust =
                 new FirestoreRecyclerOptions.Builder<requestedkotmodel>()

@@ -2,7 +2,7 @@ package ace.infosolutions.guruprasadhotelapp.Captain.Fish;
 
 public class FishModel {
     private String item_title;
-    private int item_cost;
+    private double item_cost;
 
    FishModel() {
     }
@@ -11,7 +11,7 @@ public class FishModel {
         return item_title;
     }
 
-    public int getItem_cost() {
+    public double getItem_cost() {
         return item_cost;
     }
 

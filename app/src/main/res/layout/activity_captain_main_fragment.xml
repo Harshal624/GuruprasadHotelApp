@@ -16,10 +16,8 @@
         android:id="@+id/toolbar"
         android:layout_height="wrap_content"
         android:minHeight="?actionBarSize"
-        android:padding="@dimen/appbar_padding"
+        android:padding="@dimen/_5sdp"
         />
-
-
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
@@ -33,6 +31,7 @@
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/foodback2"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

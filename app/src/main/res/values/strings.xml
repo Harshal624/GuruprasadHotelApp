@@ -106,8 +106,8 @@
         <item>चिकन मंच्युररयन</item>
         <item>चिकन क्रिस्पी</item>
         <item>चिकन क्रिस्पी बबग्स</item>
-        <item>चिकन लॉलीपॉप  मसाला</item>
-        <item>चिकन गार्लीक </item>
+        <item>चिकन लॉलीपॉप मसाला</item>
+        <item>चिकन गार्लीक</item>
     </string-array>
 
     <string-array name="starters_nonveg_cost">
@@ -141,12 +141,12 @@
 
     <string-array name="starters_colddrink_title">
 
-        <item>लस्सी </item>
+        <item>लस्सी</item>
         <item>ताक</item>
         <item>स्पेशल मसाला ताक</item>
-        <item>कोल्ड ड्रिंक </item>
-        <item>मिनरल वॉटर </item>
-        <item>सोलकडी </item>
+        <item>कोल्ड ड्रिंक</item>
+        <item>मिनरल वॉटर</item>
+        <item>सोलकडी</item>
 
     </string-array>
     <string-array name="starters_colddrink_cost">
@@ -285,90 +285,91 @@
 
     </string-array>
     <string-array name="veg_maincourse_title">
-        <item> मिक्स व्हेज  </item>
-        <item> व्हेज हंडी  </item>
-        <item> व्हेज कडई  </item>
-        <item> व्हेज मकख्खणवला   </item>
-        <item> व्हेज मालवणी हंडी  </item>
-        <item> व्हेज पटीयाला  </item>
-        <item> व्हेज कोल्हापुरी/व्हेज भुनी  </item>
-        <item> व्हेज मराठा  </item>
-        <item> व्हेज खीमा  मसाला </item>
-        <item> दम आलु  पंजाबी   </item>
-        <item> भिंडी  मसाला /फ्राय </item>
-        <item> बैगन  मसाला  /भरता </item>
-        <item>  व्हेज लसुणी  </item>
-        <item> व्हेज कोप्ता करी </item>
-        <item> काजू मसाला करी </item>
-        <item> मशरूम दो  पायजा </item>
-        <item> ग्रीन पीस मसाला </item>
-        <item> गोबी मसाला/गोबी मटर </item>
-        <item>आलु गोबी  </item>
-        <item> छोले मसाला  </item>
-        <item> आलु  मेथी  </item>
-        <item> मेथीं मटर मसाला </item>
-        <item>मशरूम काजु मसाला </item>
-        <item> पिटल   </item>
-        <item> व्हेज जालफ्रायजी  </item>
-        <item> व्हेज जयपुरी </item>
-        <item> व्हेज कोप्ता  </item>
-        <item>व्हेज नवरत्न कूर्मा  </item>
-        <item>  व्हेज हैद्राबादी </item>
-        <item> मशरूम मसाला </item>
-        <item> व्हेज भु ना </item>
-        <item> चिकन  स्प्रिंग रोल </item>
-        <item> व्हेज स्प्रिंग रोल </item>
+        <item>मिक्स व्हेज</item>
+        <item>व्हेज हंडी</item>
+        <item>व्हेज कडई</item>
+        <item>व्हेज मकख्खणवला</item>
+        <item>व्हेज मालवणी हंडी</item>
+        <item>व्हेज पटीयाला</item>
+        <item>व्हेज कोल्हापुरी/व्हेज भुनी</item>
+        <item>व्हेज मराठा</item>
+        <item>व्हेज खीमा मसाला</item>
+        <item>दम आलु पंजाबी</item>
+        <item>भिंडी मसाला फ्राय</item>
+        <item>बैगन मसाला भरता</item>
+        <item>व्हेज लसुणी</item>
+        <item>व्हेज कोप्ता करी</item>
+        <item>काजू मसाला करी</item>
+        <item>मशरूम दो पायजा</item>
+        <item>ग्रीन पीस मसाला</item>
+        <item>गोबी मसाला/गोबी मटर</item>
+        <item>आलु गोबी</item>
+        <item>छोले मसाला</item>
+        <item>आलु मेथी</item>
+        <item>मेथीं मटर मसाला</item>
+        <item>मशरूम काजु मसाला</item>
+        <item>पिटल</item>
+        <item>व्हेज जालफ्रायजी</item>
+        <item>व्हेज जयपुरी</item>
+        <item>व्हेज कोप्ता</item>
+        <item>व्हेज नवरत्न कूर्मा</item>
+        <item>व्हेज हैद्राबादी</item>
+        <item>मशरूम मसाला</item>
+        <item>व्हेज भु ना</item>
+        <item>चिकन स्प्रिंग रोल</item>
+        <item>व्हेज स्प्रिंग रोल</item>
     </string-array>
     <string-array name="veg_maincourse_cost">
-        <item>140 </item>
-        <item>260 </item>
-        <item>150 </item>
-        <item>150 </item>
-        <item>280 </item>
+        <item>140</item>
+        <item>260</item>
+        <item>150</item>
+        <item>150</item>
+        <item>280</item>
         <item>170</item>
         <item>160</item>
         <item>170</item>
-        <item>160 </item>
+        <item>160</item>
         <item>170</item>
         <item>140</item>
         <item>140</item>
         <item>150</item>
         <item>160</item>
-        <item>180 </item>
-        <item>170 </item>
-        <item>160 </item>
-        <item>130 </item>
-        <item>140 </item>
-        <item>140 </item>
+        <item>180</item>
+        <item>170</item>
+        <item>160</item>
+        <item>130</item>
+        <item>140</item>
+        <item>140</item>
         <item>140</item>
         <item>140</item>
         <item>180</item>
         <item>120</item>
         <item>150</item>
-        <item>140 </item>
+        <item>140</item>
         <item>180</item>
         <item>150</item>
         <item>150</item>
         <item>160</item>
         <item>160</item>
-
     </string-array>
 
     <string-array name="chicken_maincourse_title">
-        <item> चिकन सुखा फ्राय </item>
-        <item> चिकन करी</item>
+        <item>चिकन सुखा फ्राय</item>
+        <item>चिकन करी</item>
         <item>चिकन मसाला</item>
-        <item> चिकन कडाई /तवा</item>
-        <item> चिकन पटियाला</item>
-        <item> वचिकन अफगाणी</item>
-        <item> वचिकन लसूणी पुरी</item>
-        <item> वचिकेन आदरफी मसाला </item>
+        <item>चिकन कडाई तवा</item>
+        <item>चिकन पटियाला</item>
+        <item>चिकन अफगाणी</item>
+        <item>चिकन लसूणी पुरी</item>
+        <item>चिकन आदरफी मसाला</item>
         <item>चिकन दो पायजा</item>
-        <item> मुर्ग मुसल्लम हंडी हाफ /फूल</item>
+        <item>मुर्ग मुसल्लम हंडी हाफ</item>
+        <item>मुर्ग मुसल्लम हंडी फूल</item>
         <item>चिकन खीमा मसाला</item>
-        <item> चिकन टिक्का मसाला</item>
+        <item>चिकन टिक्का मसाला</item>
         <item>चिकन मराठा</item>
-        <item>चिकन नवाब हद्दी  हा्फ/फूल</item>
+        <item>चिकन नवाब हद्दी हा्फ</item>
+        <item>चिकन नवाब हद्दी फूल</item>
         <item>चि कन भुना  हद्दी हाफ /फूल</item>
         <item>मटर चिकन हड्डी हाफ /फूल</item>
         <item>चिकन रांगण जोश</item>
@@ -379,7 +380,6 @@
         <item> किकण बनजारा मसाला</item>
         <item>चिकन अंगारा मसाला</item>
         <item>चिकन महाराणी</item>
-        <item>चिकन मख्खनवाला हाफ /फुल</item>
         <item>व्हेज जयपुरी</item>
         <item>हेज कोप्ता</item>
         <item>व्हेज नवरत्न कूर्मा</item>
@@ -388,6 +388,8 @@
         <item>व्हेज भु ना </item>
         <item>चिकन स्प्रिंग रोल</item>
         <item>व्हेज स्प्रिंग रोल</item>
+        <item>चिकन मख्खनवाला हाफ</item>
+        <item>चिकन मख्खनवाला फुल</item>
     </string-array>
 
     <string-array name="chicken_maincourse_cost">
@@ -400,27 +402,31 @@
         <item>180</item>
         <item>160</item>
         <item>160</item>
-        <item>320/580</item>
+        <item>320</item>
+        <item>580</item>
         <item>200</item>
         <item>200</item>
         <item>200</item>
-        <item> 250/450</item>
-        <item> 180/350</item>
+        <item>250</item>
+        <item>450</item>
+        <item>180/350</item>
         <item>300/520</item>
         <item>180</item>
         <item>210/400</item>
         <item>200/380</item>
-        <item>250/450</item>
+        <item>250</item>
+        <item>450</item>
         <item>220</item>
         <item>200</item>
         <item>200</item>
         <item>190</item>
-        <item>270/470 </item>
+        <item>270</item>
+        <item>470</item>
     </string-array>
 
     <string-array name="egg_title">
         <item>अंडा मसाला आमलेट</item>
-        <item> अंडा भुर्जी</item>
+        <item>अंडा भुर्जी</item>
         <item>अंडा मसाला</item>
         <item>अंडा करी</item>
         <item>अंडा तवा</item>

@@ -2,6 +2,7 @@ package ace.infosolutions.guruprasadhotelapp.Captain.ViewCart;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,6 +35,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
+import ace.infosolutions.guruprasadhotelapp.Captain.FoodMenu;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 //TODO CHANGE TO CODE OF GETTING COST FROM COST SUBCOLLECTION TO TEXTVIEW
@@ -208,8 +210,13 @@ public class CurrentCartFragment extends Fragment {
         db.collection(CUSTOMER).document(DOC_ID).update(update_parentKOT).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful())
+                if (task.isSuccessful()){
                     Toast.makeText(getContext(), "KOT Request sent successfully", Toast.LENGTH_SHORT).show();
+                    getActivity().finishAffinity();
+                    startActivity(new Intent(getContext(), FoodMenu.class));
+                    getActivity().overridePendingTransition(0,0);
+                }
+
                 else
                     Toast.makeText(getContext(), "Unable to generate KOT", Toast.LENGTH_SHORT).show();
             }

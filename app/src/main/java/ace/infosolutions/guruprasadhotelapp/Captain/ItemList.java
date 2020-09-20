@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
     private TextView food_menu_t;
     private FirebaseFirestore db;
     private ImageButton check_cart;
+    private ProgressBar progressBar;
 
     public static final String PREF_DOCID = "PREF_DOCID";
     public static final String DOC_ID_KEY = "DOC_ID_KEY";
@@ -60,6 +62,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
         db = FirebaseFirestore.getInstance();
+        progressBar =(ProgressBar) findViewById(R.id.progressbar_itemlist);
         food_menu_t = (TextView) findViewById(R.id.food_menu_title);
         food_menu_title = getIntent().getStringExtra("Title");
         food_menu_t.setText(food_menu_title);
@@ -94,6 +97,56 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
                 Collections.addAll(item_title, getResources().getStringArray(R.array.papad_title));
                 Collections.addAll(item_cost, getResources().getStringArray(R.array.papad_cost));
                 break;
+
+            case "starters_nonveg":
+                Collections.addAll(item_title,getResources().getStringArray(R.array.starters_nonveg_title));
+                Collections.addAll(item_cost,getResources().getStringArray(R.array.starters_nonveg_cost));
+                break;
+
+            case "starters_colddrink":
+                Collections.addAll(item_title,getResources().getStringArray(R.array.starters_colddrink_title));
+                Collections.addAll(item_cost,getResources().getStringArray(R.array.starters_colddrink_cost));
+                break;
+            case "soup":
+                Collections.addAll(item_title,getResources().getStringArray(R.array.veg_nonveg_soup_title));
+                Collections.addAll(item_cost,getResources().getStringArray(R.array.veg_nonveg_soup_cost));
+                break;
+            case "raytasalad":
+                Collections.addAll(item_title,getResources().getStringArray(R.array.Rayata_Salad_title));
+                Collections.addAll(item_cost,getResources().getStringArray(R.array.Rayata_Salad_cost));
+                break;
+            case "veg_daal":
+                Collections.addAll(item_title,getResources().getStringArray(R.array.daal_title));
+                Collections.addAll(item_cost,getResources().getStringArray(R.array.daal_cost));
+                break;
+            case "veg_paneermaincourse":
+                Collections.addAll(item_title,getResources().getStringArray(R.array.paneer_maincourse_title));
+                Collections.addAll(item_cost,getResources().getStringArray(R.array.paneer_maincourse_cost));
+                break;
+            case "nonveg_egg":
+                Collections.addAll(item_title,getResources().getStringArray(R.array.egg_title));
+                Collections.addAll(item_cost,getResources().getStringArray(R.array.egg_cost));
+                break;
+            case "nonveg_specialthali":
+                Collections.addAll(item_title,getResources().getStringArray(R.array.nonveg_specialthali_title));
+                Collections.addAll(item_cost,getResources().getStringArray(R.array.nonveg_specialthali_cost));
+                break;
+
+            case "roti":
+                Collections.addAll(item_title,getResources().getStringArray(R.array.roti_title));
+                Collections.addAll(item_cost,getResources().getStringArray(R.array.roti_cost));
+                break;
+
+            case "rice_biryani":
+                Collections.addAll(item_title,getResources().getStringArray(R.array.rice_biryani_title));
+                Collections.addAll(item_cost,getResources().getStringArray(R.array.rice_biryani_cost));
+                break;
+
+            case "rice_ricenoodles":
+                Collections.addAll(item_title,getResources().getStringArray(R.array.rice_ricenoodles_title));
+                Collections.addAll(item_cost,getResources().getStringArray(R.array.rice_ricenoodles_cost));
+                break;
+
         }
         //setting up the recyclerview of food items
         setupRecyclerView();
@@ -144,6 +197,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
     @Override
     public void applyText(final String item_title, final long item_cost, final int qty) {
+        progressBar.setVisibility(View.VISIBLE);
 
         //TODO 1.Add items to KOT Collection and FINAL_BILL Collection
         //TODO 2.Update Cost Collection
@@ -162,6 +216,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
                     addToFinalBill(item_title,item_cost,qty);
                 }
                 else{
+                    progressBar.setVisibility(View.GONE);
                     Toast.makeText(ItemList.this, "Failed to add", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -182,9 +237,10 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
                     public void onComplete(@NonNull Task<DocumentReference> task) {
                         if(task.isSuccessful())
                             updateCost(itemcost);
-                        else
+                        else{
+                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(ItemList.this, "Failed to add", Toast.LENGTH_SHORT).show();
-                    }
+                    }}
                 });
     }
 
@@ -213,6 +269,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
                             check_cart.setEnabled(true);
+                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(ItemList.this, "Added", Toast.LENGTH_SHORT).show();
                         }
                         }
