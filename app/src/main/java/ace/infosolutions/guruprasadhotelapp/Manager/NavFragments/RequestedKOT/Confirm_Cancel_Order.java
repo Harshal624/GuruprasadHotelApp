@@ -87,10 +87,6 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
     }
 
     private void print_kot() {
-        //3.TODO Reset COST subcollection to zero
-        //2.TODO Update parent document cost field with the subcollection field before resetting
-        //4.TODO Update kotrequested field from parent document to false after printing
-        //1.TODO Delete all KOT subcollection documents by iterating through all the documents
         db.collection(CUSTOMERS).document(doc_id).collection(KOT)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -103,11 +99,8 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                     }
                     updateParentCostField();
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Confirm_Cancel_Order.this, "Failed to confirm the oreder", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(Confirm_Cancel_Order.this, "Failed to confirm the oreder", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -123,15 +116,11 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                     if(cost!=0){
                         getParentDocCostandAdd(cost);
                     }
+                    else
+                        Toast.makeText(Confirm_Cancel_Order.this, "Failed to confirm the oreder", Toast.LENGTH_SHORT).show();
                 }
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Confirm_Cancel_Order.this, "Failed", Toast.LENGTH_SHORT).show();
-            }
         });
-
     }
 
     private void getParentDocCostandAdd(final double cost) {
@@ -150,24 +139,15 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                             if(task.isSuccessful()){
                                 resetCostsubcollection();
                             }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order", Toast.LENGTH_SHORT).show();
                         }
                     });
 
                 }
 
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
         });
-
     }
 
     private void resetCostsubcollection() {
@@ -178,12 +158,8 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                 if(task.isSuccessful()){
                     updateparent_kotreq();
                 }
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Confirm_Cancel_Order.this, "Failed!", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(Confirm_Cancel_Order.this, "Failed!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -195,11 +171,8 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                 if(task.isSuccessful()){
                     updateFinalBillisconfirmed();
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order!!", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order!!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -220,14 +193,9 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                     finishAffinity();
                     startActivity(new Intent(getApplicationContext(), Manager.class));
                     overridePendingTransition(0,0);
-
                 }
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Confirm_Cancel_Order.this, "Failed!", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order!!", Toast.LENGTH_SHORT).show();
             }
         });
     }

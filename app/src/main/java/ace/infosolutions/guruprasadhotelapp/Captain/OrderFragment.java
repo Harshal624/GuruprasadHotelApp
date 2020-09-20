@@ -113,7 +113,6 @@ public class OrderFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                //TODO IF PARENT DOCUMENT COST IS ZERO, CAPTAIN CAN DELETE THE ORDER, ELSE HE CANNOT
                                 customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass.class);
                                 final String id = customerclass.getTable_type();
                                 final String doc_id = documentSnapshot.getId();

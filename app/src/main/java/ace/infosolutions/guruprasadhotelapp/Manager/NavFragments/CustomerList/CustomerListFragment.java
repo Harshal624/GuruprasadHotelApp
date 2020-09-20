@@ -80,7 +80,6 @@ public class CustomerListFragment extends Fragment {
                 String table_type = customerInfo.getTable_type();
                 int table_no = customerInfo.getTable_no();
                 int position = pos;
-                //TODO Show alertdialog before deleting the document
                 //Update Tables field
                 setupAlertdialog(docId,pos,table_no,table_type);
             }

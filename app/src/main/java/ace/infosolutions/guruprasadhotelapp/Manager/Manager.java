@@ -19,7 +19,7 @@ import ace.infosolutions.guruprasadhotelapp.MainActivity;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.CustomerListFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.RequestedKOT.RequestedKOTFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.TableStatusFragment;
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.UpdateFishPricesFragment;
+import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.UpdateFishPrices.UpdateFishPricesFragment;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class Manager extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {

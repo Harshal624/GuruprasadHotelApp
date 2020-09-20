@@ -45,12 +45,12 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:text="Starters"
+                       android:text="Starters - (स्टारटर्स)"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
-                       android:textSize="30sp" />
+                       android:textSize="28sp" />
 
                </LinearLayout>
 
@@ -137,12 +137,12 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:text="Veg"
+                       android:text="Veg - (व्हेज)"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
-                       android:textSize="30sp" />
+                       android:textSize="28sp" />
 
                </LinearLayout>
 
@@ -229,12 +229,12 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:text="Non Veg"
+                       android:text="Non Veg - (नॉन-व्हेज)"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
-                       android:textSize="30sp" />
+                       android:textSize="28sp" />
 
                </LinearLayout>
 
@@ -340,12 +340,12 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:text="Rice"
+                       android:text="Rice - (राईस)"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
-                       android:textSize="30sp" />
+                       android:textSize="28sp" />
 
                </LinearLayout>
 
@@ -433,12 +433,12 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:text="Spring-rolls"
+                       android:text="Spring-rolls - (स्प्रिंग रोल्स)"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
-                       android:textSize="30sp" />
+                       android:textSize="28sp" />
 
                </LinearLayout>
 
@@ -515,12 +515,12 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="@dimen/_60sdp"
-                       android:text="Roti"
+                       android:text="Roti - (रोटी)"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
-                       android:textSize="30sp" />
+                       android:textSize="28sp" />
                </LinearLayout>
 
 
@@ -559,15 +559,13 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="@dimen/_60sdp"
-                       android:text="Soup"
+                       android:text="Soup - (सूप)"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
-                       android:textSize="30sp" />
+                       android:textSize="28sp" />
                </LinearLayout>
-
-
 
            </LinearLayout>
 
@@ -599,18 +597,16 @@
                        android:layout_marginTop="@dimen/_10sdp"
                        android:background="@android:color/transparent"
                        />
-
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="@dimen/_60sdp"
-                       android:text="Papad"
+                       android:text="Papad - (पापड)"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
-                       android:textSize="30sp" />
+                       android:textSize="28sp" />
                </LinearLayout>
-
            </LinearLayout>
 
        </androidx.cardview.widget.CardView>
@@ -641,21 +637,17 @@
                        android:layout_marginTop="@dimen/_10sdp"
                        android:background="@android:color/transparent"
                        />
-
                    <TextView
                        android:layout_width="wrap_content"
-                       android:layout_height="@dimen/_60sdp"
-                       android:text="@string/rayta_salad"
+                       android:layout_height="wrap_content"
+                       android:text="Rayta/Salad - (रायता/सलाड)"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
-                       android:textSize="30sp" />
+                       android:textSize="28sp" />
                </LinearLayout>
-
            </LinearLayout>
-
        </androidx.cardview.widget.CardView>
-
    </LinearLayout>
 </androidx.core.widget.NestedScrollView>
