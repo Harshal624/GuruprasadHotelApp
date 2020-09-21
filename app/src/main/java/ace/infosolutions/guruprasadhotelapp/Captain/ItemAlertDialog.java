@@ -20,7 +20,7 @@ public class ItemAlertDialog extends DialogFragment {
 
     private String item_title;
     private String item_cost;
-    private int final_price;
+    private double final_price;
     private int final_qty;
     private ItemAlertDialogListener listener;
 
@@ -48,7 +48,7 @@ public class ItemAlertDialog extends DialogFragment {
         counter = (TextView) view.findViewById(R.id.counter);
 
         //if nothing is seletected, intialize quantity and cost
-        final_price= Integer.parseInt(item_cost.substring(3,item_cost.length()));
+        final_price = Double.parseDouble(item_cost.substring(3,item_cost.length()));
         final_qty = 1;
         //
 
@@ -104,7 +104,7 @@ public class ItemAlertDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         int qty = final_qty;
-                        int cost = final_price;
+                        double cost = final_price;
                         listener.applyText(item_title,cost,qty);
                     }
                 }).setCancelable(false);
@@ -122,6 +122,6 @@ public class ItemAlertDialog extends DialogFragment {
     }
 
     public interface ItemAlertDialogListener{
-        void applyText(String item_title, long item_cost, int qty);
+        void applyText(String item_title, double item_cost, int qty);
     }
 }

@@ -6,17 +6,21 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/requested_kot"
+            android:icon="@drawable/nav_requestedkot"
             android:title="Requested KOTs"
             />
         <item
             android:id="@+id/customer_list"
+            android:icon="@drawable/nav_cust_list"
             android:title="Customer List"
             />
         <item
             android:id="@+id/table_status"
+            android:icon="@drawable/nav_table_status"
             android:title="Table Status"
             />
         <item android:id="@+id/update_fishprices"
+            android:icon="@drawable/nav_fish"
             android:title="Update Fish Prices">
         </item>
 
@@ -24,17 +28,20 @@
     <item android:title="@string/order_parcel" >
         <menu>
         <item android:title="Take Order"
+            android:icon="@drawable/nav_take_order"
             android:id="@+id/take_order"/>
 
             <item android:title="Food Menu"
+                android:icon="@drawable/nav_food_menu"
                 android:id="@+id/food_menu"/>
         <item
             android:title="Parcel"
+            android:icon="@drawable/menu_parcel"
             android:id="@+id/parcel"
             />
             <item  android:title="History"
+                android:icon="@drawable/nav_history"
                 android:id="@+id/cust_history"/>
-
         </menu>
     </item>
 
@@ -43,6 +50,7 @@
         <menu>
             <item
                 android:id="@+id/feedback"
+                android:icon="@drawable/nav_feedback"
                 android:title="Feedback" />
         </menu>
     </item>

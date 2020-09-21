@@ -65,6 +65,7 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
         conn = new InternetConn(this);
         db = FirebaseFirestore.getInstance();
         //
+        //
         update_costmap = new HashMap<>();
         reset_costcoll = new HashMap<>();
         confirm_itemmap = new HashMap<>();
@@ -88,8 +89,6 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     private void print_kot() {

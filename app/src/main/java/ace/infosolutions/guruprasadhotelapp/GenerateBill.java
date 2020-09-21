@@ -1,9 +1,16 @@
 package ace.infosolutions.guruprasadhotelapp;
 
-public class GenerateBill {
+import android.util.Log;
+
+import java.util.Date;
+import java.util.Random;
+
+/*public class GenerateBill {
+    public static String KOT_NO;
+    public static String Bill_NO;
 
     //Logic of generating KOT number
-   /* public void generateKOT() {
+    public void generateKOT() {
         Date date = new Date();
         Random r = new Random();
         long timelilli = date.getTime();
@@ -26,5 +33,5 @@ public class GenerateBill {
         String randomMilli = timeString.substring(timeString.length() - 5);
         Bill_NO = String.valueOf(a).concat(String.valueOf(b)).toUpperCase().concat(randomMilli);
         Log.e("billno", Bill_NO);
-    }*/
-}
+    }
+}*/

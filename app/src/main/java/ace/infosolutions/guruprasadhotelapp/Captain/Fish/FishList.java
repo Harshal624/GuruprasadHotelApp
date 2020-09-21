@@ -114,7 +114,7 @@ public class FishList extends AppCompatActivity implements ItemAlertDialog.ItemA
     }
 
     @Override
-    public void applyText(final String item_title, final long item_cost, final int qty) {
+    public void applyText(final String item_title, final double item_cost, final int qty) {
         boolean isrequested = false;
         check_cart.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);

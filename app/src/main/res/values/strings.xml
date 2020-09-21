@@ -616,6 +616,8 @@
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
     <string name="order_parcel"><![CDATA[Order & Parcel]]></string>
     <string name="confirm_print_kot"><![CDATA[Confirm & Print KOT]]></string>
+    <string name="no_of_cust">ग्राहक संख्या:</string>
+    <string name="table_type_m">टेबल प्रकार</string>
 
 
 </resources>

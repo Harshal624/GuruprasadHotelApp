@@ -19,8 +19,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Table type"
+        android:text="@string/table_type_m"
+        android:textColor="@color/colorPrimary"
         android:layout_weight="0.2"
+        android:textStyle="bold"
         android:layout_marginStart="@dimen/_5sdp"
         android:layout_marginTop="@dimen/_5sdp"
         android:textSize="20sp"
@@ -45,6 +47,7 @@
             android:layout_weight="1"
             android:id="@+id/vipdiningradio"
             android:checked="true"
+            android:textSize="15sp"
             android:layout_height="wrap_content"
             android:text="VIP Dining" />
 
@@ -52,6 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textSize="15sp"
             android:id="@+id/acfamilyradio"
             android:text="AC Family" />
 
@@ -60,6 +64,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/bardiningradio"
             android:layout_weight="1"
+            android:textSize="15sp"
             android:text="Bar Dining" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -67,6 +72,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/familyradio"
             android:layout_weight="1"
+            android:textSize="15sp"
             android:text="Family" />
 
 
@@ -81,9 +87,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Table No."
-            android:paddingStart="@dimen/_3sdp"
-            android:layout_weight="1"
+            android:text="@string/table_no"
+            android:paddingStart="@dimen/_6sdp"
+            android:layout_weight="0.8"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
             android:layout_gravity="center"
             />
         <NumberPicker
@@ -96,16 +105,19 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No.of customers"
-            android:paddingStart="@dimen/_3sdp"
-            android:layout_weight="1"
+            android:text="@string/no_of_cust"
+            android:paddingStart="@dimen/_10sdp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:layout_weight="0.8"
             android:layout_gravity="center"
             />
         <NumberPicker
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:paddingEnd="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
             android:descendantFocusability="blocksDescendants"
             android:id="@+id/noofcustnumpicker"
             />
@@ -131,7 +143,9 @@
           android:layout_height="wrap_content"
           android:text="Cancel"
           android:id="@+id/cancelcust"
+          android:textColor="@color/white"
           android:layout_weight="1"
+          android:drawableStart="@drawable/ic_close"
           android:layout_marginStart="@dimen/_20sdp"
           android:layout_marginEnd="@dimen/_10sdp"
           android:background="@drawable/circular_imgbutton_cancel"
@@ -140,8 +154,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Confirm"
+            android:textColor="@color/white"
             android:id="@+id/confirmcust"
             android:layout_weight="1"
+            android:drawableStart="@drawable/ic_save"
             android:enabled="false"
             android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_20sdp"

@@ -1,8 +1,10 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.Adapters;
 
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,10 +21,16 @@ import ace.infosolutions.guruprasadhotelapp.R;
 public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerclass, CustomerFirestoreAdapter.CustomerHolder > {
     private OnItemClickListener listener;
     private OnItemLongClickListener listener1;
+    private View view;
+    private ImageView nocustIV;
+    private TextView nocustTV;
 
 
-    public CustomerFirestoreAdapter(@NonNull FirestoreRecyclerOptions<customerclass> options) {
+    public CustomerFirestoreAdapter(@NonNull FirestoreRecyclerOptions<customerclass> options,View view) {
         super(options);
+        this.view = view;
+        nocustIV = (ImageView)view.findViewById(R.id.nocustIV);
+        nocustTV = (TextView)view.findViewById(R.id.nocustsTV);
     }
 
     @Override
@@ -36,6 +44,19 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
     @Override
     public int getItemCount() {
         return super.getItemCount();
+    }
+
+    @Override
+    public void onDataChanged() {
+        super.onDataChanged();
+        if(getItemCount() == 0){
+            nocustTV.setVisibility(View.VISIBLE);
+            nocustIV.setVisibility(View.VISIBLE);
+        }
+        else{
+            nocustTV.setVisibility(View.GONE);
+            nocustIV.setVisibility(View.GONE);
+        }
     }
 
     @NonNull

@@ -27,7 +27,6 @@ public class CheckRole extends AppCompatActivity {
         else if(userId.equals(CAPTAIN_UID)){
             startActivity(new Intent(getApplicationContext(), CaptainMainFragment.class));
         }
-        Log.e("User",userId);
     }
 
 

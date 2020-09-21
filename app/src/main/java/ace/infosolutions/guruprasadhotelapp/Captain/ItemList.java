@@ -196,7 +196,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
     }
 
     @Override
-    public void applyText(final String item_title, final long item_cost, final int qty) {
+    public void applyText(final String item_title, final double item_cost, final int qty) {
         progressBar.setVisibility(View.VISIBLE);
 
         //TODO 1.Add items to KOT Collection and FINAL_BILL Collection

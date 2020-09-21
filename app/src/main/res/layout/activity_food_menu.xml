@@ -40,8 +40,8 @@
 
     <ImageButton
         android:id="@+id/view_cart"
-        android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_50sdp"
+        android:layout_width="@dimen/_55sdp"
+        android:layout_height="@dimen/_55sdp"
         android:src="@drawable/ic_shopping_cart"
         android:background="@drawable/circular_imgbutton_confirm"
         android:layout_marginBottom="@dimen/_30sdp"

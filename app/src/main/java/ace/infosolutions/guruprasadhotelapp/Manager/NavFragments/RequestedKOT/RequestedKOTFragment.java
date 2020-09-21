@@ -2,6 +2,7 @@ package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.RequestedKOT;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,18 +55,23 @@ public class RequestedKOTFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+
     }
 
     private void setupRecyclerView() {
-        Query query = collectionReference.whereEqualTo("kotrequested",true);
+        Query query = collectionReference.whereEqualTo("kotrequested", true);
         FirestoreRecyclerOptions<requestedkotmodel> cust =
                 new FirestoreRecyclerOptions.Builder<requestedkotmodel>()
-                .setQuery(query,requestedkotmodel.class)
-                .build();
-        adapter = new RequestedKOTFirestoreAdapter(cust);
+                        .setQuery(query, requestedkotmodel.class)
+                        .build();
+        adapter = new RequestedKOTFirestoreAdapter(cust,getView());
         recyclerView.setHasFixedSize(true);
+        adapter.notifyDataSetChanged();
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+
     }
 
     @Override

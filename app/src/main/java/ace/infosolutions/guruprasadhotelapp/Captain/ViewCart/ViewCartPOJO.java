@@ -2,7 +2,7 @@ package ace.infosolutions.guruprasadhotelapp.Captain.ViewCart;
 
 public class ViewCartPOJO {
     private String item_title;
-    private int item_cost;
+    private double item_cost;
     private int item_qty;
 
     public ViewCartPOJO() {
@@ -12,7 +12,7 @@ public class ViewCartPOJO {
         return item_title;
     }
 
-    public int getItem_cost() {
+    public double getItem_cost() {
         return item_cost;
     }
 

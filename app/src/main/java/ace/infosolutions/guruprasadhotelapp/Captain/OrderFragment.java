@@ -278,7 +278,7 @@ public class OrderFragment extends Fragment {
         FirestoreRecyclerOptions<customerclass> cust = new FirestoreRecyclerOptions.Builder<customerclass>()
                 .setQuery(query, customerclass.class)
                 .build();
-        adapter = new CustomerFirestoreAdapter(cust);
+        adapter = new CustomerFirestoreAdapter(cust,getView());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);

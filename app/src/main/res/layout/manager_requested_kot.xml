@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
  >
@@ -7,6 +9,33 @@
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/requestedkot_recycler"
       android:layout_width="match_parent"
-      android:layout_height="match_parent" />
+      android:layout_height="match_parent"
+      tools:layout_editor_absoluteX="0dp"
+      tools:layout_editor_absoluteY="0dp" />
+
+  <TextView
+      android:id="@+id/noreqkots"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      android:text="There are no requested KOT's!"
+      android:textColor="#808080"
+      android:textSize="25sp"
+      android:textStyle="bold"
+      android:visibility="gone"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toTopOf="@+id/requestedkot_recycler" />
+
+  <ImageView
+      android:id="@+id/empty_cart"
+      android:visibility="gone"
+      android:layout_width="@dimen/_100sdp"
+      android:layout_height="@dimen/_80sdp"
+      android:layout_marginBottom="@dimen/_10sdp"
+      app:layout_constraintBottom_toTopOf="@+id/noreqkots"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:srcCompat="@drawable/empty" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

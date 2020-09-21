@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Table No:"
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="25sp"
             android:textStyle="bold" />
 
@@ -39,6 +40,7 @@
             android:id="@+id/final_billtableno"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/tomatored"
             android:layout_weight="1"
             android:text="Loading..."
             android:textSize="25sp"
@@ -59,6 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Table type:"
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="25sp"
             android:textStyle="bold" />
 
@@ -68,6 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Loading..."
+            android:textColor="@color/tomatored"
             android:textSize="25sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -145,6 +149,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:text="Total Cost:"
+        android:textColor="@color/tomatored"
         android:layout_marginEnd="@dimen/_5sdp"
         />
         <TextView
@@ -152,6 +157,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Loading..."
+            android:textStyle="bold"
             android:layout_marginEnd="@dimen/_10sdp"
             android:textSize="20sp"
             />

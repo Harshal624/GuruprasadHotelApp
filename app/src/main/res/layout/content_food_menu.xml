@@ -640,7 +640,7 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:text="Rayta/Salad - (रायता/सलाड)"
+                       android:text="Raita/Salad - (रायता/सलाड)"
                        android:textStyle="bold"
                        android:textColor="#FF6347"
                        android:layout_marginStart="@dimen/_5sdp"

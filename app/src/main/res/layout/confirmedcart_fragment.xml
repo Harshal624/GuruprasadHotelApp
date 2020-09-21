@@ -10,6 +10,7 @@
         android:id="@+id/linearLayout6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_3sdp"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent" >
 
@@ -17,7 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Title"
-            android:textSize="15sp"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_weight="2"
@@ -26,8 +28,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Qty"
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"
             android:gravity="end"
             android:layout_weight="0.8"
             />
@@ -35,7 +38,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cost"
-            android:textSize="15sp"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold"
             android:layout_marginEnd="@dimen/_5sdp"
             android:gravity="end"
