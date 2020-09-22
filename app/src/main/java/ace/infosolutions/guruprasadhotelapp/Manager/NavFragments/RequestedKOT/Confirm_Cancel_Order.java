@@ -92,6 +92,7 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
     }
 
     private void print_kot() {
+        print_order.setEnabled(false);
         db.collection(CUSTOMERS).document(doc_id).collection(KOT)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -104,8 +105,10 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                     }
                     updateParentCostField();
                 }
-                else
+                else{
+                    print_order.setEnabled(true);
                     Toast.makeText(Confirm_Cancel_Order.this, "Failed to confirm the oreder", Toast.LENGTH_SHORT).show();
+            }
             }
         });
     }
@@ -122,9 +125,10 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                     if(cost!=0){
                         getParentDocCostandAdd(cost);
                     }
-                    else
+                    else{
+                        print_order.setEnabled(true);
                         Toast.makeText(Confirm_Cancel_Order.this, "Failed to confirm the order", Toast.LENGTH_SHORT).show();
-                }
+                }}
             }
         });
     }
@@ -145,9 +149,10 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                             if(task.isSuccessful()){
                                 resetCostsubcollection();
                             }
-                            else
+                            else{
+                                print_order.setEnabled(true);
                                 Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order", Toast.LENGTH_SHORT).show();
-                        }
+                        }}
                     });
 
                 }
@@ -164,9 +169,10 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                 if(task.isSuccessful()){
                     updateparent_kotreq();
                 }
-                else
+                else{
+                    print_order.setEnabled(true);
                     Toast.makeText(Confirm_Cancel_Order.this, "Failed!", Toast.LENGTH_SHORT).show();
-            }
+            }}
         });
     }
 
@@ -177,9 +183,10 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                 if(task.isSuccessful()){
                     updateFinalBillisconfirmed();
                 }
-                else
+                else{
+                    print_order.setEnabled(true);
                     Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order!!", Toast.LENGTH_SHORT).show();
-            }
+            }}
         });
     }
 
@@ -194,15 +201,16 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
                         db.collection(CUSTOMERS).document(doc_id).collection(FINAL_BILL).document(finalDocId)
                                 .update(confirm_itemmap);
                        }
-
+                    print_order.setEnabled(true);
                     Toast.makeText(Confirm_Cancel_Order.this, "KOT Generated", Toast.LENGTH_SHORT).show();
                     finishAffinity();
                     startActivity(new Intent(getApplicationContext(), Manager.class));
                     overridePendingTransition(0,0);
                 }
-                else
+                else{
+                    print_order.setEnabled(true);
                     Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order!!", Toast.LENGTH_SHORT).show();
-            }
+            }}
         });
     }
 

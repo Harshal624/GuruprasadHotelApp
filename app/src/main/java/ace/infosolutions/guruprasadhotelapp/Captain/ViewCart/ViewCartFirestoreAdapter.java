@@ -5,8 +5,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -18,6 +21,7 @@ import ace.infosolutions.guruprasadhotelapp.R;
 
 public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartPOJO, ViewCartFirestoreAdapter.CustomerHolder > {
     private OnItemClickListenerCart listener;
+    private onQtyClickListener qtylistener;
 
     @Override
     public int getItemCount() {
@@ -49,7 +53,7 @@ public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartP
         private TextView food_qty;
         private ImageButton delete_order;
 
-        public CustomerHolder(@NonNull View itemView) {
+        public CustomerHolder(@NonNull final View itemView) {
             super(itemView);
             food_title = itemView.findViewById(R.id.food_item_title);
             food_cost = itemView.findViewById(R.id.food_item_cost);
@@ -67,6 +71,18 @@ public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartP
                     }
                 }
             });
+
+            food_qty.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   /* String title = getSnapshots().getSnapshot(getAdapterPosition()).getString("item_title");
+                    Toast.makeText(itemView.getContext(), title, Toast.LENGTH_SHORT).show();*/
+                    int pos = getAdapterPosition();
+                    //if item is removed and it's in his remove animation
+                    if(pos != RecyclerView.NO_POSITION && listener!=null)
+                        qtylistener.onQtyClick(getSnapshots().getSnapshot(pos));
+                }
+            });
         }
     }
 
@@ -76,9 +92,14 @@ public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartP
 
    public void setOnItemCartClickListener(OnItemClickListenerCart listener) {
         this.listener = listener;
-
    }
 
+   public interface onQtyClickListener{
+        void onQtyClick(DocumentSnapshot snapshot);
+   }
+   public void setOnQtyClickListener(onQtyClickListener qtylistener){
+        this.qtylistener = qtylistener;
+   }
 
 }
 

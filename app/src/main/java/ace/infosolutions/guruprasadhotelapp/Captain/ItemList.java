@@ -199,8 +199,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
     public void applyText(final String item_title, final double item_cost, final int qty) {
         progressBar.setVisibility(View.VISIBLE);
 
-        //TODO 1.Add items to KOT Collection and FINAL_BILL Collection
-        //TODO 2.Update Cost Collection
+        //TODO BEFORE ADDING FOOD ITEMS CHECK IF THERE EXIST ITEM OF SAME NAME AND UPDATE ACCORDINGLY(IMP)
         boolean isrequested = false;
         check_cart.setEnabled(false);
 

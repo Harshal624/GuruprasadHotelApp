@@ -5,10 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +64,11 @@ public class CurrentCartFragment extends Fragment {
     private Map<String, Object> isrequested_map;
     private Map<String, Object> update_parentKOT;
 
+    private View editQtyView;
+    private AlertDialog.Builder editQtybuilder;
+    private EditText editQtyET;
+    private AlertDialog editQtyalert;
+
     private ProgressBar progressbar;
 
 
@@ -71,6 +78,12 @@ public class CurrentCartFragment extends Fragment {
         View view = inflater.inflate(R.layout.currentcart_fragment, container, false);
         recyclerView = view.findViewById(R.id.currentcart_recycler);
         layoutManager = new LinearLayoutManager(view.getContext());
+
+        editQtyView = inflater.inflate(R.layout.editqtycurrentcart_alertdialog,null);
+        editQtyET = (EditText)editQtyView.findViewById(R.id.edit_qty);
+        editQtybuilder = new AlertDialog.Builder(getContext());
+
+
         sendkotreq = (Button) view.findViewById(R.id.sendkotreq);
         total_cost_order = view.findViewById(R.id.total_cost_order);
         progressbar = (ProgressBar) view.findViewById(R.id.progressbar_currentcart);
@@ -81,13 +94,15 @@ public class CurrentCartFragment extends Fragment {
         builder = new AlertDialog.Builder(getContext());
         sharedPreferences = getContext().getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
         DOC_ID = sharedPreferences.getString(DOC_ID_KEY, "");
+        editQtyalert = editQtybuilder.create();
+        editQtyalert.setCancelable(false);
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        setUpQtyEditAlertdialog();
         setupRecyclerview();
         setTotalCost();
 
@@ -97,6 +112,28 @@ public class CurrentCartFragment extends Fragment {
                 checkifCartEmpty();
             }
         });
+
+        adapter.setOnQtyClickListener(new ViewCartFirestoreAdapter.onQtyClickListener() {
+            @Override
+            public void onQtyClick(DocumentSnapshot snapshot) {
+               //TODO EDIT QTY OF SELECTED FOOD ITEM IN CURRENT CART LIST
+                editQtyET.setText("");
+                final String item_title = snapshot.getString("item_title");
+                final String doc_id_kot = snapshot.getId();
+                final int item_qty = snapshot.getLong("item_qty").intValue();
+                final double item_cost = snapshot.getDouble("item_cost");
+                editQtyalert.setTitle(item_title);
+                editQtyalert.setButton(AlertDialog.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                               updateQty(doc_id_kot,item_qty,item_cost,item_title);
+                    }
+                });
+                editQtyalert.show();
+            }
+        });
+
+
 
         adapter.setOnItemCartClickListener(new ViewCartFirestoreAdapter.OnItemClickListenerCart() {
             @Override
@@ -140,6 +177,137 @@ public class CurrentCartFragment extends Fragment {
             }
         });
     }
+
+    private void updateQty(String doc_id_kot,int item_qty,double item_cost,String item_title) {
+        //TODO 1.Update the cost
+        //TODO 2.Update KOT subcollection document field value(item_qty) & (item_cost)
+        //TODO 3.Update Final subcollection document field value(item_qty) & (item_cost)
+        if(editQtyET.getText().toString().equals("") || editQtyET.getText().toString().equals(null)){
+            Toast.makeText(getContext(), "No value entered", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            int entered_qty = Integer.parseInt(editQtyET.getText().toString());
+            if(entered_qty == 0)
+                Toast.makeText(getContext(), "Should be atleast one", Toast.LENGTH_SHORT).show();
+            else{
+                updateQtyMain(doc_id_kot,item_qty,item_cost,entered_qty,item_title);
+            }
+        }
+
+    }
+
+    private void updateQtyMain(final String doc_id_kot, final int item_qty, final double current_item_cost, final int entered_qty, final String item_title) {
+        double single_item_cost = current_item_cost/item_qty;
+        final double final_item_cost = single_item_cost*entered_qty;
+        final double cost_difference;
+
+        if(current_item_cost== final_item_cost)
+            cost_difference = 0;
+        else {
+            sendkotreq.setEnabled(false);
+            progressbar.setVisibility(View.VISIBLE);
+            cost_difference = current_item_cost - final_item_cost;
+            db.collection(CUSTOMER).document(DOC_ID).collection(COST).document(COST).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        double total_cost = task.getResult().getDouble("cost");
+                        double changed_total_cost = total_cost - cost_difference;
+                        Map<String,Object> update_total_cost = new HashMap<>();
+                        update_total_cost.put("cost",changed_total_cost);
+                        //Updating Total cost in COST subcollection
+                        db.collection(CUSTOMER).document(DOC_ID).collection(COST).
+                                document(COST).update(update_total_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    //Updating KOT item_qty value with new entered qty
+                                    db.collection(CUSTOMER).document(DOC_ID).collection(KOT)
+                                            .document(doc_id_kot).update("item_qty",entered_qty).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            //updating KOT item_cost with new cost
+                                            if(task.isSuccessful()) {
+                                                db.collection(CUSTOMER).document(DOC_ID).collection(KOT)
+                                                        .document(doc_id_kot).update("item_cost", final_item_cost)
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if(task.isSuccessful()){
+                                                                    //updating Final Bill item_qty
+                                                                    //TODO REM
+                                                                    updateFinalBillQty(item_qty,current_item_cost,entered_qty,item_title,final_item_cost);
+                                                                }
+                                                            }
+                                                        });
+
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        Log.e("Cost Difference", String.valueOf(cost_difference));
+
+
+        //db.collection(CUSTOMER).document(DOC_ID).collection(KOT).document(doc_id_kot).
+    }
+
+    private void updateFinalBillQty(int item_qty, double current_item_cost, final int entered_qty, final String item_title, final double final_item_cost) {
+        db.collection(CUSTOMER).document(DOC_ID)
+                .collection(FINAL_BILL).whereEqualTo("item_title", item_title).whereEqualTo("item_qty", item_qty).
+                whereEqualTo("isconfirmed", false)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    String final_bill_doc_id;
+                    for(QueryDocumentSnapshot snapshot:task.getResult()){
+                            final_bill_doc_id = snapshot.getId();
+                        final String final_bill_doc_id1 = final_bill_doc_id;
+                        db.collection(CUSTOMER).document(DOC_ID).collection(FINAL_BILL).document(final_bill_doc_id)
+                                .update("item_qty",entered_qty).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    db.collection(CUSTOMER).document(DOC_ID).collection(FINAL_BILL)
+                                            .document(final_bill_doc_id1)
+                                            .update("item_cost",final_item_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                progressbar.setVisibility(View.GONE);
+                                                sendkotreq.setEnabled(true);
+                                                setTotalCost();
+                                                Toast.makeText(getContext(), "Quantity updated!", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        }
+                }
+            }
+        });
+    }
+
+    private void setUpQtyEditAlertdialog() {
+        editQtyalert.setIcon(R.drawable.rupee);
+        editQtyalert.setView(editQtyView);
+        editQtyalert.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                editQtyalert.dismiss();
+            }
+        });
+
+    }
+
 
     private void requestKOT() {
         //TODO SET isrequested field to true

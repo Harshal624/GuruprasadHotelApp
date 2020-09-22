@@ -15,10 +15,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer;
+import ace.infosolutions.guruprasadhotelapp.Captain.CaptainMainFragment;
+import ace.infosolutions.guruprasadhotelapp.Captain.FoodMenu;
 import ace.infosolutions.guruprasadhotelapp.MainActivity;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.CustomerListFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.RequestedKOT.RequestedKOTFragment;
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.TableStatusFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.UpdateFishPrices.UpdateFishPricesFragment;
 import ace.infosolutions.guruprasadhotelapp.R;
 
@@ -80,11 +82,6 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
                         , new RequestedKOTFragment()).commit();
                 break;
-            case R.id.table_status:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                        , new TableStatusFragment()).commit();
-                break;
-
             case R.id.update_fishprices:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
                         , new UpdateFishPricesFragment()).commit();
@@ -97,6 +94,14 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
                         , new CustomerListFragment()).commit();
                 break;
 
+            case R.id.take_order:
+                startActivity(new Intent(getApplicationContext(), CaptainMainFragment.class));
+                break;
+
+            case R.id.food_menu:
+                //TODO Send data to foodmenu to let know that a manager is accessing the foodmenu and restrict the views
+               // startActivity(new Intent(getApplicationContext(), FoodMenu.class));
+                //break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

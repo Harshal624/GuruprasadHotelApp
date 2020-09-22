@@ -14,11 +14,6 @@
             android:icon="@drawable/nav_cust_list"
             android:title="Customer List"
             />
-        <item
-            android:id="@+id/table_status"
-            android:icon="@drawable/nav_table_status"
-            android:title="Table Status"
-            />
         <item android:id="@+id/update_fishprices"
             android:icon="@drawable/nav_fish"
             android:title="Update Fish Prices">

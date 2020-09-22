@@ -74,6 +74,22 @@ public class ConfirmFinalBill extends AppCompatActivity {
                 //TODO STORE CUSTOMER HISTORY
                 //TODO SET TABLE FREE
                 confirm_bill();
+                //TODO INCOMPLETE SAVETO HISTORY METHOD
+               // savetoHistory();
+            }
+        });
+    }
+
+    private void savetoHistory() {
+        db.collection(CUSTOMERS).document(doc_id).collection(FINAL_BILL).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                 if(task.isSuccessful()){
+                     for(QueryDocumentSnapshot snapshot: task.getResult()){
+                         HistoryModel model = snapshot.toObject(HistoryModel.class);
+                         db.collection("History").document().set(model);
+                     }
+                 }
             }
         });
     }
@@ -202,4 +218,6 @@ public class ConfirmFinalBill extends AppCompatActivity {
         super.onStop();
         adapter.stopListening();
     }
+
 }
+
