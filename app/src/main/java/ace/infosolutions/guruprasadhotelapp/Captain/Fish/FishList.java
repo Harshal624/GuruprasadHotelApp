@@ -26,6 +26,7 @@ import com.google.firebase.firestore.Query;
 import java.util.HashMap;
 import java.util.Map;
 
+import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.ItemAlertDialog;
 import ace.infosolutions.guruprasadhotelapp.Captain.ItemList;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCart;
@@ -33,15 +34,13 @@ import ace.infosolutions.guruprasadhotelapp.R;
 
 public class FishList extends AppCompatActivity implements ItemAlertDialog.ItemAlertDialogListener{
     private static final String FISH = "FISH";
-    private static final String CUSTOMERS = "Customers";
-    private static final String KOT = "KOT";
-    private static final String FINAL_BILL = "FINAL_BILL";
-    private static final String COST = "COST";
+    private static final String CUSTOMERS = "CUSTOMERS";
+    private static final String CURRENT_KOT = "CURRENT_KOT";
     private RecyclerView recyclerView;
     private FishFirestoreAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private FirebaseFirestore db;
-    private CollectionReference fishRef;
+    private CollectionReference fishRef,currentRef,custRef;
 
     public static final String PREF_DOCID = "PREF_DOCID";
     public static final String DOC_ID_KEY = "DOC_ID_KEY";
@@ -63,6 +62,8 @@ public class FishList extends AppCompatActivity implements ItemAlertDialog.ItemA
         layoutManager = new LinearLayoutManager(this);
         sharedPreferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
         doc_id = sharedPreferences.getString(DOC_ID_KEY,"");
+        currentRef = db.collection(CUSTOMERS).document(doc_id).collection(CURRENT_KOT);
+        custRef = db.collection(CUSTOMERS);
 
         setUpRecyclerView();
         hideViewCartButton();
@@ -115,84 +116,41 @@ public class FishList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
     @Override
     public void applyText(final String item_title, final double item_cost, final int qty) {
-        boolean isrequested = false;
         check_cart.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
+        //TODO ADDING FISH TO CURRENT_KOT AND UPDATING THE CURRENT_COST FIELD
 
-        ItemList.FoodItemPOJO foodItemPOJO = new ItemList.FoodItemPOJO(item_title,item_cost,qty,isrequested);
-        db.collection(CUSTOMERS).document(doc_id).collection(KOT).document()
-                .set(foodItemPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
+        FoodItemModel model = new FoodItemModel(item_title,item_cost,qty);
+        currentRef.document().set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isComplete())
-                    addToFinalBill(item_title,item_cost,qty);
-                else
-                {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(FishList.this, "Failed to add item to cart!", Toast.LENGTH_SHORT).show();
-            }
-            }
-        });
-    }
-
-    private void addToFinalBill(String item_title, final double item_cost, int qty) {
-        boolean isconfirmed = false;
-        boolean isrequested = false;
-
-        ItemList.FinalBillPOJO finalBillPOJO = new ItemList.FinalBillPOJO(item_title,item_cost,qty,isrequested,isconfirmed);
-        db.collection(CUSTOMERS).document(doc_id)
-                .collection(FINAL_BILL).add(finalBillPOJO)
-                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if(task.isSuccessful())
-                            updateCost(item_cost);
-                        else{
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(FishList.this, "Failed to add", Toast.LENGTH_SHORT).show();
-                    }
-                    }
-                });
-    }
-
-    private void updateCost(final double item_cost) {
-
-        db.collection(CUSTOMERS).document(doc_id)
-                .collection(COST)
-                .document(COST).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    DocumentSnapshot snapshot = task.getResult();
-                    double cost = 0;
-                    try {
-                        cost = snapshot.getDouble("cost");
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    }
-                    cost = cost + item_cost;
-                    Map<String,Object> map = new HashMap<>();
-                    map.put("cost",cost);
-                    db.collection(CUSTOMERS).document(doc_id)
-                            .collection(COST)
-                            .document(COST).update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    custRef.document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if(task.isSuccessful()){
-                                check_cart.setEnabled(true);
-                                progressBar.setVisibility(View.GONE);
-                                Toast.makeText(FishList.this, "Added", Toast.LENGTH_SHORT).show();
+                                double current_cost = task.getResult().getDouble("current_cost");
+                                double final_cost = item_cost + current_cost;
+                                custRef.document(doc_id).update("current_cost",final_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            progressBar.setVisibility(View.GONE);
+                                            check_cart.setEnabled(true);
+                                            Toast.makeText(FishList.this, "Added!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
                             }
-                            else{
-                                progressBar.setVisibility(View.GONE);
-                                Toast.makeText(FishList.this, "Failed to add item to the cart!", Toast.LENGTH_SHORT).show();
-                        }
                         }
                     });
                 }
             }
         });
+
+
     }
+
     private void hideViewCartButton() {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

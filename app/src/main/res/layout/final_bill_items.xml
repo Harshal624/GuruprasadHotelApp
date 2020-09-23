@@ -21,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent="0.70" />
+        app:layout_constraintWidth_percent="0.48" />
 
     <TextView
         android:id="@+id/final_billQty"
@@ -31,9 +31,10 @@
         android:gravity="start"
         android:text="1"
         android:textStyle="bold"
-        android:layout_marginEnd="@dimen/_10sdp"
+        app:layout_constraintHorizontal_bias="0.65"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/final_billCost"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/final_billTitle"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.1" />

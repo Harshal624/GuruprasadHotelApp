@@ -103,7 +103,7 @@ public class UpdateFishPricesFragment extends Fragment {
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                String fish_cost =enter_cost.getText().toString().trim();
+                String fish_cost = enter_cost.getText().toString().trim();
                 if(fish_cost.isEmpty())
                     Toast.makeText(getContext(), "No cost entered", Toast.LENGTH_SHORT).show();
                 else{

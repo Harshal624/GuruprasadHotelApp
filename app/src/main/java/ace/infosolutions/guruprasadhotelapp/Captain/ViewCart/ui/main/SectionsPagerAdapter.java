@@ -10,17 +10,13 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ConfirmedCartFragment;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.CurrentCartFragment;
+import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.RequestedKOTFragmentCaptain;
 import ace.infosolutions.guruprasadhotelapp.R;
 
-
-/**
- * A [FragmentPagerAdapter] that returns a fragment corresponding to
- * one of the sections/tabs/pages.
- */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.cart_text_1, R.string.cart_text_2};
+    private static final int[] TAB_TITLES = new int[]{R.string.cart_text_1, R.string.cart_text_2,R.string.cart_text3};
     private final Context mContext;
 
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
@@ -32,10 +28,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
             Fragment fragment = null;
             switch (position){
-
                 case 0: fragment = new CurrentCartFragment();
                 break;
-                case 1:fragment = new ConfirmedCartFragment();
+                case 1:fragment = new RequestedKOTFragmentCaptain();
+                break;
+                case 2:fragment = new ConfirmedCartFragment();
                 break;
             }
             return fragment;
@@ -49,7 +46,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 2 total pages.
-        return 2;
+        return 3;
     }
 }

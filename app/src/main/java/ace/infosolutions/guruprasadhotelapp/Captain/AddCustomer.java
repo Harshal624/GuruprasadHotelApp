@@ -43,8 +43,7 @@ import ace.infosolutions.guruprasadhotelapp.R;
 
 public class AddCustomer extends AppCompatActivity {
     private static final String TABLES ="Tables";
-    private static final String CUSTOMERS = "Customers";
-    private static final String COST = "COST";
+    private static final String CUSTOMERS = "CUSTOMERS";
     private Button confirm_button, cancel_button;
     private NumberPicker table_noNP, noofcustNP;
     private RadioGroup table_typeRG;
@@ -166,13 +165,15 @@ public class AddCustomer extends AppCompatActivity {
     }
 
     private void addCustomer() {
-        double cost=0;
+        double final_cost=0;
+        double current_cost =0;
+        double requested_cost = 0;
         boolean kotreqested = false;
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
         Date date = new Date();
         String datetoday = format.format(date);
         int no_cust = noofcustNP.getValue();
-        CustomerInfo customerInfo = new CustomerInfo(table_noInt,no_cust,datetoday,table_typeString,cost,kotreqested);
+        CustomerInfo customerInfo = new CustomerInfo(table_noInt,no_cust,datetoday,table_typeString,kotreqested,final_cost,current_cost,requested_cost);
         customerRef.add(customerInfo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -193,22 +194,14 @@ public class AddCustomer extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    addCostSubcollection(id);
+                    Toast.makeText(AddCustomer.this, "Added", Toast.LENGTH_SHORT).show();
+                    finishAffinity();
+                    startActivity(new Intent(getApplicationContext(),FoodMenu.class));
+                    overridePendingTransition(0,0);
                 }
             }
         });
     }
 
-    private void addCostSubcollection(String id) {
-        customerRef.document(id).collection(COST).document(COST).set(cost).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(AddCustomer.this, "Added", Toast.LENGTH_SHORT).show();
-                finishAffinity();
-                startActivity(new Intent(getApplicationContext(),FoodMenu.class));
-                overridePendingTransition(0,0);
-            }
-        });
-    }
 
 }

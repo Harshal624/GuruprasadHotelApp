@@ -33,16 +33,14 @@ import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class ConfirmFinalBill extends AppCompatActivity {
-    private static final String FINAL_BILL = "FINAL_BILL";
-    private static final String CUSTOMERS = "Customers";
-    private static final String KOT = "KOT";
-    private static final String COST = "COST";
+    private static final String CUSTOMERS = "CUSTOMERS";
     private static final String TABLES = "Tables";
+    private static final String CONFIRMED_KOT = "CONFIRMED_KOT";
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private ConfirmFinalBillFirestoreAdapter adapter;
     private FirebaseFirestore db;
-    private CollectionReference collectionReference;
+    private CollectionReference confirmedRef,custRef;
     private String doc_id;
     private TextView tableNo,tableType,totalCost;
     private Button printBill;
@@ -56,7 +54,8 @@ public class ConfirmFinalBill extends AppCompatActivity {
         recyclerView = findViewById(R.id.final_bill_recycler);
         doc_id = getIntent().getStringExtra("FinalDOCID");
         layoutManager = new LinearLayoutManager(this);
-        collectionReference  = db.collection("Customers");
+        confirmedRef = db.collection(CUSTOMERS).document(doc_id).collection(CONFIRMED_KOT);
+        custRef = db.collection(CUSTOMERS);
 
         printBill = (Button) findViewById(R.id.final_billPrint);
         tableNo = (TextView)findViewById(R.id.final_billtableno);
@@ -73,130 +72,14 @@ public class ConfirmFinalBill extends AppCompatActivity {
                 //TODO DELETE PARENT DOCUMENT
                 //TODO STORE CUSTOMER HISTORY
                 //TODO SET TABLE FREE
-                confirm_bill();
                 //TODO INCOMPLETE SAVETO HISTORY METHOD
                // savetoHistory();
             }
         });
     }
 
-    private void savetoHistory() {
-        db.collection(CUSTOMERS).document(doc_id).collection(FINAL_BILL).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                 if(task.isSuccessful()){
-                     for(QueryDocumentSnapshot snapshot: task.getResult()){
-                         HistoryModel model = snapshot.toObject(HistoryModel.class);
-                         db.collection("History").document().set(model);
-                     }
-                 }
-            }
-        });
-    }
-
-    private void confirm_bill() {
-        db.collection(CUSTOMERS).document(doc_id).collection(FINAL_BILL).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot snapshot:task.getResult()){
-                        String DOCID = snapshot.getId();
-                        db.collection("Customers").document(doc_id).collection("FINAL_BILL").document(DOCID).delete();
-                    }
-                    deleteKOTsub();
-                    deleteCostsub();
-                }
-
-            }
-        });
-    }
-
-    private void deleteCostsub() {
-        db.collection(CUSTOMERS).document(doc_id).collection(COST).document(COST).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful())
-                    updatetableColl();
-            }
-        });
-    }
-
-    private void deleteParentdoc() {
-        db.collection(CUSTOMERS).document(doc_id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Toast.makeText(ConfirmFinalBill.this, "Final bill generated", Toast.LENGTH_SHORT).show();
-                    finishAffinity();
-                    startActivity(new Intent(getApplicationContext(), Manager.class));
-                    overridePendingTransition(0,0);
-                }
-
-            }
-        });
-    }
-
-    private void updatetableColl() {
-        db.collection(CUSTOMERS).document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    String table_type = task.getResult().getString("table_type");
-                    String table_no = String.valueOf(task.getResult().getLong("table_no").intValue());
-                    db.collection(TABLES).document(table_type).update(table_no,true).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                deleteParentdoc();
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
-
-    }
-
-    private void deleteKOTsub() {
-        db.collection(CUSTOMERS).document(doc_id).collection(KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot snapshot: task.getResult()){
-                        String DOCID= snapshot.getId();
-                        db.collection(CUSTOMERS).document(doc_id).collection(KOT).document(DOCID).delete();
-                    }
-                }
-            }
-        });
-    }
-
-    private void fetchTableInfoTotalcost() {
-        collectionReference.document(doc_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                String table_no = String.valueOf(documentSnapshot.getLong("table_no").intValue());
-                String total_cost = String.valueOf(documentSnapshot.getDouble("cost"));
-                String table_type = documentSnapshot.getString("table_type");
-                tableNo.setText(table_no);
-                tableType.setText(table_type);
-                totalCost.setText(total_cost);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                tableNo.setText("Error!");
-                tableType.setText("Error!");
-                totalCost.setText("Error!");
-
-            }
-        });
-    }
-
     private void setupRecyclerView() {
-        Query query = collectionReference.document(doc_id).collection(FINAL_BILL).whereEqualTo("isrequested",true)
-                .whereEqualTo("isconfirmed",true);
+        Query query = confirmedRef;
         FirestoreRecyclerOptions<FinalBillClass> cust = new FirestoreRecyclerOptions.Builder<FinalBillClass>()
                 .setQuery(query,FinalBillClass.class)
                 .build();
@@ -217,6 +100,27 @@ public class ConfirmFinalBill extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
+    }
+    private void fetchTableInfoTotalcost() {
+        custRef.document(doc_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String table_no = String.valueOf(documentSnapshot.getLong("table_no").intValue());
+                String total_cost = String.valueOf(documentSnapshot.getDouble("confirmed_cost"));
+                String table_type = documentSnapshot.getString("table_type");
+                tableNo.setText(table_no);
+                tableType.setText(table_type);
+                totalCost.setText(total_cost);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                tableNo.setText("Error!");
+                tableType.setText("Error!");
+                totalCost.setText("Error!");
+
+            }
+        });
     }
 
 }

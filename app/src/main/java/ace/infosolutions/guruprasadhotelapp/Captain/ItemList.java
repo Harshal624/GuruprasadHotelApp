@@ -29,11 +29,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.ItemListAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCart;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemAlertDialogListener {
+    private static final String CURRENT_KOT = "CURRENT_KOT";
     private LinearLayoutManager linearLayoutManager;
     private RecyclerView recyclerView;
     private ItemListAdapter itemListAdapter;
@@ -51,10 +53,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
     private SharedPreferences sharedPreferences;
 
     private String DOC_ID = "";
-    private final String CUSTOMER = "Customers";
-    private final String KOT = "KOT";
-    private final String FINAL_BILL = "FINAL_BILL";
-    private final String COST = "COST";
+    private final String CUSTOMERS = "CUSTOMERS";
 
 
     @Override
@@ -196,161 +195,80 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
     }
 
     @Override
-    public void applyText(final String item_title, final double item_cost, final int qty) {
+    public void applyText(final String item_title, final double item_cost, final int item_qty) {
         progressBar.setVisibility(View.VISIBLE);
-
-        //TODO BEFORE ADDING FOOD ITEMS CHECK IF THERE EXIST ITEM OF SAME NAME AND UPDATE ACCORDINGLY(IMP)
-        boolean isrequested = false;
         check_cart.setEnabled(false);
-
-        FoodItemPOJO items= new FoodItemPOJO(item_title,item_cost,qty,isrequested);
-
-        db.collection(CUSTOMER).document(DOC_ID)
-                .collection(KOT)
-                .document()
-                .set(items).addOnCompleteListener(new OnCompleteListener<Void>() {
+        //TODO BEFORE ADDING FOOD ITEMS CHECK IF THERE EXIST ITEM OF SAME NAME AND UPDATE ACCORDINGLY(IMP)
+        FoodItemModel model = new FoodItemModel(item_title,item_cost,item_qty);
+        db.collection(CUSTOMERS).document(DOC_ID).collection(CURRENT_KOT).document().set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    addToFinalBill(item_title,item_cost,qty);
-                }
+                if(task.isSuccessful())
+                    updateCurrentCost(item_cost);
                 else{
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ItemList.this, "Failed to add", Toast.LENGTH_SHORT).show();
+                    check_cart.setEnabled(true);
+                    Toast.makeText(ItemList.this, "Cannot add item", Toast.LENGTH_SHORT).show();
                 }
-            }
 
+            }
         });
 
     }
 
-    private void addToFinalBill(String itemtitle, final double itemcost, int itmeqty) {
-        boolean isconfirmed = false;
-        boolean isrequested = false;
-        //TODO Adding confirmed food items to final bill
-        FinalBillPOJO finalBillPOJO = new FinalBillPOJO(itemtitle,itemcost,itmeqty,isrequested,isconfirmed);
-        db.collection(CUSTOMER).document(DOC_ID)
-                .collection(FINAL_BILL).add(finalBillPOJO)
-                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if(task.isSuccessful())
-                            updateCost(itemcost);
-                        else{
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(ItemList.this, "Failed to add", Toast.LENGTH_SHORT).show();
-                    }}
-                });
-    }
-
-    private void updateCost(final double item_cost) {
-
-        db.collection(CUSTOMER).document(DOC_ID)
-                .collection(COST)
-                .document(COST).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+    private void updateCurrentCost(final double item_cost) {
+        db.collection(CUSTOMERS).document(DOC_ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    DocumentSnapshot snapshot = task.getResult();
-                    double cost = 0;
-                    try {
-                        cost = snapshot.getDouble("cost");
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
+                    double cost = task.getResult().getDouble("current_cost");
+                    if(cost==0){
+                        Map<String,Object> update_currentCost = new HashMap<>();
+                        update_currentCost.put("current_cost",item_cost);
+                        db.collection(CUSTOMERS).document(DOC_ID).update(update_currentCost).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    progressBar.setVisibility(View.GONE);
+                                    check_cart.setEnabled(true);
+                                    Toast.makeText(ItemList.this, "Item Added!", Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    progressBar.setVisibility(View.GONE);
+                                    check_cart.setEnabled(true);
+                                    Toast.makeText(ItemList.this, "Cannot add item", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                     }
-                    cost = cost + item_cost;
-                    Map<String,Object> map = new HashMap<>();
-                    map.put("cost",cost);
-                    db.collection(CUSTOMER).document(DOC_ID)
-                            .collection(COST)
-                            .document(COST).update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                            check_cart.setEnabled(true);
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(ItemList.this, "Added", Toast.LENGTH_SHORT).show();
-                        }
-                        }
-                    });
+                    else{
+                        double final_cost = item_cost + cost;
+                        Map<String,Object> updated_cost = new HashMap<>();
+                        updated_cost.put("current_cost",final_cost);
+                        db.collection(CUSTOMERS).document(DOC_ID).update(updated_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    progressBar.setVisibility(View.GONE);
+                                    check_cart.setEnabled(true);
+                                    Toast.makeText(ItemList.this, "Item Added!", Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    progressBar.setVisibility(View.GONE);
+                                    check_cart.setEnabled(true);
+                                    Toast.makeText(ItemList.this, "Failed to add item!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
                 }
-
+                else{
+                    Toast.makeText(ItemList.this, "Failed to add item", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
     }
-
-    public static class FoodItemPOJO{
-        private String item_title;
-        private double item_cost;
-        private int item_qty;
-        private boolean isrequested;
-
-        public FoodItemPOJO() {
-
-        }
-
-        public FoodItemPOJO(String item_title, double item_cost, int item_qty, boolean isrequested) {
-            this.item_title = item_title;
-            this.item_cost = item_cost;
-            this.item_qty = item_qty;
-            this.isrequested = isrequested;
-        }
-
-        public String getItem_title() {
-            return item_title;
-        }
-
-        public double getItem_cost() {
-            return item_cost;
-        }
-
-        public int getItem_qty() {
-            return item_qty;
-        }
-
-        public boolean isIsrequested() {
-            return isrequested;
-        }
-    }
-
-    public static class FinalBillPOJO {
-        private String item_title;
-        private double item_cost;
-        private int item_qty;
-        private boolean isrequested;
-        private boolean isconfirmed;
-
-        FinalBillPOJO(){}
-
-        public FinalBillPOJO(String item_title, double item_cost, int item_qty, boolean isrequested, boolean isconfirmed) {
-            this.item_title = item_title;
-            this.item_cost = item_cost;
-            this.item_qty = item_qty;
-            this.isrequested = isrequested;
-            this.isconfirmed = isconfirmed;
-        }
-
-        public String getItem_title() {
-            return item_title;
-        }
-
-        public double getItem_cost() {
-            return item_cost;
-        }
-
-        public int getItem_qty() {
-            return item_qty;
-        }
-
-        public boolean isIsrequested() {
-            return isrequested;
-        }
-
-        public boolean isIsconfirmed() {
-            return isconfirmed;
-        }
-    }
-
 }
 
 

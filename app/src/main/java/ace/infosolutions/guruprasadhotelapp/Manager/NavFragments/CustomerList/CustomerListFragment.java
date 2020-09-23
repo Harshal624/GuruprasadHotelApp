@@ -33,16 +33,13 @@ import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class CustomerListFragment extends Fragment {
-    private static final String CUSTOMERS = "Customers";
+    private static final String CUSTOMERS = "CUSTOMERS";
     private static final String TABLES = "Tables";
-    private static final String KOT = "KOT";
-    private static final String FINAL_BILL = "FINAL_BILL";
-    private static final String COST = "COST";
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private CustomerFirestoreAdapter adapter;
     private FirebaseFirestore db= FirebaseFirestore.getInstance();
-    private CollectionReference collectionReference = db.collection("Customers");
+    private CollectionReference collectionReference = db.collection(CUSTOMERS);
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
 
@@ -89,66 +86,16 @@ public class CustomerListFragment extends Fragment {
 
     private void setupAlertdialog(final String doc_id, final int pos, final int table_no, final String table_type) {
         builder.setTitle("Delete order!")
-                .setIcon(R.drawable.ic_shopping_cart)
+                .setIcon(R.drawable.ic_delete)
                 .setMessage("Are you sure want to delete the order?")
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteDocument(doc_id,pos,table_no,table_type);
+                        //TODO DELETE HERE
                     }
                 }).setNegativeButton("Cancel",null);
         alertDialog = builder.create();
         alertDialog.show();
-
-    }
-
-    private void deleteDocument(final String doc_id, int pos, final int table_no, final String table_type) {
-        db.collection(CUSTOMERS).document(doc_id).collection(KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot snapshot:task.getResult()){
-                        String id = snapshot.getId();
-                        db.collection(CUSTOMERS).document(doc_id).collection(KOT).document(id).delete();
-                    }
-                }
-
-            }
-        });
-        db.collection(CUSTOMERS).document(doc_id).collection(FINAL_BILL).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot snapshot:task.getResult()){
-                        String id = snapshot.getId();
-                        db.collection(CUSTOMERS).document(doc_id).collection(FINAL_BILL).document(id).delete();
-                    }
-                }
-
-            }
-        });
-        db.collection(CUSTOMERS).document(doc_id).collection(COST).document(COST).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    db.collection(CUSTOMERS).document(doc_id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                                  if(task.isSuccessful()){
-                                      db.collection(TABLES).document(table_type).update(String.valueOf(table_no),true).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                          @Override
-                                          public void onComplete(@NonNull Task<Void> task) {
-                                              if(task.isSuccessful()){
-                                                  Toast.makeText(getContext(), "Order deleted successfully", Toast.LENGTH_SHORT).show();
-                                              }
-                                          }
-                                      });
-                                  }
-                        }
-                    });
-                }
-            }
-        });
 
     }
 
@@ -162,8 +109,6 @@ public class CustomerListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-
-
     }
 
     @Override
@@ -175,5 +120,10 @@ public class CustomerListFragment extends Fragment {
     public void onStop() {
         super.onStop();
         adapter.stopListening();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 }

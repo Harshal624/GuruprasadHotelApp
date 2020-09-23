@@ -7,19 +7,20 @@
     android:layout_height="@dimen/_50sdp">
 
 
-
-            <TextView
-                android:id="@+id/food_item_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/_8sdp"
-                android:text="Loading..."
-                android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.45" />
+    <TextView
+        android:id="@+id/food_item_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_8sdp"
+        android:text="Loading..."
+        android:textSize="15sp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.45" />
 
             <TextView
                 android:id="@+id/food_item_qty"

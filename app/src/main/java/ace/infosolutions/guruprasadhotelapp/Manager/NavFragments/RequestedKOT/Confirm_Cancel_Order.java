@@ -37,21 +37,16 @@ import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class Confirm_Cancel_Order extends AppCompatActivity {
-    private static final String FINAL_BILL = "FINAL_BILL";
+    private static final String REQUESTED_KOT = "REQUESTED_KOT";
+    private static final String CONFIRMED_KOT = "CONFIRMED_KOT";
     private ViewCartFirestoreAdapter adapter;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private FirebaseFirestore db;
-    private CollectionReference collectionReference;
+    private CollectionReference collectionReference,custRef,collectionRefConfirmed;
     private Button print_order;
-    private static final String CUSTOMERS="Customers";
-    private static final String KOT="KOT";
-    private static final String COST="COST";
+    private static final String CUSTOMERS="CUSTOMERS";
     String doc_id;
-    Map<String,Object> update_costmap;
-    Map<String,Object> reset_costcoll;
-    Map<String,Object> update_kotrequestedmap;
-    Map<String,Object> confirm_itemmap;
     private InternetConn conn;
 
     @Override
@@ -64,24 +59,30 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
         doc_id = getIntent().getStringExtra("DOCID");
         conn = new InternetConn(this);
         db = FirebaseFirestore.getInstance();
-        //
-        //
-        update_costmap = new HashMap<>();
-        reset_costcoll = new HashMap<>();
-        confirm_itemmap = new HashMap<>();
-        reset_costcoll.put("cost",0);
-        update_kotrequestedmap = new HashMap<>();
-        update_kotrequestedmap.put("kotrequested",false);
-        confirm_itemmap.put("isconfirmed",true);
-        //
-        collectionReference = db.collection("Customers").document(doc_id).collection("KOT");
+        collectionReference = db.collection(CUSTOMERS).document(doc_id).collection(REQUESTED_KOT);
+        collectionRefConfirmed = db.collection(CUSTOMERS).document(doc_id).collection(CONFIRMED_KOT);
+        custRef = db.collection(CUSTOMERS);
         setupRecyclerView();
 
         print_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(conn.haveNetworkConnection()){
-                    print_kot();
+                    collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful()){
+                                for(QueryDocumentSnapshot snapshot:task.getResult()){
+                                    ViewCartPOJO model = snapshot.toObject(ViewCartPOJO.class);
+                                    collectionRefConfirmed.document().set(model);
+                                }
+                                updateReqCostField();
+                            }
+                        }
+                    });
+
+
+
                 }
                 else{
                     Toast.makeText(Confirm_Cancel_Order.this, "No internet connection", Toast.LENGTH_SHORT).show();
@@ -91,131 +92,74 @@ public class Confirm_Cancel_Order extends AppCompatActivity {
         });
     }
 
-    private void print_kot() {
-        print_order.setEnabled(false);
-        db.collection(CUSTOMERS).document(doc_id).collection(KOT)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot snapshot:task.getResult()){
-                        String DOC_ID = snapshot.getId();
-                        db.collection(CUSTOMERS).document(doc_id).collection(KOT).document(DOC_ID)
-                                .delete();
-                    }
-                    updateParentCostField();
-                }
-                else{
-                    print_order.setEnabled(true);
-                    Toast.makeText(Confirm_Cancel_Order.this, "Failed to confirm the oreder", Toast.LENGTH_SHORT).show();
-            }
-            }
-        });
-    }
-
-    private void updateParentCostField() {
-        db.collection(CUSTOMERS).document(doc_id).collection(COST).document(COST)
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+    private void updateReqCostField() {
+        //adding confirmed and requested costs
+        custRef.document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    DocumentSnapshot snapshot = task.getResult();
-                    int cost = 0;
-                    cost = snapshot.getDouble("cost").intValue();
-                    if(cost!=0){
-                        getParentDocCostandAdd(cost);
-                    }
-                    else{
-                        print_order.setEnabled(true);
-                        Toast.makeText(Confirm_Cancel_Order.this, "Failed to confirm the order", Toast.LENGTH_SHORT).show();
-                }}
-            }
-        });
-    }
-
-    private void getParentDocCostandAdd(final double cost) {
-        db.collection(CUSTOMERS).document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot snapshot = task.getResult();
-                    double total_cost_doc = snapshot.getDouble("cost");
-                    double final_cost = cost + total_cost_doc;
-                    update_costmap.put("cost",final_cost);
-                    db.collection(CUSTOMERS).document(doc_id)
-                            .update(update_costmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    Map<String,Object> finalcost = new HashMap<>();
+                    final Map<String,Object> reqcostzero = new HashMap<>();
+                    reqcostzero.put("requested_cost",0);
+                    double requested_cost = task.getResult().getDouble("requested_cost");
+                    double confirmed_cost = task.getResult().getDouble("confirmed_cost");
+                    double final_cost = requested_cost + confirmed_cost;
+                    finalcost.put("confirmed_cost",final_cost);
+                    custRef.document(doc_id).update(finalcost).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                resetCostsubcollection();
-                            }
-                            else{
-                                print_order.setEnabled(true);
-                                Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order", Toast.LENGTH_SHORT).show();
-                        }}
-                    });
+                            //setting requested cost to zero
+                            custRef.document(doc_id).update(reqcostzero).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                       if(task.isSuccessful()){
+                                           deleteRequCostColl();
+                                       }
+                                }
 
+                            });
+                        }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void deleteRequCostColl() {
+        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot snapshot:task.getResult()){
+                        String reqkot_id = snapshot.getId();
+                        collectionReference.document(reqkot_id).delete();
+                    }
+                }
+                updateKOTRequested();
+            }
+        });
+    }
+
+    private void updateKOTRequested() {
+        custRef.document(doc_id).update("kotrequested",false).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(Confirm_Cancel_Order.this, "Order Confirmed, printing KOT", Toast.LENGTH_SHORT).show();
+                    finishAffinity();
+                    startActivity(new Intent(getApplicationContext(),Manager.class));
+                    overridePendingTransition(0,0);
                 }
 
             }
         });
     }
 
-    private void resetCostsubcollection() {
-        db.collection(CUSTOMERS).document(doc_id).collection(COST).document(COST)
-                .update(reset_costcoll).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    updateparent_kotreq();
-                }
-                else{
-                    print_order.setEnabled(true);
-                    Toast.makeText(Confirm_Cancel_Order.this, "Failed!", Toast.LENGTH_SHORT).show();
-            }}
-        });
-    }
-
-    private void updateparent_kotreq() {
-        db.collection(CUSTOMERS).document(doc_id).update(update_kotrequestedmap).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    updateFinalBillisconfirmed();
-                }
-                else{
-                    print_order.setEnabled(true);
-                    Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order!!", Toast.LENGTH_SHORT).show();
-            }}
-        });
-    }
-
-    private void updateFinalBillisconfirmed() {
-        db.collection(CUSTOMERS).document(doc_id).collection(FINAL_BILL).whereEqualTo("isrequested",true)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot snapshot:task.getResult()){
-                        String finalDocId = snapshot.getId();
-                        db.collection(CUSTOMERS).document(doc_id).collection(FINAL_BILL).document(finalDocId)
-                                .update(confirm_itemmap);
-                       }
-                    print_order.setEnabled(true);
-                    Toast.makeText(Confirm_Cancel_Order.this, "KOT Generated", Toast.LENGTH_SHORT).show();
-                    finishAffinity();
-                    startActivity(new Intent(getApplicationContext(), Manager.class));
-                    overridePendingTransition(0,0);
-                }
-                else{
-                    print_order.setEnabled(true);
-                    Toast.makeText(Confirm_Cancel_Order.this, "Cannot confirm the order!!", Toast.LENGTH_SHORT).show();
-            }}
-        });
-    }
 
     private void setupRecyclerView() {
-        Query query = collectionReference.whereEqualTo("isrequested",true);
+        Query query = collectionReference;
         FirestoreRecyclerOptions<ViewCartPOJO> cust = new FirestoreRecyclerOptions.Builder<ViewCartPOJO>()
                 .setQuery(query,ViewCartPOJO.class)
                 .build();

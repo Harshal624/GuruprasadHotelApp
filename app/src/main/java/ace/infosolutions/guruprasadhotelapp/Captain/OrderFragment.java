@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.internal.$Gson$Preconditions;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.CustomerFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass;
@@ -40,15 +45,12 @@ public class OrderFragment extends Fragment {
     public static final String PREF_DOCID = "PREF_DOCID";
     public static final String DOC_ID_KEY = "DOC_ID_KEY";
     private static final String TABLE_COLLECTION = "Tables";
-    private static final String CUSTOMER_COLLECTION = "Customers";
-    private static final String TABLE_TYPE_KEY = "TABLE_TYPE_KEY";
-    private static final String TABLE_NO_KEY = "TABLE_NO_KEY";
-    private final String FINAL_BILL = "FINAL_BILL";
-    private final String KOT = "KOT";
-    private final String COST = "COST";
+    private static final String CUSTOMER_COLLECTION = "CUSTOMERS";
+    private static final String CURRENT_KOT = "CURRENT_KOT";
+    private static final String REQUESTED_KOT = "REQUESTED_KOT";
     private FloatingActionButton add_customer;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference collectionReference = db.collection("Customers");
+    private CollectionReference collectionReference = db.collection("CUSTOMERS");
     private CustomerFirestoreAdapter adapter;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
@@ -98,8 +100,6 @@ public class OrderFragment extends Fragment {
                 String docid = documentSnapshot.getId();
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(DOC_ID_KEY, docid);
-                editor.putString(TABLE_TYPE_KEY, table_type);
-                editor.putInt(TABLE_NO_KEY, table_no);
                 editor.commit();
                 Intent i = new Intent(getContext(), FoodMenu.class);
                 startActivity(i);
@@ -114,13 +114,14 @@ public class OrderFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass.class);
-                                final String id = customerclass.getTable_type();
                                 final String doc_id = documentSnapshot.getId();
                                 final String table_no = String.valueOf(customerclass.getTable_no());
-                                progressBar.setProgress(100);
+                                String table_type = customerclass.getTable_type();
+                                //progressBar.setProgress(100);
+                                Log.e("DOCID",doc_id);
                                 progressBar.setVisibility(View.VISIBLE);
                                 add_customer.setEnabled(false);
-                                checkparentcost(id, doc_id, table_no, pos);
+                                checkCosts(doc_id,table_no,pos,table_type);
                             }
 
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -136,142 +137,106 @@ public class OrderFragment extends Fragment {
         });
     }
 
-    private void checkparentcost(final String id, final String doc_id, final String table_no, final int pos) {
-
+    private void checkCosts(final String doc_id, final String table_no, final int pos,final String table_type) {
         db.collection(CUSTOMER_COLLECTION).document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot snapshot = task.getResult();
-                    double cost = snapshot.getDouble("cost");
-                    if (cost == 0) {
-                        checkanddeleteOrder(id, doc_id, table_no, pos);
-                    } else {
+                if(task.isSuccessful()){
+                    double confirmed_cost = 0;
+                    double current_cost = 0;
+                    double requested_cost = 0;
+                    confirmed_cost = task.getResult().getDouble("confirmed_cost");
+                    current_cost = task.getResult().getDouble("current_cost");
+                    requested_cost = task.getResult().getDouble("requested_cost");
+                    if(confirmed_cost == 0){
+                        if(current_cost!=0 && requested_cost!=0){
+                            deleteCurrent_Requested(doc_id,table_no,pos,table_type);
+                            deleteParentDoc(doc_id,table_no,pos,table_type);
+                        }
+                        else if(current_cost==0 && requested_cost!=0){
+                            deleteRequested_kot(doc_id,table_no,pos,table_type);
+                            deleteParentDoc(doc_id,table_no,pos,table_type);
+                        }
+                        else if(current_cost!=0 && requested_cost==0){
+                            deleteCurrent_kot(doc_id,table_no,pos,table_type);
+                            deleteParentDoc(doc_id,table_no,pos,table_type);
+                        }
+                        else{
+                            deleteParentDoc(doc_id,table_no,pos,table_type);
+                        }
+                    }
+
+                    else{
                         alertDialog.dismiss();
                         progressBar.setVisibility(View.GONE);
                         add_customer.setEnabled(true);
                         Toast.makeText(getContext(), "Cannot delete order", Toast.LENGTH_SHORT).show();
                     }
                 }
-
             }
         });
     }
 
-    private void checkanddeleteOrder(final String id, final String doc_id, final String table_no, final int pos) {
-        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(COST).document(COST)
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+    private void deleteCurrent_Requested(final String doc_id, String table_no, int pos, String table_type) {
+       deleteCurrent_kot(doc_id,table_no,pos, table_type);
+        deleteRequested_kot(doc_id,table_no,pos ,table_type);
+    }
+
+    private void deleteCurrent_kot(final String doc_id, final String table_no, final int pos, final String table_type) {
+        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    int cost = 0;
-                    DocumentSnapshot documentSnapshot = task.getResult();
-                    cost = documentSnapshot.getLong("cost").intValue();
-                    if (cost == 0)
-                        deleteCOSTSubcollection(id, doc_id, table_no, pos);
-                    else
-                        deleteFinalBill(id, doc_id, table_no, pos);
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot snapshot:task.getResult()){
+                        String current_kot_id = snapshot.getId();
+                        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(CURRENT_KOT).document(current_kot_id)
+                                .delete();
+                    }
+
                 }
             }
         });
-
     }
 
-    private void deleteFinalBill(final String id, final String doc_id, final String table_no, final int pos) {
-        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(FINAL_BILL).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                                final String idDoc = queryDocumentSnapshot.getId();
-                                db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(FINAL_BILL)
-                                        .document(idDoc).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                    }
-                                });
-                            }
-                            deleteKOTSubCollection(id, doc_id, table_no, pos);
-                        } else
-                            Toast.makeText(getContext(), "Failed to delete the order", Toast.LENGTH_SHORT).show();
+    private void deleteRequested_kot(final String doc_id, String table_no, int pos, String table_type) {
+        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(REQUESTED_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                        String requested_kot_id = snapshot.getId();
+                        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(REQUESTED_KOT).document(requested_kot_id)
+                                .delete();
                     }
-                });
+                }
+            }
+        });
     }
 
-    private void deleteKOTSubCollection(final String id, final String doc_id, final String table_no, final int pos) {
-
-        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(KOT).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                                final String idDoc = queryDocumentSnapshot.getId();
-                                db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(KOT)
-                                        .document(idDoc).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-
-                                        }
-                                    }
-                                });
-                            }
-                            deleteCOSTSubcollection(id, doc_id, table_no, pos);
-
-                        } else
-                            Toast.makeText(getContext(), "Failed to delete the order", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-    }
-
-    private void deleteCOSTSubcollection(final String id, final String doc_id, final String table_no, final int pos) {
-        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(COST).document(COST)
-                .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+    private void deleteParentDoc(String doc_id, final String table_no, final int pos,final String table_type) {
+        db.collection(CUSTOMER_COLLECTION).document(doc_id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    deleteParentDocument(id, doc_id, table_no, pos);
-                } else
-                    Toast.makeText(getContext(), "Failed to delete the order", Toast.LENGTH_SHORT).show();
-
+                if(task.isSuccessful()){
+                    updateTableStatus(table_no,table_type,pos);
+                }
             }
         });
     }
 
-    private void deleteParentDocument(final String id, String doc_id, final String table_no, final int pos) {
-        db.collection(CUSTOMER_COLLECTION).document(doc_id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+    private void updateTableStatus(String table_no, String table_type,final int pos) {
+        Map<String,Object> table_update = new HashMap<>();
+        table_update.put(table_no,true);
+        db.collection(TABLE_COLLECTION).document(table_type).update(table_update).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onSuccess(Void aVoid) {
-                db.collection(TABLE_COLLECTION).document(id).update(table_no, true).addOnSuccessListener(
-                        new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                //Toast.makeText(getContext(), "Order successfully deleted", Toast.LENGTH_SHORT).show();
-                                adapter.notifyItemRemoved(pos);
-                                adapter.notifyDataSetChanged();
-                                progressBar.setVisibility(View.GONE);
-                                add_customer.setEnabled(true);
-                            }
-                        }
-                ).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(), "Failed to delete the order", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "Failed to delete", Toast.LENGTH_SHORT).show();
-
+            public void onComplete(@NonNull Task<Void> task) {
+                adapter.notifyItemRemoved(pos);
+                adapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
+                add_customer.setEnabled(true);
             }
         });
     }
-
 
     private void setupReyclerview() {
         Query query = collectionReference;

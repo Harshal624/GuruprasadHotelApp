@@ -36,7 +36,7 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
     @Override
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull customerclass model) {
         holder.table_type.setText(model.getTable_type());
-        holder.cost.setText(""+model.getCost());
+        holder.cost.setText(""+model.getConfirmed_cost());
         holder.table_no.setText(""+model.getTable_no());
 
     }

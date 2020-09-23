@@ -26,7 +26,7 @@ public class RequestedKOTFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private RequestedKOTFirestoreAdapter adapter;
     private RecyclerView recyclerView;
-    private static final String CUSTOMER_COLLECTION = "Customers";
+    private static final String CUSTOMER_COLLECTION = "CUSTOMERS";
     private FirebaseFirestore db;
     private CollectionReference collectionReference;
 
