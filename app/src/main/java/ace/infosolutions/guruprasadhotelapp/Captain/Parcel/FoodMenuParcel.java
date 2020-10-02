@@ -2,7 +2,6 @@ package ace.infosolutions.guruprasadhotelapp.Captain.Parcel;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,17 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.CaptainMainFragment;
-import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishList;
-import ace.infosolutions.guruprasadhotelapp.Captain.ItemList;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ViewCartParcel;
-import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCart;
-import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.CustomerListFragment;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class FoodMenuParcel extends AppCompatActivity implements View.OnClickListener {
@@ -107,7 +98,11 @@ public class FoodMenuParcel extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onBackPressed() {
+
         super.onBackPressed();
+        finishAffinity();
+        startActivity(new Intent(getApplicationContext(), CaptainMainFragment.class));
+        overridePendingTransition(0, 0);
     }
 
     @Override

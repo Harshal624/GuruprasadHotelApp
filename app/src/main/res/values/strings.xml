@@ -623,6 +623,7 @@
     <string name="MANAGER_UID">AGYYthgpCKRAxTdQFGUEBvnkPgl1</string>
     <string name="CAPTAIN_UID">YdecB8sBOGMP65JcIgQeHFVRQQe2</string>
     <string name="title_activity_view_cart_parcel">ViewCartParcel</string>
+    <string name="print_confirm_kot"><![CDATA[Print & Confirm KOT]]></string>
 
 
 </resources>

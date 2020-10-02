@@ -1,13 +1,15 @@
 package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -47,6 +49,9 @@ public class CustomerListFragment extends Fragment {
     private View pinView;
     private AlertDialog.Builder builder;
 
+    private ImageButton confirmpin, cancelpin;
+    private EditText enter_pin;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,6 +62,9 @@ public class CustomerListFragment extends Fragment {
         builder = new AlertDialog.Builder(getContext());
         pinView = inflater.inflate(R.layout.pin_alertdialog,null);
         pinAlert = builder.create();
+        confirmpin = pinView.findViewById(R.id.confirmpin);
+        cancelpin = pinView.findViewById(R.id.cancelpin);
+        enter_pin = pinView.findViewById(R.id.enter_pin);
 
         return view;
     }
@@ -69,14 +77,10 @@ public class CustomerListFragment extends Fragment {
         adapter.setOnItemClickListener(new CustomerFirestoreAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
-                String document_id = documentSnapshot.getId();
-                Intent intent = new Intent(getContext(),ConfirmFinalBill.class);
-                intent.putExtra("FinalDOCID",document_id);
-                startActivity(intent);
-
-             /*  pinAlert.setView(pinView);
+                setUpPinAlert(documentSnapshot);
+                pinAlert.setView(pinView);
                pinAlert.setCancelable(true);
-               pinAlert.show();*/
+                pinAlert.show();
 
             }
         });
@@ -90,6 +94,59 @@ public class CustomerListFragment extends Fragment {
             }
         });
 
+    }
+
+    private void setUpPinAlert(final DocumentSnapshot documentSnapshot) {
+        enter_pin.setText("");
+        enter_pin.requestFocus();
+        enter_pin.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager keyboard =
+                        (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.showSoftInput(enter_pin, 0);
+            }
+        }, 100);
+        confirmpin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (enter_pin.getText().toString().trim().equals("") || enter_pin.getText().toString().trim().equals(null)) {
+                    enter_pin.setError("Enter manager pin");
+                } else {
+                    int input_pin = Integer.parseInt(enter_pin.getText().toString().trim());
+                    verifyPin(input_pin);
+                }
+            }
+
+            private void verifyPin(final int input_pin) {
+                db.collection("MANAGERPIN").document("PIN").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            int manager_pin = task.getResult().getDouble("pin").intValue();
+                            if (input_pin == manager_pin) {
+                                pinAlert.dismiss();
+                                String document_id = documentSnapshot.getId();
+                                Intent intent = new Intent(getContext(), ConfirmFinalBill.class);
+                                intent.putExtra("FinalDOCID", document_id);
+                                startActivity(intent);
+
+                            } else {
+                                enter_pin.setError("Wrong Pin");
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "Failed to verify pin", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+        cancelpin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pinAlert.dismiss();
+            }
+        });
     }
 
     private void setupAlertdialog(final DocumentSnapshot snapshot, final CustomerInfo customerInfo) {

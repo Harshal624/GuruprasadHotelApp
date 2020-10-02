@@ -1,13 +1,12 @@
 package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally;
 
+import android.content.Intent;
+import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -33,6 +32,7 @@ public class TableTallyDateList extends AppCompatActivity {
         setContentView(R.layout.activity_table_tally_date_list);
         recyclerView = findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
+
         setUpRecyclerView();
         adapter.setOnDateClickListener(new TableDateListAdapter.OnDateClickListener() {
             @Override

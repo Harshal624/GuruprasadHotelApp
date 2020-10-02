@@ -3,29 +3,19 @@ package ace.infosolutions.guruprasadhotelapp.Captain;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -37,13 +27,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import ace.infosolutions.guruprasadhotelapp.BuildConfig;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.CustomerInfo;
 import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class AddCustomer extends AppCompatActivity {
-    private static final String TABLES ="Tables";
+    public static final String PREF_DOCID = "PREF_DOCID";
+    public static final String DOC_ID_KEY = "DOC_ID_KEY";
+    private static final String TABLES = "Tables";
     private static final String CUSTOMERS = "CUSTOMERS";
     private Button confirm_button, cancel_button;
     private NumberPicker table_noNP, noofcustNP;
@@ -52,15 +43,12 @@ public class AddCustomer extends AppCompatActivity {
     private InternetConn conn;
     private FirebaseFirestore db;
     private RadioButton radioButton;
-    private Map<String,Object> cost;
-
-    public static final String PREF_DOCID = "PREF_DOCID";
-    public static final String DOC_ID_KEY = "DOC_ID_KEY";
+    private Map<String, Object> cost;
     private SharedPreferences preferences;
     private String doc_id;
     private String table_typeString = "VIP Dining";
     private int table_noInt = 1;
-    private CollectionReference customerRef,tableRef;
+    private CollectionReference customerRef, tableRef;
 
 
     @Override
@@ -71,15 +59,15 @@ public class AddCustomer extends AppCompatActivity {
         confirm_button = (Button) findViewById(R.id.confirmcust);
         cancel_button = (Button) findViewById(R.id.cancelcust);
         table_noNP = (NumberPicker) findViewById(R.id.tablenonumpicker);
-        noofcustNP = (NumberPicker)findViewById(R.id.noofcustnumpicker);
+        noofcustNP = (NumberPicker) findViewById(R.id.noofcustnumpicker);
         table_typeRG = (RadioGroup) findViewById(R.id.radiogroup);
         isavailable = (ImageButton) findViewById(R.id.tableavailimgbtn);
         conn = new InternetConn(this);
         cost = new HashMap<>();
-        cost.put("cost",0);
+        cost.put("cost", 0);
 
         preferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
-        customerRef= db.collection(CUSTOMERS);
+        customerRef = db.collection(CUSTOMERS);
         tableRef = db.collection(TABLES);
 
         table_noNP.setMaxValue(5);
@@ -87,22 +75,22 @@ public class AddCustomer extends AppCompatActivity {
         noofcustNP.setMaxValue(6);
         noofcustNP.setMinValue(1);
 
-        checkIfTableisAvail(table_typeString,table_noInt);
+        checkIfTableisAvail(table_typeString, table_noInt);
 
         table_typeRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 radioButton = (RadioButton) findViewById(i);
                 table_typeString = radioButton.getText().toString();
-                if(table_typeString.equals("Family"))
+                if (table_typeString.equals("Family"))
                     table_noNP.setMaxValue(12);
-                else if(table_typeString.equals("AC Family"))
+                else if (table_typeString.equals("AC Family"))
                     table_noNP.setMaxValue(5);
-                else if(table_typeString.equals("Bar Dining"))
+                else if (table_typeString.equals("Bar Dining"))
                     table_noNP.setMaxValue(12);
-                else if(table_typeString.equals("VIP Dining"))
+                else if (table_typeString.equals("VIP Dining"))
                     table_noNP.setMaxValue(5);
-                checkIfTableisAvail(table_typeString,table_noInt);
+                checkIfTableisAvail(table_typeString, table_noInt);
             }
         });
 
@@ -110,12 +98,10 @@ public class AddCustomer extends AppCompatActivity {
         confirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(conn.haveNetworkConnection()){
+                if (conn.haveNetworkConnection()) {
                     confirm_button.setEnabled(false);
                     addCustomer();
-                }
-
-                else
+                } else
                     Toast.makeText(AddCustomer.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
 
             }
@@ -124,16 +110,16 @@ public class AddCustomer extends AppCompatActivity {
         table_noNP.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                 table_noInt = numberPicker.getValue();
-                 checkIfTableisAvail(table_typeString,table_noInt);
+                table_noInt = numberPicker.getValue();
+                checkIfTableisAvail(table_typeString, table_noInt);
             }
         });
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finishAffinity();
-                startActivity(new Intent(getApplicationContext(),CaptainMainFragment.class));
-                overridePendingTransition(0,0);
+                startActivity(new Intent(getApplicationContext(), CaptainMainFragment.class));
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -143,19 +129,18 @@ public class AddCustomer extends AppCompatActivity {
         db.collection(TABLES).document(table_type).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    boolean isavail= false;
+                if (task.isSuccessful()) {
+                    boolean isavail = false;
                     try {
                         isavail = task.getResult().getBoolean(String.valueOf(table_no));
                     } catch (NullPointerException e) {
                         e.printStackTrace();
-                        checkIfTableisAvail(table_type,5);
+                        checkIfTableisAvail(table_type, 5);
                     }
-                    if(isavail){
+                    if (isavail) {
                         confirm_button.setEnabled(true);
                         isavailable.setImageResource(R.drawable.ic_free);
-                    }
-                    else{
+                    } else {
                         confirm_button.setEnabled(false);
                         isavailable.setImageResource(R.drawable.ic_occupied);
                     }
@@ -166,21 +151,21 @@ public class AddCustomer extends AppCompatActivity {
     }
 
     private void addCustomer() {
-        double final_cost=0;
-        double current_cost =0;
+        double final_cost = 0;
+        double current_cost = 0;
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
         Date date = new Date();
         String datetoday = format.format(date);
-        String final_date = datetoday.replaceAll("/","-");
+        String final_date = datetoday.replaceAll("/", "-");
         int no_cust = noofcustNP.getValue();
-        CustomerInfo customerInfo = new CustomerInfo(table_noInt,no_cust,final_date,table_typeString,final_cost,current_cost);
+        CustomerInfo customerInfo = new CustomerInfo(table_noInt, no_cust, final_date, table_typeString, final_cost, current_cost);
         customerRef.add(customerInfo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     doc_id = task.getResult().getId();
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(DOC_ID_KEY,doc_id);
+                    editor.putString(DOC_ID_KEY, doc_id);
                     editor.commit();
                     updateTableStatus(doc_id);
                 }
@@ -190,14 +175,14 @@ public class AddCustomer extends AppCompatActivity {
     }
 
     private void updateTableStatus(final String id) {
-       tableRef.document(table_typeString).update(String.valueOf(table_noInt),false).addOnCompleteListener(new OnCompleteListener<Void>() {
+        tableRef.document(table_typeString).update(String.valueOf(table_noInt), false).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Toast.makeText(AddCustomer.this, "Added", Toast.LENGTH_SHORT).show();
                     finishAffinity();
-                    startActivity(new Intent(getApplicationContext(),FoodMenu.class));
-                    overridePendingTransition(0,0);
+                    startActivity(new Intent(getApplicationContext(), FoodMenu.class));
+                    overridePendingTransition(0, 0);
                 }
             }
         });

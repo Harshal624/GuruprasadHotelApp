@@ -1,6 +1,5 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.Adapters;
 
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +66,7 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
     @NonNull
     @Override
     public CustomerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.customerlistitem,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.customerlistitem2, parent, false);
         return new CustomerHolder(view);
     }
 

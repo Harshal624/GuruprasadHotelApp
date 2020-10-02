@@ -1,24 +1,21 @@
 package ace.infosolutions.guruprasadhotelapp;
 
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.leo.simplearcloader.SimpleArcLoader;
 
 public class MainActivity extends AppCompatActivity {
     String username, password;
@@ -26,9 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText usernameEdittext, passwordEdittext;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
-    private TextView alertemail;
-    private TextView alertpass;
-    private ProgressBar progressBar;
+    private SimpleArcLoader progressBar;
     private InternetConn conn;
 
 
@@ -38,12 +33,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         firebaseAuth = FirebaseAuth.getInstance();
         conn = new InternetConn(this);
-        progressBar = (ProgressBar)findViewById(R.id.progressBar_main);
-        login = (Button) findViewById(R.id.login);
-        usernameEdittext = (EditText) findViewById(R.id.username);
-        passwordEdittext = (EditText) findViewById(R.id.password);
-        alertemail = (TextView) findViewById(R.id.alertemail);
-        alertpass = (TextView) findViewById(R.id.alertpass);
+        progressBar = findViewById(R.id.loader);
+        login = findViewById(R.id.login);
+        usernameEdittext = findViewById(R.id.username);
+        passwordEdittext = findViewById(R.id.password);
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -67,22 +60,21 @@ public class MainActivity extends AppCompatActivity {
                 username = usernameEdittext.getText().toString().trim();
                 password = passwordEdittext.getText().toString().trim();
                 if (username.equals("") && password.equals("")) {
+                    usernameEdittext.setError("Enter email");
+                    passwordEdittext.setError("Enter password");
                     progressBar.setVisibility(View.GONE);
-                    alertemail.setVisibility(View.VISIBLE);
-                    alertpass.setVisibility(View.VISIBLE);
+
 
                 } else if (username.equals("") && !password.equals("")) {
+                    usernameEdittext.setError("Enter email");
                     progressBar.setVisibility(View.GONE);
-                    alertemail.setVisibility(View.VISIBLE);
-                    alertpass.setVisibility(View.GONE);
                 }
                 if (!username.equals("") && password.equals("")) {
                     progressBar.setVisibility(View.GONE);
-                    alertemail.setVisibility(View.GONE);
-                    alertpass.setVisibility(View.VISIBLE);
+                    passwordEdittext.setError("Enter password");
+
                 } else if (!username.equals("") && !password.equals("")) {
-                    alertemail.setVisibility(View.GONE);
-                    alertpass.setVisibility(View.GONE);
+
                     if(conn.haveNetworkConnection())
                         usersignin(username, password);
                     else{
