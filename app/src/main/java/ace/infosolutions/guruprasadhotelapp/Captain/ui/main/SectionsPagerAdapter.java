@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.OrderFragment;
-import ace.infosolutions.guruprasadhotelapp.Captain.ParcelFragment;
+import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelFragment;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 
@@ -51,4 +51,5 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         // Show 2 total pages.
         return 2;
     }
+
 }

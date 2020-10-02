@@ -21,14 +21,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.ui.main.SectionsPagerAdapter;
+import ace.infosolutions.guruprasadhotelapp.CheckRole;
 import ace.infosolutions.guruprasadhotelapp.MainActivity;
+import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class CaptainMainFragment extends AppCompatActivity {
     private Toolbar toolbar;
     FirebaseAuth firebaseAuth;
+    private String MANAGER_UID;
+    private String currentUID;
+    private long backPressedTime;
+    private Toast backToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,8 @@ public class CaptainMainFragment extends AppCompatActivity {
         setContentView(R.layout.activity_captain_main_fragment);
         firebaseAuth = FirebaseAuth.getInstance();
         toolbar = (Toolbar)findViewById(R.id.toolbar);
+        currentUID = firebaseAuth.getUid();
+        MANAGER_UID = this.getResources().getString(R.string.MANAGER_UID);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
@@ -48,9 +57,27 @@ public class CaptainMainFragment extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finishAffinity();
-        finish();
+        if(currentUID.equals(MANAGER_UID)){
+            finishAffinity();
+            startActivity(new Intent(getApplicationContext(), Manager.class));
+            overridePendingTransition(0,0);
+        }
+        else{
+            if(backPressedTime + 2000 > System.currentTimeMillis()){
+                backToast.cancel();
+                finishAffinity();
+                finish();
+                super.onBackPressed();
+                return;
+            }
+            else{
+                backToast = Toast.makeText(getBaseContext(),"Press back again to exit",Toast.LENGTH_SHORT);
+                backToast.show();
+            }
+            backPressedTime = System.currentTimeMillis();
+        }
+
+
     }
 
     @Override

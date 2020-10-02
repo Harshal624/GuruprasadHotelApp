@@ -3,6 +3,7 @@ package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,12 +36,15 @@ import ace.infosolutions.guruprasadhotelapp.R;
 public class CustomerListFragment extends Fragment {
     private static final String CUSTOMERS = "CUSTOMERS";
     private static final String TABLES = "Tables";
+    private static final String CURRENT_KOT ="CURRENT_KOT" ;
+    private static final String CONFIRMED_KOT ="CONFIRMED_KOT" ;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private CustomerFirestoreAdapter adapter;
     private FirebaseFirestore db= FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection(CUSTOMERS);
-    private AlertDialog alertDialog;
+    private AlertDialog alertDialog,pinAlert;
+    private View pinView;
     private AlertDialog.Builder builder;
 
     @Nullable
@@ -51,6 +55,9 @@ public class CustomerListFragment extends Fragment {
         recyclerView = view.findViewById(R.id.customerlist_recycler);
         layoutManager = new LinearLayoutManager(getContext());
         builder = new AlertDialog.Builder(getContext());
+        pinView = inflater.inflate(R.layout.pin_alertdialog,null);
+        pinAlert = builder.create();
+
         return view;
     }
 
@@ -66,37 +73,143 @@ public class CustomerListFragment extends Fragment {
                 Intent intent = new Intent(getContext(),ConfirmFinalBill.class);
                 intent.putExtra("FinalDOCID",document_id);
                 startActivity(intent);
+
+             /*  pinAlert.setView(pinView);
+               pinAlert.setCancelable(true);
+               pinAlert.show();*/
+
             }
         });
 
         adapter.setOnItemLongClickListener(new CustomerFirestoreAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(DocumentSnapshot documentSnapshot, int pos) {
-                String docId = documentSnapshot.getId();
                 CustomerInfo customerInfo = documentSnapshot.toObject(CustomerInfo.class);
-                String table_type = customerInfo.getTable_type();
-                int table_no = customerInfo.getTable_no();
-                int position = pos;
                 //Update Tables field
-                setupAlertdialog(docId,pos,table_no,table_type);
+                setupAlertdialog(documentSnapshot,customerInfo);
             }
         });
 
     }
 
-    private void setupAlertdialog(final String doc_id, final int pos, final int table_no, final String table_type) {
+    private void setupAlertdialog(final DocumentSnapshot snapshot, final CustomerInfo customerInfo) {
         builder.setTitle("Delete order!")
                 .setIcon(R.drawable.ic_delete)
                 .setMessage("Are you sure want to delete the order?")
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //TODO DELETE HERE
+                        deleteCustomer(snapshot,customerInfo);
                     }
                 }).setNegativeButton("Cancel",null);
         alertDialog = builder.create();
         alertDialog.show();
 
+    }
+
+    private void deleteCustomer(final DocumentSnapshot snapshot, final CustomerInfo customerInfo) {
+        String doc_id = snapshot.getId();
+        collectionReference.document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    double current_cost = task.getResult().getDouble("current_cost");
+                    double confirmed_cost = task.getResult().getDouble("confirmed_cost");
+                    if(current_cost == 0.0 && confirmed_cost != 0.0){
+                        //delete confirmed_kot collection with parentdocument
+                        deleteConfirmedKOT(snapshot);
+                        deleteParentDoc(snapshot,customerInfo);
+
+                    }
+                    else if(current_cost != 0.0 && confirmed_cost != 0.0){
+                        //delete confirmed and current kot with parentdoc
+                        deleteConfirmedKOT(snapshot);
+                        deleteCurrentKOT(snapshot);
+                        deleteParentDoc(snapshot,customerInfo);
+                    }
+                    else if(current_cost != 0.0 && confirmed_cost == 0.0){
+                        //delete current_kot coll with parent
+                        deleteCurrentKOT(snapshot);
+                        deleteParentDoc(snapshot,customerInfo);
+                    }
+                    else{
+                        deleteParentDoc(snapshot,customerInfo);
+                    }
+
+                }
+                else{
+
+                }
+            }
+        });
+    }
+
+    private void deleteCurrentKOT(DocumentSnapshot snapshot) {
+        final String doc_id = snapshot.getId();
+        collectionReference.document(doc_id).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot snapshot1: task.getResult()){
+                        collectionReference.document(doc_id).collection(CURRENT_KOT).
+                                document(snapshot1.getId()).delete();
+                    }
+                }
+                else{
+
+                }
+            }
+        });
+    }
+
+    private void deleteConfirmedKOT(DocumentSnapshot snapshot) {
+        final String doc_id = snapshot.getId();
+        collectionReference.document(doc_id).collection(CONFIRMED_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot snapshot1: task.getResult()){
+                        collectionReference.document(doc_id).collection(CONFIRMED_KOT).
+                                document(snapshot1.getId()).delete();
+                    }
+                }
+                else{
+
+                }
+            }
+        });
+    }
+
+    private void deleteParentDoc(DocumentSnapshot snapshot, final CustomerInfo customerInfo) {
+        //update table status too
+        String doc_id = snapshot.getId();
+        collectionReference.document(doc_id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    updateTableStatus(customerInfo);
+                }
+                else{
+
+                }
+            }
+        });
+    }
+
+    private void updateTableStatus(CustomerInfo customerInfo) {
+        String table_type = customerInfo.getTable_type();
+        String table_no = String.valueOf(customerInfo.getTable_no());
+        db.collection("Tables").document(table_type).update(table_no,true).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                }
+                else{
+
+                }
+            }
+        });
     }
 
 

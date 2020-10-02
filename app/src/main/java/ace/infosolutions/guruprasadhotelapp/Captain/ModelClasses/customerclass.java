@@ -1,13 +1,10 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses;
 
-//POJO to read firestore data
-
 public class customerclass {
     private int table_no;
     private double confirmed_cost;
     private String table_type;
 
-    //no-arg constructor is needed
     public customerclass() {
 
     }

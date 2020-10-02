@@ -5,11 +5,6 @@
     >
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/requested_kot"
-            android:icon="@drawable/nav_requestedkot"
-            android:title="Requested KOTs"
-            />
-        <item
             android:id="@+id/customer_list"
             android:icon="@drawable/nav_cust_list"
             android:title="Customer List"
@@ -18,25 +13,32 @@
             android:icon="@drawable/nav_fish"
             android:title="Update Fish Prices">
         </item>
+        <item android:title="Tally"
+            android:icon="@drawable/tally"
+            android:id="@+id/tally"
+            />
 
     </group>
     <item android:title="@string/order_parcel" >
         <menu>
+        <group android:checkableBehavior="single">
         <item android:title="Take Order"
             android:icon="@drawable/nav_take_order"
             android:id="@+id/take_order"/>
 
-            <item android:title="Food Menu"
-                android:icon="@drawable/nav_food_menu"
-                android:id="@+id/food_menu"/>
         <item
             android:title="Parcel"
             android:icon="@drawable/menu_parcel"
             android:id="@+id/parcel"
             />
-            <item  android:title="History"
+            <item  android:title="Customer History"
                 android:icon="@drawable/nav_history"
                 android:id="@+id/cust_history"/>
+
+            <item  android:title="Parcel History"
+                android:icon="@drawable/parcel"
+                android:id="@+id/parcel_history"/>
+        </group>
         </menu>
     </item>
 
@@ -49,6 +51,7 @@
                 android:title="Feedback" />
         </menu>
     </item>
+
     <item android:title="Device">
 
         <menu>

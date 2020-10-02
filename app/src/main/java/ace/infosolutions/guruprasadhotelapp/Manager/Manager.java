@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -15,12 +16,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
-import ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer;
 import ace.infosolutions.guruprasadhotelapp.Captain.CaptainMainFragment;
-import ace.infosolutions.guruprasadhotelapp.Captain.FoodMenu;
+import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelFragment;
 import ace.infosolutions.guruprasadhotelapp.MainActivity;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.CustomerListFragment;
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.RequestedKOT.RequestedKOTFragment;
+import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.History.HistoryFragment;
+import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.ParcelHistory.ParcelHistoryFragment;
+import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally.TallyFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.UpdateFishPrices.UpdateFishPricesFragment;
 import ace.infosolutions.guruprasadhotelapp.R;
 
@@ -29,6 +31,10 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
     private ImageButton signout;
     private FirebaseAuth firebaseAuth;
     private DrawerLayout drawerLayout;
+    private  NavigationView navigationView;
+    private long backPressedTime;
+    private Toast backToast;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +45,7 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
         firebaseAuth = FirebaseAuth.getInstance();
         drawerLayout = findViewById(R.id.drawer_layout);
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
@@ -51,8 +57,8 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                    , new RequestedKOTFragment()).commit();
-            navigationView.setCheckedItem(R.id.requested_kot);
+                    , new CustomerListFragment()).commit();
+            navigationView.setCheckedItem(R.id.customer_list);
         }
 
     }
@@ -68,20 +74,33 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
+
         } else {
-            super.onBackPressed();
-            finishAffinity();
-            finish();
+            if(navigationView.getMenu().findItem(R.id.customer_list).isChecked()){
+                if(backPressedTime + 2000 > System.currentTimeMillis()){
+                    backToast.cancel();
+                    finishAffinity();
+                    finish();
+                    super.onBackPressed();
+                    return;
+                }
+                else{
+                    backToast = Toast.makeText(getBaseContext(),"Press back again to exit",Toast.LENGTH_SHORT);
+                    backToast.show();
+                }
+                backPressedTime = System.currentTimeMillis();
+            }
+            else{
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                        , new CustomerListFragment()).commit();
+                navigationView.setCheckedItem(R.id.customer_list);
+            }
         }
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.requested_kot:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                        , new RequestedKOTFragment()).commit();
-                break;
             case R.id.update_fishprices:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
                         , new UpdateFishPricesFragment()).commit();
@@ -93,15 +112,26 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
                         , new CustomerListFragment()).commit();
                 break;
-
             case R.id.take_order:
                 startActivity(new Intent(getApplicationContext(), CaptainMainFragment.class));
                 break;
 
-            case R.id.food_menu:
-                //TODO Send data to foodmenu to let know that a manager is accessing the foodmenu and restrict the views
-               // startActivity(new Intent(getApplicationContext(), FoodMenu.class));
-                //break;
+            case R.id.parcel:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                ,new ParcelFragment()).commit();
+                break;
+
+            case R.id.cust_history: getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                    ,new HistoryFragment()).commit();
+                break;
+
+            case R.id.tally: getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                    ,new TallyFragment()).commit();
+                break;
+
+            case R.id.parcel_history:getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                    ,new ParcelHistoryFragment()).commit();
+                break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import ace.infosolutions.guruprasadhotelapp.BuildConfig;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.CustomerInfo;
 import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
@@ -167,13 +168,12 @@ public class AddCustomer extends AppCompatActivity {
     private void addCustomer() {
         double final_cost=0;
         double current_cost =0;
-        double requested_cost = 0;
-        boolean kotreqested = false;
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
         Date date = new Date();
         String datetoday = format.format(date);
+        String final_date = datetoday.replaceAll("/","-");
         int no_cust = noofcustNP.getValue();
-        CustomerInfo customerInfo = new CustomerInfo(table_noInt,no_cust,datetoday,table_typeString,kotreqested,final_cost,current_cost,requested_cost);
+        CustomerInfo customerInfo = new CustomerInfo(table_noInt,no_cust,final_date,table_typeString,final_cost,current_cost);
         customerRef.add(customerInfo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {

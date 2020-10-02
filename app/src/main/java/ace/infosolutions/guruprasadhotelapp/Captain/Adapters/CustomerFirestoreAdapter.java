@@ -36,7 +36,8 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
     @Override
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull customerclass model) {
         holder.table_type.setText(model.getTable_type());
-        holder.cost.setText(""+model.getConfirmed_cost());
+        double roundedDouble = Math.round(model.getConfirmed_cost() * 100.0)/100.0;
+        holder.cost.setText(""+roundedDouble);
         holder.table_no.setText(""+model.getTable_no());
 
     }
@@ -49,13 +50,17 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
     @Override
     public void onDataChanged() {
         super.onDataChanged();
-        if(getItemCount() == 0){
-            nocustTV.setVisibility(View.VISIBLE);
-            nocustIV.setVisibility(View.VISIBLE);
-        }
-        else{
-            nocustTV.setVisibility(View.GONE);
-            nocustIV.setVisibility(View.GONE);
+        try {
+            if(getItemCount() == 0){
+                nocustTV.setVisibility(View.VISIBLE);
+                nocustIV.setVisibility(View.VISIBLE);
+            }
+            else{
+                nocustTV.setVisibility(View.GONE);
+                nocustIV.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

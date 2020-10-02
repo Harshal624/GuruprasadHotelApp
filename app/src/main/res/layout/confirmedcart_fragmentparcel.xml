@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/linearLayout6"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginStart="@dimen/_2sdp"
+        android:layout_marginEnd="@dimen/_2sdp"
+        android:orientation="horizontal"
+        android:background="@drawable/edittext_border"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Item"
+            android:textSize="15sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:paddingStart="@dimen/_5sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:layout_weight="3"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Qty"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15sp"
+            android:layout_weight="0.8"
+            android:layout_gravity="end"
+            android:paddingEnd="@dimen/_5sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:gravity="center"
+            />
+    </LinearLayout>
+   <androidx.constraintlayout.widget.ConstraintLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       >
+
+       <androidx.recyclerview.widget.RecyclerView
+           android:id="@+id/recycler_confirmed"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           app:layout_constraintTop_toTopOf="parent" />
+
+
+       <ImageView
+           android:id="@+id/empty_cartIV"
+           android:layout_width="@dimen/_40sdp"
+           android:layout_height="@dimen/_40sdp"
+           android:src="@drawable/empty_cart"
+           android:layout_marginBottom="@dimen/_20sdp"
+           app:layout_constraintBottom_toTopOf="@+id/empty_cart"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintStart_toStartOf="parent" />
+
+       <TextView
+           android:id="@+id/empty_cart"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="There are no confirmed items!"
+           android:textSize="25sp"
+           android:textColor="@color/grey"
+           android:gravity="center"
+           app:layout_constraintBottom_toBottomOf="@+id/recycler_confirmed"
+           app:layout_constraintTop_toTopOf="@+id/recycler_confirmed" />
+
+   </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+</LinearLayout>

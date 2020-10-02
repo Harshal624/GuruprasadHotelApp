@@ -47,7 +47,6 @@ public class OrderFragment extends Fragment {
     private static final String TABLE_COLLECTION = "Tables";
     private static final String CUSTOMER_COLLECTION = "CUSTOMERS";
     private static final String CURRENT_KOT = "CURRENT_KOT";
-    private static final String REQUESTED_KOT = "REQUESTED_KOT";
     private FloatingActionButton add_customer;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("CUSTOMERS");
@@ -144,28 +143,15 @@ public class OrderFragment extends Fragment {
                 if(task.isSuccessful()){
                     double confirmed_cost = 0;
                     double current_cost = 0;
-                    double requested_cost = 0;
                     confirmed_cost = task.getResult().getDouble("confirmed_cost");
                     current_cost = task.getResult().getDouble("current_cost");
-                    requested_cost = task.getResult().getDouble("requested_cost");
-                    if(confirmed_cost == 0){
-                        if(current_cost!=0 && requested_cost!=0){
-                            deleteCurrent_Requested(doc_id,table_no,pos,table_type);
-                            deleteParentDoc(doc_id,table_no,pos,table_type);
-                        }
-                        else if(current_cost==0 && requested_cost!=0){
-                            deleteRequested_kot(doc_id,table_no,pos,table_type);
-                            deleteParentDoc(doc_id,table_no,pos,table_type);
-                        }
-                        else if(current_cost!=0 && requested_cost==0){
-                            deleteCurrent_kot(doc_id,table_no,pos,table_type);
-                            deleteParentDoc(doc_id,table_no,pos,table_type);
-                        }
-                        else{
-                            deleteParentDoc(doc_id,table_no,pos,table_type);
-                        }
+                    if(confirmed_cost == 0 && current_cost!=0){
+                        deleteCurrent_kot(doc_id,table_no,pos,table_type);
+                        deleteParentDoc(doc_id,table_no,pos,table_type);
                     }
-
+                    else if(confirmed_cost == 0 && current_cost == 0){
+                        deleteParentDoc(doc_id,table_no,pos,table_type);
+                    }
                     else{
                         alertDialog.dismiss();
                         progressBar.setVisibility(View.GONE);
@@ -175,11 +161,6 @@ public class OrderFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private void deleteCurrent_Requested(final String doc_id, String table_no, int pos, String table_type) {
-       deleteCurrent_kot(doc_id,table_no,pos, table_type);
-        deleteRequested_kot(doc_id,table_no,pos ,table_type);
     }
 
     private void deleteCurrent_kot(final String doc_id, final String table_no, final int pos, final String table_type) {
@@ -193,21 +174,6 @@ public class OrderFragment extends Fragment {
                                 .delete();
                     }
 
-                }
-            }
-        });
-    }
-
-    private void deleteRequested_kot(final String doc_id, String table_no, int pos, String table_type) {
-        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(REQUESTED_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                        String requested_kot_id = snapshot.getId();
-                        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(REQUESTED_KOT).document(requested_kot_id)
-                                .delete();
-                    }
                 }
             }
         });

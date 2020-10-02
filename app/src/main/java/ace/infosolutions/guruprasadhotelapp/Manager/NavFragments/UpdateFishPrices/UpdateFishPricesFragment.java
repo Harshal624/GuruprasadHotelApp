@@ -149,4 +149,9 @@ public class UpdateFishPricesFragment extends Fragment {
         super.onStop();
         adapter.stopListening();
     }
+
+    @Override
+    public void onPrimaryNavigationFragmentChanged(boolean isPrimaryNavigationFragment) {
+        super.onPrimaryNavigationFragmentChanged(isPrimaryNavigationFragment);
+    }
 }

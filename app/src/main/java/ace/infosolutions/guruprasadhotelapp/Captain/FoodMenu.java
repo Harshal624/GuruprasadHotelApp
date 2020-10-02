@@ -1,49 +1,21 @@
 package ace.infosolutions.guruprasadhotelapp.Captain;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
-
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishList;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCart;
-import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartPOJO;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class FoodMenu extends AppCompatActivity implements View.OnClickListener {
@@ -121,7 +93,7 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
 
         //setting up the toolbar
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Food Menu");
+        getSupportActionBar().setTitle(R.string.food_menu);
 
     }
 

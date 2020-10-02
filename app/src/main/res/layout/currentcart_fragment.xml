@@ -10,6 +10,9 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginStart="@dimen/_2sdp"
+        android:layout_marginEnd="@dimen/_2sdp"
+        android:layout_marginTop="@dimen/_3sdp"
         android:orientation="horizontal"
         android:background="@drawable/edittext_border"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,19 +38,10 @@
             android:layout_weight="0.8"
             android:layout_gravity="start"
             android:paddingTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
             android:gravity="start"
             />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cost"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="15sp"
-            android:paddingStart="@dimen/_5sdp"
-            android:paddingTop="@dimen/_5sdp"
-            android:layout_weight="1"
-            android:gravity="start"
-            />
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -60,34 +54,22 @@
         app:layout_constraintVertical_bias="0.0"
          />
 
-    <TextView
-        android:id="@+id/total_cost_order"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:gravity="start"
-        android:paddingStart="@dimen/_10sdp"
-        android:text="Loading..."
-        android:textColor="@color/tomatored"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.1"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/sendkotreq"
+        android:id="@+id/printkot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_20sdp"
         android:background="@drawable/circular_imgbutton_cancel"
         android:drawableLeft="@drawable/ic_save"
         android:drawablePadding="@dimen/_5sdp"
-        android:text="Request"
-        android:layout_marginEnd="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_5sdp"
+        android:text="Print KOT"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/currentcart_recycler"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/currentcart_recycler" />
 
     <ProgressBar
@@ -99,6 +81,29 @@
         app:layout_constraintBottom_toBottomOf="@+id/currentcart_recycler"
         app:layout_constraintEnd_toEndOf="@+id/currentcart_recycler"
         app:layout_constraintStart_toStartOf="@+id/currentcart_recycler"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+
+    <ImageView
+        android:id="@+id/empty_cartIV"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:src="@drawable/empty_cart"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/progressbar_currentcart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/empty_cart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Food cart is empty!"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textColor="@color/grey"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="@+id/currentcart_recycler"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
 
 

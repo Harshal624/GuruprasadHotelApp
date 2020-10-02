@@ -7,16 +7,33 @@
     android:layout_height="match_parent"
     tools:context=".Captain.Fish.FishList">
 
-    <androidx.appcompat.widget.Toolbar
+    <LinearLayout
         android:id="@+id/toolbar4"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/colorPrimary"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintHeight_percent="0.15"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="Fish Maincourse"
-        app:titleTextColor="@color/white" />
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="@dimen/_45sdp"
+            android:src="@drawable/fish"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_20sdp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fish Maincourse"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_gravity="center"
+            />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_fishmain"
@@ -24,7 +41,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.9"
+        app:layout_constraintHeight_percent="0.85"
         app:layout_constraintTop_toBottomOf="@+id/toolbar4" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

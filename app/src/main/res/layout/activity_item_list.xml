@@ -24,13 +24,24 @@
                 android:id="@+id/food_menu_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/_15sdp"
                 android:text="Food Menu Title"
-                android:textColor="#ffffff"
+                android:textColor="@color/white"
                 android:textSize="20sp"
+                android:paddingStart="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/food_menu_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/food_menu_icon"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:background="@android:color/transparent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

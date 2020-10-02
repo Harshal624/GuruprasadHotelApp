@@ -10,16 +10,14 @@ import ace.infosolutions.guruprasadhotelapp.Captain.CaptainMainFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 
 public class CheckRole extends AppCompatActivity {
-    private static final String MANAGER_UID="AGYYthgpCKRAxTdQFGUEBvnkPgl1";
-    private static final String CAPTAIN_UID="YdecB8sBOGMP65JcIgQeHFVRQQe2";
-
-
-
+    private String MANAGER_UID;
+    private String CAPTAIN_UID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        MANAGER_UID =  this.getResources().getString(R.string.MANAGER_UID);
+        CAPTAIN_UID =  this.getResources().getString(R.string.CAPTAIN_UID);
         String userId = getIntent().getStringExtra("User");
         if(userId.equals(MANAGER_UID)){
             startActivity(new Intent(getApplicationContext(), Manager.class));

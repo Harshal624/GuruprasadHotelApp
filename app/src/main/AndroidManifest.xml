@@ -12,9 +12,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Captain.Fish.FishList"></activity>
+        <activity android:name=".Manager.NavFragments.Tally.CalculateTallyTable"></activity>
+        <activity android:name=".Manager.NavFragments.Tally.TableTallyDateList" />
+        <activity android:name=".Manager.NavFragments.Tally.CalculateTallyOnline" />
+        <activity android:name=".Manager.NavFragments.Tally.CalculateTallyParcel" />
+        <activity android:name=".Manager.NavFragments.Tally.TableTally" />
+        <activity android:name=".Manager.NavFragments.ParcelHistory.ParcelHistoryItemList" />
+        <activity android:name=".Manager.NavFragments.Tally.CalculateTallyGrand" />
+        <activity android:name=".Manager.NavFragments.Tally.TableTallyMonthList" />
+        <activity android:name=".Manager.NavFragments.History.HistoryItems" />
+        <activity
+            android:name=".Captain.Parcel.ViewCartParcel.ViewCartParcel"
+            android:label="@string/title_activity_view_cart_parcel"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Captain.Parcel.AddParcel" />
+        <activity android:name=".Captain.Fish.FishList" />
         <activity android:name=".Manager.NavFragments.CustomerList.ConfirmFinalBill" />
-        <activity android:name=".Manager.NavFragments.RequestedKOT.Confirm_Cancel_Order" />
         <activity
             android:name=".Captain.ViewCart.ViewCart"
             android:label="@string/title_activity_view_cart"
@@ -31,6 +44,9 @@
         <activity android:name=".CheckRole" />
         <activity android:name=".Captain.AddCustomer" />
         <activity android:name=".Manager.Manager" />
+        <activity android:name=".Captain.Parcel.FoodMenuParcel" />
+        <activity android:name=".Captain.Parcel.ItemListParcel" />
+        <activity android:name=".Captain.Parcel.FishListParcel" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

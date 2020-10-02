@@ -57,12 +57,12 @@ public class ItemAlertDialog extends DialogFragment {
             @Override
             public void onClick(View view) {
                 count[0]++;
-                if(count[0] > 5){
-                    count[0] =5;
+                if(count[0] > 10){
+                    count[0] =10;
                 }
                 else{
                     String itemCost = item_cost.substring(3,item_cost.length());
-                    int final_cost = count[0] * Integer.parseInt(itemCost);
+                    double final_cost = count[0] * Double.parseDouble(itemCost);
                     item_costTV.setText("Rs."+final_cost);
                     counter.setText(""+count[0]);
                     final_price = final_cost;
