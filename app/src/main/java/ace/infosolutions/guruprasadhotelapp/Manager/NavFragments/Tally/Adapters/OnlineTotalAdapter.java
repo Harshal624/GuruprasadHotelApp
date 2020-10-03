@@ -64,6 +64,7 @@ public class OnlineTotalAdapter extends FirestoreRecyclerAdapter<OnlineTotalMode
         }
     }
 
+
     public class CustomerHolder extends RecyclerView.ViewHolder{
       private TextView date;
       private TextView grandtotal;

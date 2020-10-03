@@ -1,12 +1,13 @@
 package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally;
 
+import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.CollectionReference;
@@ -33,36 +34,40 @@ public class CalculateTallyOnline extends AppCompatActivity {
     private ImageView t_type_image;
     private Query query;
     private FirestoreRecyclerOptions<OnlineTotalModel> tally;
+    private EditText searchview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculate_tally);
-
         recyclerView = findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
         t_type = findViewById(R.id.tally_type);
         t_type_image = findViewById(R.id.tally_type_image);
         tally_type = getIntent().getStringExtra("TALLYTYPE");
+        searchview = findViewById(R.id.searchview);
         computeTallyType();
         setUpRecyclerView();
+
     }
+
+
     private void computeTallyType() {
         switch (tally_type){
             case "DAILYONLINE":tallyRef = db.collection(TALLY).document(DAILY).collection(ONLINETOTAL);
+                query = tallyRef;
                 t_type.setText("Daily Online");
                 t_type_image.setImageResource(R.drawable.online_method);
                 break;
             case "MONTHLYONLINE": tallyRef = db.collection(TALLY).document(MONTHLY).collection(ONLINETOTAL);
+                query = tallyRef;
                 t_type.setText("Monthly Online");
                 t_type_image.setImageResource(R.drawable.online_method);
                 break;
-
         }
 
     }
     private void setUpRecyclerView() {
-        query = tallyRef;//.orderBy("grandtotal", Query.Direction.DESCENDING);
         tally = new FirestoreRecyclerOptions.Builder<OnlineTotalModel>()
                 .setQuery(query,OnlineTotalModel.class)
                 .build();
@@ -70,7 +75,6 @@ public class CalculateTallyOnline extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-
     }
 
     @Override

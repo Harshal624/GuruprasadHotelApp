@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -18,11 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -38,6 +33,9 @@ import ace.infosolutions.guruprasadhotelapp.R;
 
 public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemAlertDialogListener {
     public static final String CURRENT_KOT = "CURRENT_KOT";
+    public static final String PREF_DOCID = "PREF_DOCID";
+    public static final String DOC_ID_KEY = "DOC_ID_KEY";
+    private final String CUSTOMERS = "CUSTOMERS";
     private LinearLayoutManager linearLayoutManager;
     private RecyclerView recyclerView;
     private ItemListAdapter itemListAdapter;
@@ -50,15 +48,8 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
     private ImageButton check_cart;
     private ProgressBar progressBar;
     private ImageView food_menu_icon;
-
-    public static final String PREF_DOCID = "PREF_DOCID";
-    public static final String DOC_ID_KEY = "DOC_ID_KEY";
     private SharedPreferences sharedPreferences;
-
     private String DOC_ID = "";
-    private final String CUSTOMERS = "CUSTOMERS";
-
-    private FirebaseAuth auth;
 
 
     @Override
@@ -67,22 +58,21 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         setContentView(R.layout.activity_item_list);
         db = FirebaseFirestore.getInstance();
         food_menu_icon = findViewById(R.id.food_menu_icon);
-        progressBar =(ProgressBar) findViewById(R.id.progressbar_itemlist);
-        food_menu_t = (TextView) findViewById(R.id.food_menu_title);
+        progressBar = findViewById(R.id.progressbar_itemlist);
+        food_menu_t = findViewById(R.id.food_menu_title);
         food_menu_title = getIntent().getStringExtra("Title");
         food_menu_t.setText(food_menu_title);
-        recyclerView = (RecyclerView) findViewById(R.id.item_list_recycler);
+        recyclerView = findViewById(R.id.item_list_recycler);
         item_title = new ArrayList<>();
         item_cost = new ArrayList<>();
-        check_cart = (ImageButton)findViewById(R.id.check_cart);
+        check_cart = findViewById(R.id.check_cart);
 
         //Getting document id from sharedpref
         sharedPreferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
-         DOC_ID = sharedPreferences.getString(DOC_ID_KEY,"");
-         //
+        DOC_ID = sharedPreferences.getString(DOC_ID_KEY, "");
+        //
         //getting the item type
         type = getIntent().getStringExtra("Type");
-        Log.e("Type", type);
         //
 
         check_cart.setOnClickListener(new View.OnClickListener() {
@@ -107,63 +97,94 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
             case "starters_nonveg":
                 food_menu_icon.setImageResource(R.drawable.nonveg);
-                Collections.addAll(item_title,getResources().getStringArray(R.array.starters_nonveg_title));
-                Collections.addAll(item_cost,getResources().getStringArray(R.array.starters_nonveg_cost));
+                Collections.addAll(item_title, getResources().getStringArray(R.array.starters_nonveg_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.starters_nonveg_cost));
                 break;
 
             case "starters_colddrink":
                 food_menu_icon.setImageResource(R.drawable.colddrink);
-                Collections.addAll(item_title,getResources().getStringArray(R.array.starters_colddrink_title));
-                Collections.addAll(item_cost,getResources().getStringArray(R.array.starters_colddrink_cost));
+                Collections.addAll(item_title, getResources().getStringArray(R.array.starters_colddrink_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.starters_colddrink_cost));
                 break;
             case "soup":
                 food_menu_icon.setImageResource(R.drawable.soup);
-                Collections.addAll(item_title,getResources().getStringArray(R.array.veg_nonveg_soup_title));
-                Collections.addAll(item_cost,getResources().getStringArray(R.array.veg_nonveg_soup_cost));
+                Collections.addAll(item_title, getResources().getStringArray(R.array.veg_nonveg_soup_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.veg_nonveg_soup_cost));
                 break;
             case "raytasalad":
                 food_menu_icon.setImageResource(R.drawable.salad);
-                Collections.addAll(item_title,getResources().getStringArray(R.array.Rayata_Salad_title));
-                Collections.addAll(item_cost,getResources().getStringArray(R.array.Rayata_Salad_cost));
+                Collections.addAll(item_title, getResources().getStringArray(R.array.Rayata_Salad_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.Rayata_Salad_cost));
                 break;
             case "veg_daal":
                 food_menu_icon.setImageResource(R.drawable.veg);
-                Collections.addAll(item_title,getResources().getStringArray(R.array.daal_title));
-                Collections.addAll(item_cost,getResources().getStringArray(R.array.daal_cost));
+                Collections.addAll(item_title, getResources().getStringArray(R.array.daal_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.daal_cost));
                 break;
             case "veg_paneermaincourse":
                 food_menu_icon.setImageResource(R.drawable.veg);
-                Collections.addAll(item_title,getResources().getStringArray(R.array.paneer_maincourse_title));
-                Collections.addAll(item_cost,getResources().getStringArray(R.array.paneer_maincourse_cost));
+                Collections.addAll(item_title, getResources().getStringArray(R.array.paneer_maincourse_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.paneer_maincourse_cost));
                 break;
             case "nonveg_egg":
                 food_menu_icon.setImageResource(R.drawable.eggs);
-                Collections.addAll(item_title,getResources().getStringArray(R.array.egg_title));
-                Collections.addAll(item_cost,getResources().getStringArray(R.array.egg_cost));
+                Collections.addAll(item_title, getResources().getStringArray(R.array.egg_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.egg_cost));
                 break;
             case "nonveg_specialthali":
                 food_menu_icon.setImageResource(R.drawable.nonveg);
-                Collections.addAll(item_title,getResources().getStringArray(R.array.nonveg_specialthali_title));
-                Collections.addAll(item_cost,getResources().getStringArray(R.array.nonveg_specialthali_cost));
+                Collections.addAll(item_title, getResources().getStringArray(R.array.nonveg_specialthali_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.nonveg_specialthali_cost));
                 break;
 
             case "roti":
                 food_menu_icon.setImageResource(R.drawable.roti);
-                Collections.addAll(item_title,getResources().getStringArray(R.array.roti_title));
-                Collections.addAll(item_cost,getResources().getStringArray(R.array.roti_cost));
+                Collections.addAll(item_title, getResources().getStringArray(R.array.roti_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.roti_cost));
                 break;
 
             case "rice_biryani":
                 food_menu_icon.setImageResource(R.drawable.biryani);
-                Collections.addAll(item_title,getResources().getStringArray(R.array.rice_biryani_title));
-                Collections.addAll(item_cost,getResources().getStringArray(R.array.rice_biryani_cost));
+                Collections.addAll(item_title, getResources().getStringArray(R.array.rice_biryani_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.rice_biryani_cost));
                 break;
 
             case "rice_ricenoodles":
                 food_menu_icon.setImageResource(R.drawable.ricenoodles);
-                Collections.addAll(item_title,getResources().getStringArray(R.array.rice_ricenoodles_title));
-                Collections.addAll(item_cost,getResources().getStringArray(R.array.rice_ricenoodles_cost));
+                Collections.addAll(item_title, getResources().getStringArray(R.array.rice_ricenoodles_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.rice_ricenoodles_cost));
                 break;
+
+            case "rice_main":
+                food_menu_icon.setImageResource(R.drawable.rice);
+                Collections.addAll(item_title, getResources().getStringArray(R.array.rice_main_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.rice_main_cost));
+                break;
+
+            case "veg_vegmaincourse":
+                food_menu_icon.setImageResource(R.drawable.veg);
+                Collections.addAll(item_title, getResources().getStringArray(R.array.veg_maincourse_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.veg_maincourse_cost));
+                break;
+
+            case "nonveg_matanmaincourse":
+                food_menu_icon.setImageResource(R.drawable.nonveg);
+                Collections.addAll(item_title, getResources().getStringArray(R.array.nonveg_matanmaincourse_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.nonveg_matanmaincourse_cost));
+                break;
+
+            case "springroll_chicken":
+                food_menu_icon.setImageResource(R.drawable.nonveg);
+                Collections.addAll(item_title, getResources().getStringArray(R.array.chickenspringroll_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.chickenspringroll_cost));
+                break;
+
+            case "springroll_veg":
+                food_menu_icon.setImageResource(R.drawable.veg);
+                Collections.addAll(item_title, getResources().getStringArray(R.array.vegspringroll_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.vegspringroll_cost));
+                break;
+
 
         }
         //setting up the recyclerview of food items
@@ -174,7 +195,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         itemListAdapter.setOnItemClickListener2(new ItemListAdapter.OnItemClickListener2() {
             @Override
             public void onItemClick(String title, int position, String cost) {
-                    opendialog(title, cost);
+                opendialog(title, cost);
             }
         });
 
@@ -185,17 +206,17 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                if(dy > 0 || dy < 0 && check_cart.isShown()){
+                if (dy > 0 || dy < 0 && check_cart.isShown()) {
                     check_cart.setVisibility(View.INVISIBLE);
                 }
             }
 
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if(newState == recyclerView.SCROLL_STATE_IDLE){
+                if (newState == recyclerView.SCROLL_STATE_IDLE) {
                     check_cart.setVisibility(View.VISIBLE);
                 }
-                super.onScrollStateChanged(recyclerView,newState);
+                super.onScrollStateChanged(recyclerView, newState);
             }
         });
     }
@@ -217,14 +238,13 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
     public void applyText(final String item_title, final double item_cost, final int item_qty) {
         progressBar.setVisibility(View.VISIBLE);
         check_cart.setEnabled(false);
-        //TODO BEFORE ADDING FOOD ITEMS CHECK IF THERE EXIST ITEM OF SAME NAME AND UPDATE ACCORDINGLY(IMP)
-        FoodItemModel model = new FoodItemModel(item_title,item_cost,item_qty);
+        FoodItemModel model = new FoodItemModel(item_title, item_cost, item_qty);
         db.collection(CUSTOMERS).document(DOC_ID).collection(CURRENT_KOT).document().set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful())
+                if (task.isSuccessful())
                     updateCurrentCost(item_cost);
-                else{
+                else {
                     progressBar.setVisibility(View.GONE);
                     check_cart.setEnabled(true);
                     Toast.makeText(ItemList.this, "Cannot add item", Toast.LENGTH_SHORT).show();
@@ -239,40 +259,37 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         db.collection(CUSTOMERS).document(DOC_ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     double cost = task.getResult().getDouble("current_cost");
-                    if(cost==0){
-                        Map<String,Object> update_currentCost = new HashMap<>();
-                        update_currentCost.put("current_cost",item_cost);
+                    if (cost == 0) {
+                        Map<String, Object> update_currentCost = new HashMap<>();
+                        update_currentCost.put("current_cost", item_cost);
                         db.collection(CUSTOMERS).document(DOC_ID).update(update_currentCost).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     progressBar.setVisibility(View.GONE);
                                     check_cart.setEnabled(true);
                                     Toast.makeText(ItemList.this, "Item Added!", Toast.LENGTH_SHORT).show();
-                                }
-                                else{
+                                } else {
                                     progressBar.setVisibility(View.GONE);
                                     check_cart.setEnabled(true);
                                     Toast.makeText(ItemList.this, "Cannot add item", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
-                    }
-                    else{
+                    } else {
                         double final_cost = item_cost + cost;
-                        Map<String,Object> updated_cost = new HashMap<>();
-                        updated_cost.put("current_cost",final_cost);
+                        Map<String, Object> updated_cost = new HashMap<>();
+                        updated_cost.put("current_cost", final_cost);
                         db.collection(CUSTOMERS).document(DOC_ID).update(updated_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     progressBar.setVisibility(View.GONE);
                                     check_cart.setEnabled(true);
                                     Toast.makeText(ItemList.this, "Item Added!", Toast.LENGTH_SHORT).show();
-                                }
-                                else{
+                                } else {
                                     progressBar.setVisibility(View.GONE);
                                     check_cart.setEnabled(true);
                                     Toast.makeText(ItemList.this, "Failed to add item!", Toast.LENGTH_SHORT).show();
@@ -280,8 +297,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
                             }
                         });
                     }
-                }
-                else{
+                } else {
                     Toast.makeText(ItemList.this, "Failed to add item", Toast.LENGTH_SHORT).show();
                 }
             }

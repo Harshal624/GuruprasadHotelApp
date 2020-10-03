@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,14 +25,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.ItemListAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ItemAlertDialog;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ViewCartParcel;
-import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCart;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
@@ -167,6 +162,36 @@ public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog
                 food_menu_icon.setImageResource(R.drawable.ricenoodles);
                 Collections.addAll(item_title,getResources().getStringArray(R.array.rice_ricenoodles_title));
                 Collections.addAll(item_cost,getResources().getStringArray(R.array.rice_ricenoodles_cost));
+                break;
+
+            case "rice_main":
+                food_menu_icon.setImageResource(R.drawable.rice);
+                Collections.addAll(item_title, getResources().getStringArray(R.array.rice_main_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.rice_main_cost));
+                break;
+
+            case "veg_vegmaincourse":
+                food_menu_icon.setImageResource(R.drawable.veg);
+                Collections.addAll(item_title, getResources().getStringArray(R.array.veg_maincourse_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.veg_maincourse_cost));
+                break;
+
+            case "nonveg_matanmaincourse":
+                food_menu_icon.setImageResource(R.drawable.nonveg);
+                Collections.addAll(item_title, getResources().getStringArray(R.array.nonveg_matanmaincourse_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.nonveg_matanmaincourse_cost));
+                break;
+
+            case "springroll_chicken":
+                food_menu_icon.setImageResource(R.drawable.nonveg);
+                Collections.addAll(item_title, getResources().getStringArray(R.array.chickenspringroll_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.chickenspringroll_cost));
+                break;
+
+            case "springroll_veg":
+                food_menu_icon.setImageResource(R.drawable.veg);
+                Collections.addAll(item_title, getResources().getStringArray(R.array.vegspringroll_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.vegspringroll_cost));
                 break;
 
         }

@@ -356,46 +356,43 @@
         <item>चिकन सुखा फ्राय</item>
         <item>चिकन करी</item>
         <item>चिकन मसाला</item>
-        <item>चिकन कडाई तवा</item>
-        <item>चिकन पटियाला</item>
-        <item>चिकन अफगाणी</item>
-        <item>चिकन लसूणी पुरी</item>
-        <item>चिकन आदरफी मसाला</item>
-        <item>चिकन दो पायजा</item>
-        <item>मुर्ग मुसल्लम हंडी हाफ</item>
-        <item>मुर्ग मुसल्लम हंडी फूल</item>
-        <item>चिकन खीमा मसाला</item>
-        <item>चिकन टिक्का मसाला</item>
-        <item>चिकन मराठा</item>
-        <item>चिकन नवाब हद्दी हा्फ</item>
-        <item>चिकन नवाब हद्दी फूल</item>
-        <item>चि कन भुना  हद्दी हाफ /फूल</item>
-        <item>मटर चिकन हड्डी हाफ /फूल</item>
-        <item>चिकन रांगण जोश</item>
-        <item>चिकन हंडी हाफ /फूल</item>
-        <item>चिकन  तंदुरी  हड्डी  हाफ /फूल</item>
-        <item>चिकन मालवणी हंडी हाफ /फूल</item>
-        <item>चिकन महाराजा</item>
-        <item> किकण बनजारा मसाला</item>
-        <item>चिकन अंगारा मसाला</item>
-        <item>चिकन महाराणी</item>
-        <item>व्हेज जयपुरी</item>
-        <item>हेज कोप्ता</item>
-        <item>व्हेज नवरत्न कूर्मा</item>
-        <item>व्हेज हैद्राबादी</item>
-        <item>मशरूम मसाला</item>
-        <item>व्हेज भु ना </item>
-        <item>चिकन स्प्रिंग रोल</item>
-        <item>व्हेज स्प्रिंग रोल</item>
-        <item>चिकन मख्खनवाला हाफ</item>
-        <item>चिकन मख्खनवाला फुल</item>
+        <item>चिकन कडाई तवा-160</item>
+        <item>चिकन पटियाला-220</item>
+        <item>चिकन अफगाणी-190</item>
+        <item>चिकन लसूणी-180</item>
+        <item>चिकन आदरफी मसाला-160</item>
+        <item>चिकन दो पायजा-160</item>
+        <item>मुर्ग मुसल्लम हंडी हाफ-320</item>
+        <item>मुर्ग मुसल्लम हंडी फूल-580</item>
+        <item>चिकन खीमा मसाला-200</item>
+        <item>चिकन टिक्का मसाला-200</item>
+        <item>चिकन मराठ-200</item>
+        <item>चिकन नवाब हद्दी हा्फ250</item>
+        <item>चिकन नवाब हद्दी फूल450</item>
+        <item>चि कन भुना  हद्दी हाफ-180 /फूल</item>
+        <item>चि कन भुना  हद्दी फूल350</item>
+        <item>मटर चिकन हड्डी हाफ300</item>
+        <item>मटर चिकन हड्डी फूल520</item>
+        <item>चिकन रांगण जोश180</item>
+        <item>चिकन हंडी हाफ-210</item>
+        <item>चिकन हंडी फूल-400</item>
+        <item>चिकन  तंदुरी  हड्डी हाफ-200</item>
+        <item>चिकन  तंदुरी  हड्डी फूल-380</item>
+        <item>चिकन मालवणी हंडी हाफ-250</item>
+        <item>चिकन मालवणी हंडी फूल-450</item>
+        <item>चिकन महाराजा-220</item>
+        <item> किकण बनजारा मसाला-200</item>
+        <item>चिकन अंगारा मसाला-200</item>
+        <item>चिकन महाराणी-190</item>
+        <item>चिकन मख्खनवाला हाफ-270</item>
+        <item>चिकन मख्खनवाला फुल-470</item>
     </string-array>
 
     <string-array name="chicken_maincourse_cost">
         <item>120</item>
         <item>110</item>
-        <item>110 </item>
-        <item>160 </item>
+        <item>110</item>
+        <item>160</item>
         <item>220</item>
         <item>190</item>
         <item>180</item>
@@ -408,11 +405,15 @@
         <item>200</item>
         <item>250</item>
         <item>450</item>
-        <item>180/350</item>
-        <item>300/520</item>
         <item>180</item>
-        <item>210/400</item>
-        <item>200/380</item>
+        <item>350</item>
+        <item>300</item>
+        <item>520</item>
+        <item>180</item>
+        <item>210</item>
+        <item>400</item>
+        <item>200</item>
+        <item>380</item>
         <item>250</item>
         <item>450</item>
         <item>220</item>
@@ -449,25 +450,35 @@
     <string-array name="nonveg_matanmaincourse_title">
         <item>मटण करी /मसाला </item>
         <item>मटण रारा /मसाला </item>
-        <item>मटण हंडी हाफ/फुल</item>
-        <item>मटण मालवणी हंडी हाफ/फुल</item>
+        <item>मटण हंडी हाफ</item>
+        <item>मटण हंडी फुल</item>
+        <item>मटण मालवणी हंडी हाफ</item>
+        <item>मटण मालवणी हंडी फुल</item>
         <item>मटण सुखा </item>
-        <item>मटण मराठा हंडी हाफ/फुल</item>
+        <item>मटण मराठा हंडी हाफ</item>
+        <item>मटण मराठा हंडी फुल</item>
         <item>मटण महाराणी</item>
         <item>मटण कोल्हापुरी</item>
+        <item>मटण कोल्हापुरी</item>
+        <item>मटण हैदराबादी</item>
         <item>मटण हैदराबादी</item>
     </string-array>
 
     <string-array name="nonveg_matanmaincourse_cost">
         <item>180</item>
         <item>220</item>
-        <item>350/600</item>
-        <item>380/650</item>
+        <item>350</item>
+        <item>600</item>
+        <item>380</item>
+        <item>650</item>
         <item>190</item>
-        <item>350/600</item>
+        <item>350</item>
+        <item>600</item>
         <item>220</item>
-        <item>400/750</item>
-        <item>400/750</item>
+        <item>400</item>
+        <item>750</item>
+        <item>400</item>
+        <item>750</item>
     </string-array>
 
     <string-array name="nonveg_specialthali_title">
@@ -479,6 +490,19 @@
         <item>अंडा थाळी</item>
         <item>चिकन थाळी</item>
         <item>मटण थाळी</item>
+    </string-array>
+
+    <string-array name="chickenspringroll_title">
+        <item>चिकन स्प्रिंगरोल</item>
+    </string-array>
+    <string-array name="chickenspringroll_cost">
+        <item>140</item>
+    </string-array>
+    <string-array name="vegspringroll_title">
+        <item>व्हेज स्प्रिंगरोल</item>
+    </string-array>
+    <string-array name="vegspringroll_cost">
+        <item>120</item>
     </string-array>
 
     <string-array name="nonveg_specialthali_cost">
@@ -536,6 +560,8 @@
 
     <string-array name="rice_main_title">
         <item>प्लेन राईस</item>
+        <item>प्लेन राईस</item>
+        <item>जीरा राईस</item>
         <item>जीरा राईस</item>
         <item>डाल खिचडी</item>
         <item>पालक खिचडी</item>
@@ -547,8 +573,10 @@
     </string-array>
 
     <string-array name="rice_main_cost">
-        <item>40/70</item>
-        <item>40/70</item>
+        <item>40</item>
+        <item>70</item>
+        <item>40</item>
+        <item>70</item>
         <item>120</item>
         <item>120</item>
         <item>120</item>
