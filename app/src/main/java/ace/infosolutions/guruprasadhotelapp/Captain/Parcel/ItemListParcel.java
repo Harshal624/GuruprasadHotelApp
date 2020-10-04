@@ -194,6 +194,12 @@ public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog
                 Collections.addAll(item_cost, getResources().getStringArray(R.array.vegspringroll_cost));
                 break;
 
+            case "nonveg_chickenmaincourse":
+                food_menu_icon.setImageResource(R.drawable.nonveg);
+                Collections.addAll(item_title, getResources().getStringArray(R.array.chicken_maincourse_title));
+                Collections.addAll(item_cost, getResources().getStringArray(R.array.chicken_maincourse_cost));
+                break;
+
         }
         //setting up the recyclerview of food items
         setupRecyclerView();

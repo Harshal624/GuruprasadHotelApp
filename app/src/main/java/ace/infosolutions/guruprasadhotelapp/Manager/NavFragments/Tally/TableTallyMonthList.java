@@ -2,7 +2,6 @@ package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,13 +13,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally.Adapters.DateModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally.Adapters.MonthModel;
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally.Adapters.TableDateListAdapter;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally.Adapters.TableMonthListAdapter;
 import ace.infosolutions.guruprasadhotelapp.R;
 
-import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill.TABLETALLYDAILY;
 import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill.TABLETALLYMONTHLY;
 
 public class TableTallyMonthList extends AppCompatActivity{
@@ -46,9 +42,9 @@ public class TableTallyMonthList extends AppCompatActivity{
                 startActivity(intent);
             }
         });
+
     }
     private void setUpRecyclerView() {
-
         Query query = db.collection(TABLETALLYMONTHLY);
         FirestoreRecyclerOptions<MonthModel> date_list = new FirestoreRecyclerOptions.Builder<MonthModel>()
                 .setQuery(query,MonthModel.class)

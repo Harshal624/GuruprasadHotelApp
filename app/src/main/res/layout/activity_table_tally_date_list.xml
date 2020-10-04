@@ -28,6 +28,7 @@
             android:text="Choose date"
             android:textColor="@color/white"
             android:textSize="20sp" />
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -36,7 +37,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.85" />
+        app:layout_constraintHeight_percent="0.9" />
 
     <ImageView
         android:id="@+id/empty_cartIV"
@@ -61,13 +62,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout12" />
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchview"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerview"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.05" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
