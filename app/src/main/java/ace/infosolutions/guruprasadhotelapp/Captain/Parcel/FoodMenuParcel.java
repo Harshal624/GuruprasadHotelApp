@@ -6,12 +6,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.CaptainMainFragment;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ViewCartParcel;
@@ -24,19 +24,19 @@ public class FoodMenuParcel extends AppCompatActivity implements View.OnClickLis
     private Button rice_main, rice_biryani, rice_ricenoodles;
     private Button springroll_chicken, springroll_veg;
     private CardView roti, soup, papad, raytasalad;
-    private ImageButton view_food_cart;
+    private FloatingActionButton view_food_cart;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_menuparcel);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // Toolbar toolbar =  findViewById(R.id.toolbar);
 
 
-        view_food_cart = (ImageButton) findViewById(R.id.view_cart);
+        view_food_cart = findViewById(R.id.view_cart);
         //
-        starters_veg = (Button) findViewById(R.id.starters_veg);
+        starters_veg = findViewById(R.id.starters_veg);
         starters_veg.setOnClickListener(this);
 
         starters_colddrink = (Button) findViewById(R.id.starters_colddrink);
@@ -62,22 +62,22 @@ public class FoodMenuParcel extends AppCompatActivity implements View.OnClickLis
         nonveg_specialthali = (Button) findViewById(R.id.nonveg_specialthali);
         nonveg_specialthali.setOnClickListener(this);
         //
-        rice_main = (Button) findViewById(R.id.rice_main);
+        rice_main = findViewById(R.id.rice_main);
         rice_main.setOnClickListener(this);
-        rice_biryani = (Button) findViewById(R.id.rice_biryani);
+        rice_biryani = findViewById(R.id.rice_biryani);
         rice_biryani.setOnClickListener(this);
-        rice_ricenoodles = (Button) findViewById(R.id.rice_ricenoodles);
+        rice_ricenoodles = findViewById(R.id.rice_ricenoodles);
         rice_ricenoodles.setOnClickListener(this);
         //
-        springroll_chicken = (Button) findViewById(R.id.springroll_chicken);
+        springroll_chicken = findViewById(R.id.springroll_chicken);
         springroll_chicken.setOnClickListener(this);
-        springroll_veg = (Button) findViewById(R.id.springroll_veg);
+        springroll_veg = findViewById(R.id.springroll_veg);
         springroll_veg.setOnClickListener(this);
         //
-        roti = (CardView) findViewById(R.id.roti);
-        soup = (CardView) findViewById(R.id.soup);
-        papad = (CardView) findViewById(R.id.papad);
-        raytasalad = (CardView) findViewById(R.id.raytasalad);
+        roti = findViewById(R.id.roti);
+        soup = findViewById(R.id.soup);
+        papad = findViewById(R.id.papad);
+        raytasalad = findViewById(R.id.raytasalad);
         roti.setOnClickListener(this);
         soup.setOnClickListener(this);
         papad.setOnClickListener(this);
@@ -89,10 +89,6 @@ public class FoodMenuParcel extends AppCompatActivity implements View.OnClickLis
                 startActivity(new Intent(getApplicationContext(), ViewCartParcel.class));
             }
         });
-
-        //setting up the toolbar
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.food_menu);
 
     }
 

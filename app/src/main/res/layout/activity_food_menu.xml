@@ -4,50 +4,48 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".Captain.FoodMenu">
 
+
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/app_bar_height"
-        android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@+id/toolbar">
+            android:layout_height="wrap_content"
+            app:contentScrim="@color/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_250sdp"
+                android:background="@drawable/foodmenuback"
+                android:scaleType="fitXY" />
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
-
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_food_menu" />
-
-    <ImageButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/view_cart"
-        android:layout_width="@dimen/_55sdp"
-        android:layout_height="@dimen/_55sdp"
         android:src="@drawable/ic_shopping_cart"
-        android:background="@drawable/circular_imgbutton_confirm"
-        android:layout_marginBottom="@dimen/_30sdp"
-        android:layout_marginEnd="@dimen/_10sdp"
         android:layout_gravity="bottom|right"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
         />
+
+    <include layout="@layout/content_food_menu" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

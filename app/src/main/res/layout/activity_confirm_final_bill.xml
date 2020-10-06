@@ -243,7 +243,7 @@
             android:layout_marginBottom="@dimen/_2sdp"
             android:layout_marginStart="@dimen/_2sdp"
             android:layout_marginEnd="@dimen/_2sdp"
-            android:background="@color/tomatored"
+            android:background="@drawable/circular_imgbutton_cancel"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="20sp"

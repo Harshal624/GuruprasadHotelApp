@@ -653,6 +653,14 @@
     <string name="CAPTAIN_UID">YdecB8sBOGMP65JcIgQeHFVRQQe2</string>
     <string name="title_activity_view_cart_parcel">ViewCartParcel</string>
     <string name="print_confirm_kot"><![CDATA[Print & Confirm KOT]]></string>
+    <string name="starters">Starters - (स्टारटर्स)</string>
+    <string name="veg">Veg - (व्हेज)</string>
+    <string name="non_veg">Non Veg - (नॉन-व्हेज)</string>
+    <string name="rice">Rice - (राईस)</string>
+    <string name="spring_rolls">Spring-rolls - (स्प्रिंग रोल्स)</string>
+    <string name="roti">Roti - (रोटी)</string>
+    <string name="papad">Papad - (पापड)</string>
+    <string name="soup">Soup - (सूप)</string>
 
 
 </resources>

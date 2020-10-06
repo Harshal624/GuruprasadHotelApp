@@ -9,10 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,7 +29,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
@@ -64,7 +59,7 @@ public class ParcelFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.parcel_fragment,container,false);
         db = FirebaseFirestore.getInstance();
-        addParcel = (FloatingActionButton)view.findViewById(R.id.parcelAdd);
+        addParcel = view.findViewById(R.id.parcelAdd);
         recyclerView = view.findViewById(R.id.recyclerViewParcel);
         preferences = getContext().getSharedPreferences(SP_KEY, Context.MODE_PRIVATE);
         layoutManager = new LinearLayoutManager(getContext());

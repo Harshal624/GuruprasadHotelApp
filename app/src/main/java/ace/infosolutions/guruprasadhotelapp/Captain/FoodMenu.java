@@ -6,13 +6,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishList;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCart;
@@ -25,17 +24,16 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
     private Button rice_main, rice_biryani, rice_ricenoodles;
     private Button springroll_chicken, springroll_veg;
     private CardView roti, soup, papad, raytasalad;
-    private ImageButton view_food_cart;
+    private FloatingActionButton view_food_cart;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_menu);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
 
-        view_food_cart = (ImageButton) findViewById(R.id.view_cart);
+        view_food_cart = findViewById(R.id.view_cart);
         //
         starters_veg = (Button) findViewById(R.id.starters_veg);
         starters_veg.setOnClickListener(this);
@@ -75,10 +73,10 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
         springroll_veg = (Button) findViewById(R.id.springroll_veg);
         springroll_veg.setOnClickListener(this);
         //
-        roti = (CardView) findViewById(R.id.roti);
-        soup = (CardView) findViewById(R.id.soup);
-        papad = (CardView) findViewById(R.id.papad);
-        raytasalad = (CardView) findViewById(R.id.raytasalad);
+        roti = findViewById(R.id.roti);
+        soup = findViewById(R.id.soup);
+        papad = findViewById(R.id.papad);
+        raytasalad = findViewById(R.id.raytasalad);
         roti.setOnClickListener(this);
         soup.setOnClickListener(this);
         papad.setOnClickListener(this);
@@ -90,10 +88,6 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
                 startActivity(new Intent(getApplicationContext(), ViewCart.class));
             }
         });
-
-        //setting up the toolbar
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.food_menu);
 
     }
 

@@ -29,6 +29,7 @@ import java.util.Map;
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.ItemListAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCart;
+import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemAlertDialogListener {
@@ -241,22 +242,29 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
     @Override
     public void applyText(final String item_title, final double item_cost, final int item_qty) {
-        progressBar.setVisibility(View.VISIBLE);
-        check_cart.setEnabled(false);
-        FoodItemModel model = new FoodItemModel(item_title, item_cost, item_qty);
-        db.collection(CUSTOMERS).document(DOC_ID).collection(CURRENT_KOT).document().set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful())
-                    updateCurrentCost(item_cost);
-                else {
-                    progressBar.setVisibility(View.GONE);
-                    check_cart.setEnabled(true);
-                    Toast.makeText(ItemList.this, "Cannot add item", Toast.LENGTH_SHORT).show();
-                }
+        InternetConn conn = new InternetConn(ItemList.this);
+        if (conn.haveNetworkConnection()) {
+            progressBar.setVisibility(View.VISIBLE);
+            check_cart.setEnabled(false);
+            FoodItemModel model = new FoodItemModel(item_title, item_cost, item_qty);
+            db.collection(CUSTOMERS).document(DOC_ID).collection(CURRENT_KOT).document().set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful())
+                        updateCurrentCost(item_cost);
+                    else {
+                        progressBar.setVisibility(View.GONE);
+                        check_cart.setEnabled(true);
+                        Toast.makeText(ItemList.this, "Cannot add item", Toast.LENGTH_SHORT).show();
+                    }
 
-            }
-        });
+                }
+            });
+        } else {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+
+        }
+
 
     }
 

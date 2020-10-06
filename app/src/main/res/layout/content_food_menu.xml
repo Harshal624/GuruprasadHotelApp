@@ -9,6 +9,7 @@
     android:background="#000"
     tools:showIn="@layout/activity_food_menu">
 
+
    <LinearLayout
        android:layout_width="match_parent"
        android:layout_height="match_parent"
@@ -45,9 +46,9 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:text="Starters - (स्टारटर्स)"
+                       android:text="@string/starters"
                        android:textStyle="bold"
-                       android:textColor="#FF6347"
+                       android:textColor="@color/tomatored"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
                        android:textSize="28sp" />
@@ -137,9 +138,9 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:text="Veg - (व्हेज)"
+                       android:text="@string/veg"
                        android:textStyle="bold"
-                       android:textColor="#FF6347"
+                       android:textColor="@color/tomatored"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
                        android:textSize="28sp" />
@@ -229,9 +230,9 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:text="Non Veg - (नॉन-व्हेज)"
+                       android:text="@string/non_veg"
                        android:textStyle="bold"
-                       android:textColor="#FF6347"
+                       android:textColor="@color/tomatored"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
                        android:textSize="28sp" />
@@ -340,9 +341,9 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:text="Rice - (राईस)"
+                       android:text="@string/rice"
                        android:textStyle="bold"
-                       android:textColor="#FF6347"
+                       android:textColor="@color/tomatored"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
                        android:textSize="28sp" />
@@ -433,9 +434,9 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:text="Spring-rolls - (स्प्रिंग रोल्स)"
+                       android:text="@string/spring_rolls"
                        android:textStyle="bold"
-                       android:textColor="#FF6347"
+                       android:textColor="@color/tomatored"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
                        android:textSize="28sp" />
@@ -515,9 +516,9 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="@dimen/_60sdp"
-                       android:text="Roti - (रोटी)"
+                       android:text="@string/roti"
                        android:textStyle="bold"
-                       android:textColor="#FF6347"
+                       android:textColor="@color/tomatored"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
                        android:textSize="28sp" />
@@ -559,9 +560,9 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="@dimen/_60sdp"
-                       android:text="Soup - (सूप)"
+                       android:text="@string/soup"
                        android:textStyle="bold"
-                       android:textColor="#FF6347"
+                       android:textColor="@color/tomatored"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
                        android:textSize="28sp" />
@@ -600,9 +601,9 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="@dimen/_60sdp"
-                       android:text="Papad - (पापड)"
+                       android:text="@string/papad"
                        android:textStyle="bold"
-                       android:textColor="#FF6347"
+                       android:textColor="@color/tomatored"
                        android:layout_marginStart="@dimen/_5sdp"
                        android:layout_marginTop="@dimen/_5sdp"
                        android:textSize="28sp" />

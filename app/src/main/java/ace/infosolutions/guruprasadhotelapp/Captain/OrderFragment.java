@@ -45,7 +45,7 @@ public class OrderFragment extends Fragment {
     private static final String CURRENT_KOT = "CURRENT_KOT";
     private FloatingActionButton add_customer;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference collectionReference = db.collection("CUSTOMERS");
+    private CollectionReference collectionReference = db.collection(CUSTOMER_COLLECTION);
     private CustomerFirestoreAdapter adapter;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
@@ -101,17 +101,24 @@ public class OrderFragment extends Fragment {
         adapter.setOnItemLongClickListener(new CustomerFirestoreAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(final DocumentSnapshot documentSnapshot, final int pos) {
+                final InternetConn conn = new InternetConn(getContext());
                 builder.setTitle("Delete order!")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass.class);
-                                final String doc_id = documentSnapshot.getId();
-                                final String table_no = String.valueOf(customerclass.getTable_no());
-                                String table_type = customerclass.getTable_type();
-                                progressBar.setVisibility(View.VISIBLE);
-                                add_customer.setEnabled(false);
-                                checkCosts(doc_id, table_no, pos, table_type);
+                                if (conn.haveNetworkConnection()) {
+                                    customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass.class);
+                                    final String doc_id = documentSnapshot.getId();
+                                    final String table_no = String.valueOf(customerclass.getTable_no());
+                                    String table_type = customerclass.getTable_type();
+                                    progressBar.setVisibility(View.VISIBLE);
+                                    add_customer.setEnabled(false);
+                                    checkCosts(doc_id, table_no, pos, table_type);
+
+                                } else {
+                                    Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+                                }
+
                             }
 
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -123,6 +130,8 @@ public class OrderFragment extends Fragment {
                         .setIcon(R.drawable.ic_delete);
                 alertDialog = builder.create();
                 alertDialog.show();
+
+
             }
         });
     }
@@ -132,10 +141,8 @@ public class OrderFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    double confirmed_cost = 0;
-                    double current_cost = 0;
-                    confirmed_cost = task.getResult().getDouble("confirmed_cost");
-                    current_cost = task.getResult().getDouble("current_cost");
+                    double confirmed_cost = task.getResult().getDouble("confirmed_cost");
+                    double current_cost = task.getResult().getDouble("current_cost");
                     if (confirmed_cost == 0 && current_cost != 0) {
                         deleteCurrent_kot(doc_id, table_no, pos, table_type);
                         deleteParentDoc(doc_id, table_no, pos, table_type);
