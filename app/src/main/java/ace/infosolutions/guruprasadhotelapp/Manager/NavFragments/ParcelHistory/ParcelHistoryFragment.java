@@ -19,7 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelHistoryModel;
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.History.HistoryFirestoreAdapter;
+import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ConfirmedCartParcelFragment.PARCEL_HISTORY;
@@ -37,6 +37,7 @@ public class ParcelHistoryFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(getContext());
         phistoryRef = db.collection(PARCEL_HISTORY);
+        ((Manager) getActivity()).toolbar.setTitle("Parcel History");
 
         return view;
     }

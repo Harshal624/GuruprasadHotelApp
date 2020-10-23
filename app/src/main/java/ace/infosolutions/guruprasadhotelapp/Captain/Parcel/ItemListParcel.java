@@ -12,16 +12,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -252,43 +254,29 @@ public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog
         if (conn.haveNetworkConnection()) {
             progressBar.setVisibility(View.VISIBLE);
             check_cart.setEnabled(false);
-            FoodItemModel model = new FoodItemModel(item_title, item_cost, item_qty);
-            currentRef.add(model).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentReference> task) {
-                    if (task.isSuccessful()) {
-                        parcelRef.document(PARCEL_ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    double stored_current_cost = task.getResult().getDouble("current_cost");
-                                    double final_cost = stored_current_cost + item_cost;
-                                    parcelRef.document(PARCEL_ID).update("current_cost", final_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                progressBar.setVisibility(View.GONE);
-                                                check_cart.setEnabled(true);
-                                                Toast.makeText(ItemListParcel.this, "Added", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                progressBar.setVisibility(View.GONE);
-                                                check_cart.setEnabled(true);
-                                                Toast.makeText(ItemListParcel.this, "Failed", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    });
-                                } else {
-                                    progressBar.setVisibility(View.GONE);
-                                    check_cart.setEnabled(true);
-                                    Toast.makeText(ItemListParcel.this, "Failed!", Toast.LENGTH_SHORT).show();
+            final FoodItemModel model = new FoodItemModel(item_title, item_cost, item_qty);
+            final DocumentReference currRef = currentRef.document();
+            final DocumentReference parcRef = parcelRef.document(PARCEL_ID);
 
-                                }
-                            }
-                        });
-                    }
+            db.runTransaction(new Transaction.Function<Void>() {
+                @Nullable
+                @Override
+                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                    DocumentSnapshot snapshot = transaction.get(parcRef);
+                    double stored_current_cost = snapshot.getDouble("current_cost");
+                    double final_cost = stored_current_cost + item_cost;
+                    transaction.set(currRef, model);
+                    transaction.update(parcRef, "current_cost", final_cost);
+                    return null;
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    progressBar.setVisibility(View.GONE);
+                    check_cart.setEnabled(true);
+                    Toast.makeText(ItemListParcel.this, "Added", Toast.LENGTH_SHORT).show();
                 }
             });
-
         } else {
             Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
         }

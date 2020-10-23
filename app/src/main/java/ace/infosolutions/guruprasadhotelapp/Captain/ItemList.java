@@ -12,19 +12,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.ItemListAdapter;
@@ -58,15 +59,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
         db = FirebaseFirestore.getInstance();
-        food_menu_icon = findViewById(R.id.food_menu_icon);
-        progressBar = findViewById(R.id.progressbar_itemlist);
-        food_menu_t = findViewById(R.id.food_menu_title);
-        food_menu_title = getIntent().getStringExtra("Title");
-        food_menu_t.setText(food_menu_title);
-        recyclerView = findViewById(R.id.item_list_recycler);
-        item_title = new ArrayList<>();
-        item_cost = new ArrayList<>();
-        check_cart = findViewById(R.id.check_cart);
+        castViews();
 
         //Getting document id from sharedpref
         sharedPreferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
@@ -107,6 +100,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
                 Collections.addAll(item_title, getResources().getStringArray(R.array.starters_colddrink_title));
                 Collections.addAll(item_cost, getResources().getStringArray(R.array.starters_colddrink_cost));
                 break;
+
             case "soup":
                 food_menu_icon.setImageResource(R.drawable.soup);
                 Collections.addAll(item_title, getResources().getStringArray(R.array.veg_nonveg_soup_title));
@@ -207,6 +201,18 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
     }
 
+    private void castViews() {
+        food_menu_icon = findViewById(R.id.food_menu_icon);
+        progressBar = findViewById(R.id.progressbar_itemlist);
+        food_menu_t = findViewById(R.id.food_menu_title);
+        food_menu_title = getIntent().getStringExtra("Title");
+        food_menu_t.setText(food_menu_title);
+        recyclerView = findViewById(R.id.item_list_recycler);
+        item_title = new ArrayList<>();
+        item_cost = new ArrayList<>();
+        check_cart = findViewById(R.id.check_cart);
+    }
+
 
     private void hideViewCartButton() {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -246,77 +252,38 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         if (conn.haveNetworkConnection()) {
             progressBar.setVisibility(View.VISIBLE);
             check_cart.setEnabled(false);
-            FoodItemModel model = new FoodItemModel(item_title, item_cost, item_qty);
-            db.collection(CUSTOMERS).document(DOC_ID).collection(CURRENT_KOT).document().set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful())
-                        updateCurrentCost(item_cost);
-                    else {
-                        progressBar.setVisibility(View.GONE);
-                        check_cart.setEnabled(true);
-                        Toast.makeText(ItemList.this, "Cannot add item", Toast.LENGTH_SHORT).show();
-                    }
-
-                }
-            });
+            final FoodItemModel model = new FoodItemModel(item_title, item_cost, item_qty);
+            addItemToDB(model, item_cost);
         } else {
             Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
-
         }
-
-
     }
 
-    private void updateCurrentCost(final double item_cost) {
-        db.collection(CUSTOMERS).document(DOC_ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+    private void addItemToDB(final FoodItemModel model, final double item_cost) {
+        final DocumentReference costRef = db.collection(CUSTOMERS).document(DOC_ID);
+        final DocumentReference addItemRef = db.collection(CUSTOMERS).document(DOC_ID).collection(CURRENT_KOT).document();
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    double cost = task.getResult().getDouble("current_cost");
-                    if (cost == 0) {
-                        Map<String, Object> update_currentCost = new HashMap<>();
-                        update_currentCost.put("current_cost", item_cost);
-                        db.collection(CUSTOMERS).document(DOC_ID).update(update_currentCost).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    progressBar.setVisibility(View.GONE);
-                                    check_cart.setEnabled(true);
-                                    Toast.makeText(ItemList.this, "Item Added!", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    progressBar.setVisibility(View.GONE);
-                                    check_cart.setEnabled(true);
-                                    Toast.makeText(ItemList.this, "Cannot add item", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    } else {
-                        double final_cost = item_cost + cost;
-                        Map<String, Object> updated_cost = new HashMap<>();
-                        updated_cost.put("current_cost", final_cost);
-                        db.collection(CUSTOMERS).document(DOC_ID).update(updated_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    progressBar.setVisibility(View.GONE);
-                                    check_cart.setEnabled(true);
-                                    Toast.makeText(ItemList.this, "Item Added!", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    progressBar.setVisibility(View.GONE);
-                                    check_cart.setEnabled(true);
-                                    Toast.makeText(ItemList.this, "Failed to add item!", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    }
-                } else {
-                    Toast.makeText(ItemList.this, "Failed to add item", Toast.LENGTH_SHORT).show();
-                }
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(costRef);
+                double cost = snapshot.getDouble("current_cost");
+                double total_cost = cost + item_cost;
+                transaction.update(costRef, "current_cost", total_cost);
+                transaction.set(addItemRef, model);
+                return null;
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                progressBar.setVisibility(View.GONE);
+                check_cart.setEnabled(true);
+                Toast.makeText(ItemList.this, "Added", Toast.LENGTH_SHORT).show();
+
             }
         });
-
     }
+
 }
 
 

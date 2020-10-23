@@ -661,6 +661,8 @@
     <string name="roti">Roti - (रोटी)</string>
     <string name="papad">Papad - (पापड)</string>
     <string name="soup">Soup - (सूप)</string>
+    <string name="customer_name">ग्राहकाचे नाव</string>
+    <string name="customer_phone_no">फोन</string>
 
 
 </resources>

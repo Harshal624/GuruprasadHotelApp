@@ -128,12 +128,12 @@
             android:text="Cost"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:layout_marginEnd="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.20" />
+            app:layout_constraintWidth_percent="0.15" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <View
         android:layout_width="match_parent"
@@ -224,30 +224,30 @@
         android:layout_weight="1"
         android:drawablePadding="@dimen/_10sdp"
         android:drawableStart="@drawable/ic_print_white"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:layout_marginStart="@dimen/_2sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
         android:layout_marginEnd="@dimen/_2sdp"
-        android:background="@color/tomatored"
+        android:background="#FF4500"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:textSize="20sp"
         />
+
         <Button
             android:id="@+id/payment"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Payment"
-            android:layout_weight="0.8"
-            android:drawablePadding="@dimen/_10sdp"
-            android:drawableStart="@drawable/ic_payment"
-            android:layout_marginBottom="@dimen/_2sdp"
+            android:layout_height="match_parent"
             android:layout_marginStart="@dimen/_2sdp"
             android:layout_marginEnd="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_2sdp"
+            android:layout_weight="0.8"
             android:background="@drawable/circular_imgbutton_cancel"
+            android:drawableStart="@drawable/ic_payment"
+            android:drawablePadding="@dimen/_10sdp"
+            android:text="Payment"
             android:textColor="@color/white"
-            android:textStyle="bold"
             android:textSize="20sp"
-            />
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>
 

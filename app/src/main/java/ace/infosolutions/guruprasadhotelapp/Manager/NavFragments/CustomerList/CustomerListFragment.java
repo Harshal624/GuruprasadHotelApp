@@ -21,31 +21,36 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.CustomerFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.CustomerInfo;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass;
+import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 
+import static ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer.TABLES;
+
 public class CustomerListFragment extends Fragment {
     private static final String CUSTOMERS = "CUSTOMERS";
-    private static final String TABLES = "Tables";
-    private static final String CURRENT_KOT ="CURRENT_KOT" ;
-    private static final String CONFIRMED_KOT ="CONFIRMED_KOT" ;
+    private static final String CURRENT_KOT = "CURRENT_KOT";
+    private static final String CONFIRMED_KOT = "CONFIRMED_KOT";
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private CustomerFirestoreAdapter adapter;
-    private FirebaseFirestore db= FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection(CUSTOMERS);
-    private AlertDialog alertDialog,pinAlert;
+    private AlertDialog alertDialog, pinAlert;
     private View pinView;
     private AlertDialog.Builder builder;
 
@@ -55,12 +60,12 @@ public class CustomerListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.managercustomerlist,container,false);
-        ((Manager) getActivity() ).toolbar.setTitle("List of current customers");
+        View view = inflater.inflate(R.layout.managercustomerlist, container, false);
+        ((Manager) getActivity()).toolbar.setTitle("Customers");
         recyclerView = view.findViewById(R.id.customerlist_recycler);
         layoutManager = new LinearLayoutManager(getContext());
         builder = new AlertDialog.Builder(getContext());
-        pinView = inflater.inflate(R.layout.pin_alertdialog,null);
+        pinView = inflater.inflate(R.layout.pin_alertdialog, null);
         pinAlert = builder.create();
         confirmpin = pinView.findViewById(R.id.confirmpin);
         cancelpin = pinView.findViewById(R.id.cancelpin);
@@ -79,7 +84,7 @@ public class CustomerListFragment extends Fragment {
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
                 setUpPinAlert(documentSnapshot);
                 pinAlert.setView(pinView);
-               pinAlert.setCancelable(true);
+                pinAlert.setCancelable(true);
                 pinAlert.show();
 
             }
@@ -90,7 +95,7 @@ public class CustomerListFragment extends Fragment {
             public void onItemLongClick(DocumentSnapshot documentSnapshot, int pos) {
                 CustomerInfo customerInfo = documentSnapshot.toObject(CustomerInfo.class);
                 //Update Tables field
-                setupAlertdialog(documentSnapshot,customerInfo);
+                setupAlertdialog(documentSnapshot, customerInfo);
             }
         });
 
@@ -156,115 +161,143 @@ public class CustomerListFragment extends Fragment {
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteCustomer(snapshot,customerInfo);
+                        deleteCustomer(snapshot, customerInfo);
                     }
-                }).setNegativeButton("Cancel",null);
+                }).setNegativeButton("Cancel", null);
         alertDialog = builder.create();
         alertDialog.show();
 
     }
 
     private void deleteCustomer(final DocumentSnapshot snapshot, final CustomerInfo customerInfo) {
-        String doc_id = snapshot.getId();
+        final String doc_id = snapshot.getId();
+        final DocumentReference TableRef = db.collection(TABLES).document(customerInfo.getTable_type());
+        final String table_no = String.valueOf(customerInfo.getTable_no());
+        final DocumentReference parentRef = collectionReference.document(doc_id);
         collectionReference.document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    double current_cost = task.getResult().getDouble("current_cost");
-                    double confirmed_cost = task.getResult().getDouble("confirmed_cost");
-                    if(current_cost == 0.0 && confirmed_cost != 0.0){
-                        //delete confirmed_kot collection with parentdocument
-                        deleteConfirmedKOT(snapshot);
-                        deleteParentDoc(snapshot,customerInfo);
-
-                    }
-                    else if(current_cost != 0.0 && confirmed_cost != 0.0){
-                        //delete confirmed and current kot with parentdoc
-                        deleteConfirmedKOT(snapshot);
-                        deleteCurrentKOT(snapshot);
-                        deleteParentDoc(snapshot,customerInfo);
-                    }
-                    else if(current_cost != 0.0 && confirmed_cost == 0.0){
-                        //delete current_kot coll with parent
-                        deleteCurrentKOT(snapshot);
-                        deleteParentDoc(snapshot,customerInfo);
-                    }
-                    else{
-                        deleteParentDoc(snapshot,customerInfo);
+                if (task.isSuccessful()) {
+                    InternetConn conn = new InternetConn(getContext());
+                    if (conn.haveNetworkConnection()) {
+                        double current_cost = task.getResult().getDouble("current_cost");
+                        double confirmed_cost = task.getResult().getDouble("confirmed_cost");
+                        if (current_cost == 0.0 && confirmed_cost != 0.0) {
+                            //delete confirmed_kot collection with parentdocument
+                            deleteConfirmedKot();
+                        } else if (current_cost != 0.0 && confirmed_cost != 0.0) {
+                            //delete confirmed and current kot with parentdoc
+                            deleteBothKot();
+                        } else if (current_cost != 0.0 && confirmed_cost == 0.0) {
+                            //delete current_kot coll with parent
+                            deleteCurrentKot();
+                        } else {
+                            //delete parent doc only
+                            deleteParentKot();
+                        }
                     }
 
-                }
-                else{
-
+                } else {
+                    Toast.makeText(getContext(), "Failed to delete the order, Please try again", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
-    }
 
-    private void deleteCurrentKOT(DocumentSnapshot snapshot) {
-        final String doc_id = snapshot.getId();
-        collectionReference.document(doc_id).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot snapshot1: task.getResult()){
-                        collectionReference.document(doc_id).collection(CURRENT_KOT).
-                                document(snapshot1.getId()).delete();
+            private void deleteParentKot() {
+                final WriteBatch batch = db.batch();
+                batch.delete(parentRef);
+                batch.update(TableRef, table_no, true);
+                batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else{
-
-                }
+                });
             }
-        });
-    }
 
-    private void deleteConfirmedKOT(DocumentSnapshot snapshot) {
-        final String doc_id = snapshot.getId();
-        collectionReference.document(doc_id).collection(CONFIRMED_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot snapshot1: task.getResult()){
-                        collectionReference.document(doc_id).collection(CONFIRMED_KOT).
-                                document(snapshot1.getId()).delete();
+            private void deleteCurrentKot() {
+                final WriteBatch batch = db.batch();
+                parentRef.collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot snapshot1 : task.getResult()) {
+                                //delete confirmed_kot collection documents
+                                batch.delete(parentRef.collection(CURRENT_KOT).document(snapshot1.getId()));
+                            }
+                            //delete parent document
+                            batch.delete(parentRef);
+                            batch.update(TableRef, table_no, true);
+                            batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                     }
-                }
-                else{
-
-                }
+                });
             }
-        });
-    }
 
-    private void deleteParentDoc(DocumentSnapshot snapshot, final CustomerInfo customerInfo) {
-        //update table status too
-        String doc_id = snapshot.getId();
-        collectionReference.document(doc_id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    updateTableStatus(customerInfo);
-                }
-                else{
+            private void deleteBothKot() {
+                final WriteBatch batch = db.batch();
+                parentRef.collection(CONFIRMED_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot snapshot1 : task.getResult()) {
+                                //delete confirmed_kot collection documents
+                                batch.delete(parentRef.collection(CONFIRMED_KOT).document(snapshot1.getId()));
+                            }
+                            //delete current kot collection documents
+                            parentRef.collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot snapshot1 : task.getResult()) {
+                                            //delete confirmed_kot collection documents
+                                            batch.delete(parentRef.collection(CURRENT_KOT).document(snapshot1.getId()));
+                                        }
+                                        //delete parent document
+                                        batch.delete(parentRef);
+                                        batch.update(TableRef, table_no, true);
+                                        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
 
-                }
+
             }
-        });
-    }
 
-    private void updateTableStatus(CustomerInfo customerInfo) {
-        String table_type = customerInfo.getTable_type();
-        String table_no = String.valueOf(customerInfo.getTable_no());
-        db.collection("Tables").document(table_type).update(table_no,true).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
-                }
-                else{
-
-                }
+            private void deleteConfirmedKot() {
+                final WriteBatch batch = db.batch();
+                parentRef.collection(CONFIRMED_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot snapshot1 : task.getResult()) {
+                                //delete confirmed_kot collection documents
+                                batch.delete(parentRef.collection(CONFIRMED_KOT).document(snapshot1.getId()));
+                            }
+                            //delete parent document
+                            batch.delete(parentRef);
+                            batch.update(TableRef, table_no, true);
+                            batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                });
             }
         });
     }
@@ -273,9 +306,9 @@ public class CustomerListFragment extends Fragment {
     private void setupRecyclerview() {
         Query query = collectionReference;
         FirestoreRecyclerOptions<customerclass> cust = new FirestoreRecyclerOptions.Builder<customerclass>()
-                .setQuery(query,customerclass.class)
+                .setQuery(query, customerclass.class)
                 .build();
-        adapter = new CustomerFirestoreAdapter(cust,getView());
+        adapter = new CustomerFirestoreAdapter(cust, getView());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
@@ -286,6 +319,7 @@ public class CustomerListFragment extends Fragment {
         super.onStart();
         adapter.startListening();
     }
+
     @Override
     public void onStop() {
         super.onStop();

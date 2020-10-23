@@ -16,11 +16,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,8 +36,8 @@ import ace.infosolutions.guruprasadhotelapp.R;
 public class AddCustomer extends AppCompatActivity {
     public static final String PREF_DOCID = "PREF_DOCID";
     public static final String DOC_ID_KEY = "DOC_ID_KEY";
-    private static final String TABLES = "Tables";
-    private static final String CUSTOMERS = "CUSTOMERS";
+    public static final String TABLES = "Tables";
+    public static final String CUSTOMERS = "CUSTOMERS";
     private Button confirm_button, cancel_button;
     private NumberPicker table_noNP, noofcustNP;
     private RadioGroup table_typeRG;
@@ -56,12 +58,12 @@ public class AddCustomer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_customer);
         db = FirebaseFirestore.getInstance();
-        confirm_button = (Button) findViewById(R.id.confirmcust);
-        cancel_button = (Button) findViewById(R.id.cancelcust);
-        table_noNP = (NumberPicker) findViewById(R.id.tablenonumpicker);
-        noofcustNP = (NumberPicker) findViewById(R.id.noofcustnumpicker);
-        table_typeRG = (RadioGroup) findViewById(R.id.radiogroup);
-        isavailable = (ImageButton) findViewById(R.id.tableavailimgbtn);
+        confirm_button = findViewById(R.id.confirmcust);
+        cancel_button = findViewById(R.id.cancelcust);
+        table_noNP = findViewById(R.id.tablenonumpicker);
+        noofcustNP = findViewById(R.id.noofcustnumpicker);
+        table_typeRG = findViewById(R.id.radiogroup);
+        isavailable = findViewById(R.id.tableavailimgbtn);
         conn = new InternetConn(this);
         cost = new HashMap<>();
         cost.put("cost", 0);
@@ -77,20 +79,56 @@ public class AddCustomer extends AppCompatActivity {
 
         checkIfTableisAvail(table_typeString, table_noInt);
 
+        RadioButton vip_dining = findViewById(R.id.vipdiningradio);
+        vip_dining.setTextColor(getResources().getColor(R.color.colorAccent));
+
         table_typeRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 radioButton = (RadioButton) findViewById(i);
                 table_typeString = radioButton.getText().toString();
-                if (table_typeString.equals("Family"))
+                updateRadioButtonColor(table_typeString);
+                if (table_typeString.equals("Family")) {
                     table_noNP.setMaxValue(12);
-                else if (table_typeString.equals("AC Family"))
+                } else if (table_typeString.equals("AC Family")) {
                     table_noNP.setMaxValue(5);
-                else if (table_typeString.equals("Bar Dining"))
+                } else if (table_typeString.equals("Bar Dining"))
                     table_noNP.setMaxValue(12);
                 else if (table_typeString.equals("VIP Dining"))
                     table_noNP.setMaxValue(5);
                 checkIfTableisAvail(table_typeString, table_noInt);
+            }
+
+            private void updateRadioButtonColor(String table_typeString) {
+                RadioButton vip = findViewById(R.id.vipdiningradio);
+                RadioButton family = findViewById(R.id.familyradio);
+                RadioButton ac_family = findViewById(R.id.acfamilyradio);
+                RadioButton bar = findViewById(R.id.bardiningradio);
+
+                if (table_typeString.equals("Family")) {
+                    family.setTextColor(getResources().getColor(R.color.colorAccent));
+                    vip.setTextColor(getResources().getColor(R.color.black));
+                    ac_family.setTextColor(getResources().getColor(R.color.black));
+                    bar.setTextColor(getResources().getColor(R.color.black));
+                } else if (table_typeString.equals("AC Family")) {
+                    family.setTextColor(getResources().getColor(R.color.black));
+                    vip.setTextColor(getResources().getColor(R.color.black));
+                    ac_family.setTextColor(getResources().getColor(R.color.colorAccent));
+                    bar.setTextColor(getResources().getColor(R.color.black));
+                } else if (table_typeString.equals("Bar Dining")) {
+                    family.setTextColor(getResources().getColor(R.color.black));
+                    vip.setTextColor(getResources().getColor(R.color.black));
+                    ac_family.setTextColor(getResources().getColor(R.color.black));
+                    bar.setTextColor(getResources().getColor(R.color.colorAccent));
+
+                } else if (table_typeString.equals("VIP Dining")) {
+
+                    family.setTextColor(getResources().getColor(R.color.black));
+                    vip.setTextColor(getResources().getColor(R.color.colorAccent));
+                    ac_family.setTextColor(getResources().getColor(R.color.black));
+                    bar.setTextColor(getResources().getColor(R.color.black));
+
+                }
             }
         });
 
@@ -159,34 +197,23 @@ public class AddCustomer extends AppCompatActivity {
         String final_date = datetoday.replaceAll("/", "-");
         int no_cust = noofcustNP.getValue();
         CustomerInfo customerInfo = new CustomerInfo(table_noInt, no_cust, final_date, table_typeString, final_cost, current_cost);
-        customerRef.add(customerInfo).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentReference> task) {
-                if (task.isSuccessful()) {
-                    doc_id = task.getResult().getId();
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(DOC_ID_KEY, doc_id);
-                    editor.commit();
-                    updateTableStatus(doc_id);
-                }
-            }
-        });
 
-    }
-
-    private void updateTableStatus(final String id) {
-        tableRef.document(table_typeString).update(String.valueOf(table_noInt), false).addOnCompleteListener(new OnCompleteListener<Void>() {
+        final DocumentReference reference = db.collection(CUSTOMERS).document();
+        WriteBatch batch = db.batch();
+        batch.set(reference, customerInfo);
+        DocumentReference tableRef = db.collection("Tables").document(table_typeString);
+        batch.update(tableRef, String.valueOf(table_noInt), false);
+        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(AddCustomer.this, "Added", Toast.LENGTH_SHORT).show();
-                    finishAffinity();
-                    startActivity(new Intent(getApplicationContext(), FoodMenu.class));
-                    overridePendingTransition(0, 0);
-                }
+            public void onSuccess(Void aVoid) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(DOC_ID_KEY, reference.getId());
+                editor.commit();
+                Toast.makeText(AddCustomer.this, "Added", Toast.LENGTH_SHORT).show();
+                finishAffinity();
+                startActivity(new Intent(getApplicationContext(), FoodMenu.class));
+                overridePendingTransition(0, 0);
             }
         });
     }
-
-
 }

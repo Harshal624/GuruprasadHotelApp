@@ -19,15 +19,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import ace.infosolutions.guruprasadhotelapp.R;
 
@@ -67,6 +70,7 @@ public class ParcelFragment extends Fragment {
         alertDialog = builder.create();
         if(auth.getUid().equals(getContext().getResources().getString(R.string.MANAGER_UID))){
             ismanager = true;
+
         }
         else{
             ismanager = false;
@@ -122,13 +126,13 @@ public class ParcelFragment extends Fragment {
                         confRef = db.collection(PARCELS).document(doc_id).collection(CONFIRMED_KOT);
                         currRef = db.collection(PARCELS).document(doc_id).collection(CURRENT_KOT);
                         parcelRef = db.collection(PARCELS);
-                        checkCosts(doc_id,pos);
+                        checkCostandDelete(doc_id, pos);
                     }
                 });
                 alertDialog.show();
             }
 
-            private void checkCosts(final String doc_id, final int pos) {
+            private void checkCostandDelete(final String doc_id, final int pos) {
                 parcelRef.document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -140,59 +144,112 @@ public class ParcelFragment extends Fragment {
                             }
                             else if(confirmed_cost !=0 && current_cost == 0){
                                 deleteConfCost();
-                                deleteParentDoc();
                             }
                             else if(confirmed_cost ==0 && current_cost != 0){
                                 deleteCurrCost();
-                                deleteParentDoc();
                             }
                             else{
-                                deleteCurrCost();
-                                deleteConfCost();
-                                deleteParentDoc();
+                                deleteBoth();
                             }
                         }
                         else{
                             //failed
+                            Toast.makeText(getContext(), "Failed to delete order, Please try again", Toast.LENGTH_SHORT).show();
                         }
                     }
 
+                    private void deleteBoth() {
+                        final WriteBatch batch = db.batch();
+                        final DocumentReference parRef = parcelRef.document(doc_id);
+                        currRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                        DocumentReference currentKotRef =
+                                                currRef.document(snapshot.getId());
+                                        batch.delete(currentKotRef);
+                                    }
+                                    confRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                                    DocumentReference confKotRef =
+                                                            confRef.document(snapshot.getId());
+                                                    batch.delete(confKotRef);
+                                                }
+                                                batch.delete(parRef);
+                                                batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Toast.makeText(getContext(), "Parcel removed", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+
                     private void deleteConfCost() {
+                        final WriteBatch batch = db.batch();
+                        final DocumentReference parRef = parcelRef.document(doc_id);
                         confRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if(task.isSuccessful()){
                                     for(QueryDocumentSnapshot snapshot:task.getResult()){
-                                        confRef.document(snapshot.getId()).delete();
+                                        DocumentReference confKotRef =
+                                                confRef.document(snapshot.getId());
+                                        batch.delete(confKotRef);
                                     }
+                                    batch.delete(parRef);
+                                    batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(getContext(), "Parcel removed", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                             }
                         });
                     }
                     private void deleteCurrCost() {
+                        final WriteBatch batch = db.batch();
+                        final DocumentReference parRef = parcelRef.document(doc_id);
                         currRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if(task.isSuccessful()){
                                     for(QueryDocumentSnapshot snapshot:task.getResult()){
-                                        currRef.document(snapshot.getId()).delete();
+                                        DocumentReference currentKotRef =
+                                                currRef.document(snapshot.getId());
+                                        batch.delete(currentKotRef);
                                     }
+                                    batch.delete(parRef);
+                                    batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(getContext(), "Parcel removed", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                             }
                         });
                     }
                     private void deleteParentDoc() {
-                        parcelRef.document(doc_id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        WriteBatch batch = db.batch();
+                        DocumentReference reference = parcelRef.document(doc_id);
+                        batch.delete(reference);
+                        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    adapter.notifyItemRemoved(pos);
-                                    adapter.notifyDataSetChanged();
-                                    Toast.makeText(getContext(), "Parcel removed", Toast.LENGTH_SHORT).show();
-                                }
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(getContext(), "Parcel removed", Toast.LENGTH_SHORT).show();
                             }
                         });
-
                     }
                 });
             }

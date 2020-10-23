@@ -16,158 +16,168 @@
         app:title="Add Customer"
         app:titleTextColor="#ffffff" />
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/table_type_m"
-        android:textColor="@color/colorPrimary"
-        android:layout_weight="0.2"
-        android:textStyle="bold"
-        android:layout_marginStart="@dimen/_5sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:textSize="20sp"
-        />
+        android:orientation="horizontal">
 
+        <ImageView
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:src="@drawable/table" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_weight="0.2"
+            android:paddingStart="@dimen/_15sdp"
+            android:text="@string/table_type_m"
+            android:textColor="@color/colorPrimary"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 
     <RadioGroup
+        android:id="@+id/radiogroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_weight="1"
-        android:id="@+id/radiogroup"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
-     >
+        app:layout_constraintTop_toBottomOf="@+id/toolbar3">
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
             android:id="@+id/vipdiningradio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:checked="true"
-            android:textSize="15sp"
-            android:layout_height="wrap_content"
-            android:text="VIP Dining" />
+            android:text="VIP Dining"
+            android:textSize="16sp" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="15sp"
             android:id="@+id/acfamilyradio"
-            android:text="AC Family" />
-
-        <com.google.android.material.radiobutton.MaterialRadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="AC Family"
+            android:textSize="16sp" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/bardiningradio"
-            android:layout_weight="1"
-            android:textSize="15sp"
-            android:text="Bar Dining" />
-
-        <com.google.android.material.radiobutton.MaterialRadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/familyradio"
             android:layout_weight="1"
-            android:textSize="15sp"
-            android:text="Family" />
+            android:text="Bar Dining"
+            android:textSize="16sp" />
 
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/familyradio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Family"
+            android:textSize="16sp" />
 
     </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorAccent" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/table_no"
+            android:layout_gravity="center"
+            android:layout_weight="0.8"
             android:paddingStart="@dimen/_6sdp"
-            android:layout_weight="0.8"
-            android:textSize="20sp"
+            android:text="@string/table_no"
             android:textColor="@color/colorPrimary"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            />
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
         <NumberPicker
+            android:id="@+id/tablenonumpicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:descendantFocusability="blocksDescendants"
-            android:id="@+id/tablenonumpicker"
-            />
+            android:descendantFocusability="blocksDescendants" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_of_cust"
-            android:paddingStart="@dimen/_10sdp"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimary"
-            android:layout_weight="0.8"
             android:layout_gravity="center"
-            />
+            android:layout_weight="0.8"
+            android:paddingStart="@dimen/_10sdp"
+            android:text="@string/no_of_cust"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
         <NumberPicker
+            android:id="@+id/noofcustnumpicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
             android:layout_marginEnd="@dimen/_5sdp"
-            android:descendantFocusability="blocksDescendants"
-            android:id="@+id/noofcustnumpicker"
-            />
+            android:layout_weight="0.5"
+            android:descendantFocusability="blocksDescendants" />
 
     </LinearLayout>
+
     <ImageButton
         android:id="@+id/tableavailimgbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_occupied"
-        android:layout_weight="0.5"
         android:layout_gravity="center"
+        android:layout_weight="0.5"
         android:background="@android:color/transparent"
-        />
+        android:src="@drawable/ic_occupied" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        >
-      <Button
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="Cancel"
-          android:id="@+id/cancelcust"
-          android:textColor="@color/white"
-          android:layout_weight="1"
-          android:drawableStart="@drawable/ic_close"
-          android:layout_marginStart="@dimen/_20sdp"
-          android:layout_marginEnd="@dimen/_10sdp"
-          android:background="@drawable/circular_imgbutton_cancel"
-          />
+        android:layout_weight="0.3"
+        android:orientation="horizontal">
+
         <Button
+            android:id="@+id/cancelcust"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Confirm"
-            android:textColor="@color/white"
-            android:id="@+id/confirmcust"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
             android:layout_weight="1"
-            android:drawableStart="@drawable/ic_save"
-            android:enabled="false"
+            android:background="@drawable/circular_imgbutton_cancel"
+            android:drawableStart="@drawable/ic_close"
+            android:text="Cancel"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/confirmcust"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_20sdp"
+            android:layout_weight="1"
             android:background="@drawable/circular_imgbutton_confirm"
-            />
+            android:drawableStart="@drawable/ic_save"
+            android:enabled="false"
+            android:text="Confirm"
+            android:textColor="@color/white" />
 
 
     </LinearLayout>
-
-
 
 
 </LinearLayout>

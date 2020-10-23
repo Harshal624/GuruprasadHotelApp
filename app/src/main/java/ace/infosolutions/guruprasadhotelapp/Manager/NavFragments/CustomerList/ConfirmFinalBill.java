@@ -59,18 +59,18 @@ public class ConfirmFinalBill extends AppCompatActivity {
     public static final String GRANDTOTAL = "GRANDTOTAL";
     public static final String TOTALONLINEBILL = "TOTALONLINEBILL";
     public static final String PARCEHOMEDELIVERY = "PARCEHOMEDELIVERY";
+    public static final String TABLETALLYMONTHLY = "TABLETALLYMONTHLY";
     private static final String CUSTOMERS = "CUSTOMERS";
     private static final String TABLES = "Tables";
     private static final String CONFIRMED_KOT = "CONFIRMED_KOT";
     private static final String CURRENT_KOT = "CURRENT_KOT";
-    public static final String TABLETALLYMONTHLY = "TABLETALLYMONTHLY";
     private String completed_date;
     //
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private ConfirmFinalBillFirestoreAdapter adapter;
     private FirebaseFirestore db;
-    private CollectionReference confirmedRef, custRef,historyRef,tallyRef;
+    private CollectionReference confirmedRef, custRef, historyRef, tallyRef;
     private String doc_id;
     private TextView tableNo, tableType, totalCost;
     private Button printBill, addItem;
@@ -315,11 +315,15 @@ public class ConfirmFinalBill extends AppCompatActivity {
                 alertDialogQty.setButton(AlertDialog.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        int qty = Integer.parseInt(editqtyET.getText().toString());
-                        if (qty == 0) {
-                            Toast.makeText(ConfirmFinalBill.this, "Quantity is empty!", Toast.LENGTH_SHORT).show();
+                        if (editqtyET.getText().toString().trim().equals("") || editqtyET.getText().toString().trim().equals(null)) {
+                            Toast.makeText(ConfirmFinalBill.this, "Empty", Toast.LENGTH_SHORT).show();
                         } else {
-                            updateItemQty(snapshot, qty);
+                            int qty = Integer.parseInt(editqtyET.getText().toString());
+                            if (qty == 0) {
+                                Toast.makeText(ConfirmFinalBill.this, "Quantity is empty!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                updateItemQty(snapshot, qty);
+                            }
                         }
                     }
                 });
@@ -638,43 +642,43 @@ public class ConfirmFinalBill extends AppCompatActivity {
                     } else {
                         savetoHistory(payment_mode);
                     }
+                } else {
                 }
-                else { }
             }
 
             private void savetoHistory(final String payment_mode) {
                 generateBillNo();
                 generateCompletedDateTime();
-                HistoryModel model = new HistoryModel(date_time,payment_mode,final_confirmed_cost,table_type,table_no,Bill_NO,completed_date,no_of_cust);
+                HistoryModel model = new HistoryModel(date_time, payment_mode, final_confirmed_cost, table_type, table_no, Bill_NO, completed_date, no_of_cust);
                 historyRef.add(model).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             final String history_doc_id = task.getResult().getId();
 
                             confirmedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if(task.isSuccessful()){
-                                        for(QueryDocumentSnapshot snapshot:task.getResult()){
-                                            FinalBillModel model =snapshot.toObject(FinalBillModel.class);
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                            FinalBillModel model = snapshot.toObject(FinalBillModel.class);
                                             historyRef.document(history_doc_id).collection(CONFIRMED_KOT).add(model);
                                         }
-                                       confirmedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                           @Override
-                                           public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                               if(task.isSuccessful()){
-                                                   for(QueryDocumentSnapshot snapshot:task.getResult()){
-                                                       confirmedRef.document(snapshot.getId()).delete();
-                                                   }
-                                               }
-                                           }
-                                       });
+                                        confirmedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                                        confirmedRef.document(snapshot.getId()).delete();
+                                                    }
+                                                }
+                                            }
+                                        });
                                         custRef.document(doc_id).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if(task.isSuccessful()){
-                                                    for(QueryDocumentSnapshot snapshot:task.getResult()){
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
                                                         custRef.document(doc_id).collection(CURRENT_KOT)
                                                                 .document(snapshot.getId()).delete();
                                                     }
@@ -684,22 +688,22 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                         custRef.document(doc_id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful()){
+                                                if (task.isSuccessful()) {
                                                     progressBar.setVisibility(View.GONE);
                                                     db.collection("Tables").document(table_type)
-                                                            .update(String.valueOf(table_no),true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            .update(String.valueOf(table_no), true).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
-                                                            if(task.isSuccessful()){
+                                                            if (task.isSuccessful()) {
                                                                 addtoGrandTotal();
-                                                                if(payment_mode.equals("Online")){
+                                                                if (payment_mode.equals("Online")) {
                                                                     addToOnlineTotal();
                                                                 }
                                                                 addToTableWiseTotal();
-                                                            Toast.makeText(ConfirmFinalBill.this, "Order completed", Toast.LENGTH_SHORT).show();
-                                                            startActivity(new Intent(getApplicationContext(), Manager.class));
-                                                            overridePendingTransition(0,0);
-                                                        }
+                                                                Toast.makeText(ConfirmFinalBill.this, "Order completed", Toast.LENGTH_SHORT).show();
+                                                                startActivity(new Intent(getApplicationContext(), Manager.class));
+                                                                overridePendingTransition(0, 0);
+                                                            }
                                                         }
                                                     });
 
@@ -711,8 +715,8 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                 }
                             });
 
-                        }
-                        else{}//failed
+                        } else {
+                        }//failed
                     }
                 });
             }
@@ -721,27 +725,27 @@ public class ConfirmFinalBill extends AppCompatActivity {
     }
 
     private void addToTableWiseTotal() {
-        final String date_only = date_time.substring(0,8);
-        final String month_only = date_time.substring(3,8);
-        Map<String,Object> datemap = new HashMap<>();
-        datemap.put("date",date_only);
-        final Map<String,Object> monthmap = new HashMap<>();
-        monthmap.put("month",month_only);
+        final String date_only = date_time.substring(0, 8);
+        final String month_only = date_time.substring(3, 8);
+        Map<String, Object> datemap = new HashMap<>();
+        datemap.put("date", date_only);
+        final Map<String, Object> monthmap = new HashMap<>();
+        monthmap.put("month", month_only);
 
         db.collection(TABLETALLYDAILY).document(date_only).set(datemap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     db.collection(TABLETALLYDAILY).document(date_only).collection(table_type)
                             .document(String.valueOf(table_no)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
-                                if(task.getResult().exists()){
+                            if (task.isSuccessful()) {
+                                if (task.getResult().exists()) {
                                     //daily date is already available
                                     double stored_cost = task.getResult().getDouble("tabletotal");
                                     double total_cost = stored_cost + final_confirmed_cost;
-                                    TableTotalModel model = new TableTotalModel(total_cost,table_no);
+                                    TableTotalModel model = new TableTotalModel(total_cost, table_no);
                                     db.collection(TABLETALLYDAILY).document(date_only).collection(table_type)
                                             .document(String.valueOf(table_no)).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
@@ -749,15 +753,14 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                             addToMonthlyTable();
                                         }
                                     });
-                                }
-                                else{
+                                } else {
                                     //first daily entry
-                                    TableTotalModel model = new TableTotalModel(final_confirmed_cost,table_no);
+                                    TableTotalModel model = new TableTotalModel(final_confirmed_cost, table_no);
                                     db.collection(TABLETALLYDAILY).document(date_only).collection(table_type)
                                             .document(String.valueOf(table_no)).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()){
+                                            if (task.isSuccessful()) {
                                                 addToMonthlyTable();
                                             }
                                         }
@@ -774,23 +777,22 @@ public class ConfirmFinalBill extends AppCompatActivity {
                 db.collection(TABLETALLYMONTHLY).document(month_only).set(monthmap).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             db.collection(TABLETALLYMONTHLY).document(month_only).collection(table_type)
                                     .document(String.valueOf(table_no)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if(task.isSuccessful()){
-                                        if(task.getResult().exists()){
+                                    if (task.isSuccessful()) {
+                                        if (task.getResult().exists()) {
                                             //daily date is already available
                                             double stored_cost = task.getResult().getDouble("tabletotal");
                                             double total_cost = stored_cost + final_confirmed_cost;
-                                            TableTotalModel model = new TableTotalModel(total_cost,table_no);
+                                            TableTotalModel model = new TableTotalModel(total_cost, table_no);
                                             db.collection(TABLETALLYMONTHLY).document(month_only).collection(table_type)
                                                     .document(String.valueOf(table_no)).set(model);
-                                        }
-                                        else{
+                                        } else {
                                             //first daily entry
-                                            TableTotalModel model = new TableTotalModel(final_confirmed_cost,table_no);
+                                            TableTotalModel model = new TableTotalModel(final_confirmed_cost, table_no);
                                             db.collection(TABLETALLYMONTHLY).document(month_only).collection(table_type)
                                                     .document(String.valueOf(table_no)).set(model);
                                         }
@@ -805,17 +807,17 @@ public class ConfirmFinalBill extends AppCompatActivity {
     }
 
     private void addToOnlineTotal() {
-        final String date_only = date_time.substring(0,8);
-        final String month_only = date_time.substring(3,8);
+        final String date_only = date_time.substring(0, 8);
+        final String month_only = date_time.substring(3, 8);
 
         tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    if(task.getResult().exists()){
+                if (task.isSuccessful()) {
+                    if (task.getResult().exists()) {
                         double stored_gt = task.getResult().getDouble("onlinetotal");
                         double total_gt = stored_gt + final_confirmed_cost;
-                        OnlineTotalModel model = new OnlineTotalModel(total_gt,date_only);
+                        OnlineTotalModel model = new OnlineTotalModel(total_gt, date_only);
                         tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only)
                                 .set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -824,13 +826,12 @@ public class ConfirmFinalBill extends AppCompatActivity {
                             }
                         });
 
-                    }
-                    else{
-                        OnlineTotalModel model = new OnlineTotalModel(final_confirmed_cost,date_only);
+                    } else {
+                        OnlineTotalModel model = new OnlineTotalModel(final_confirmed_cost, date_only);
                         tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     addtoOnlineMonthly();
                                 }
                             }
@@ -843,18 +844,17 @@ public class ConfirmFinalBill extends AppCompatActivity {
                 tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            if(task.getResult().exists()){
+                        if (task.isSuccessful()) {
+                            if (task.getResult().exists()) {
                                 //exists
                                 double stored_gt = task.getResult().getDouble("onlinetotal");
                                 double total_gt = final_confirmed_cost + stored_gt;
-                                OnlineTotalModel model = new OnlineTotalModel(total_gt,month_only);
+                                OnlineTotalModel model = new OnlineTotalModel(total_gt, month_only);
                                 tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only).
                                         set(model);
-                            }
-                            else{
+                            } else {
                                 //doesn't exist
-                                OnlineTotalModel model = new OnlineTotalModel(final_confirmed_cost,month_only);
+                                OnlineTotalModel model = new OnlineTotalModel(final_confirmed_cost, month_only);
                                 tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only).set(model);
                             }
                         }
@@ -867,18 +867,18 @@ public class ConfirmFinalBill extends AppCompatActivity {
     }
 
     private void addtoGrandTotal() {
-        final String date_only = date_time.substring(0,8);
-        final String month_only = date_time.substring(3,8);
+        final String date_only = date_time.substring(0, 8);
+        final String month_only = date_time.substring(3, 8);
 
 
         tallyRef.document(DAILY).collection(GRANDTOTAL).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    if(task.getResult().exists()){
+                if (task.isSuccessful()) {
+                    if (task.getResult().exists()) {
                         double stored_gt = task.getResult().getDouble("grandtotal");
                         double total_gt = stored_gt + final_confirmed_cost;
-                        GrandTotalModel model = new GrandTotalModel(total_gt,date_only);
+                        GrandTotalModel model = new GrandTotalModel(total_gt, date_only);
                         tallyRef.document(DAILY).collection(GRANDTOTAL).document(date_only)
                                 .set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -887,14 +887,13 @@ public class ConfirmFinalBill extends AppCompatActivity {
                             }
                         });
 
-                    }
-                    else{
-                        GrandTotalModel model = new GrandTotalModel(final_confirmed_cost,date_only);
+                    } else {
+                        GrandTotalModel model = new GrandTotalModel(final_confirmed_cost, date_only);
                         tallyRef.document(DAILY).collection(GRANDTOTAL).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                          addToGTMonthly();
+                                if (task.isSuccessful()) {
+                                    addToGTMonthly();
                                 }
                             }
                         });
@@ -906,19 +905,18 @@ public class ConfirmFinalBill extends AppCompatActivity {
                 tallyRef.document(MONTHLY).collection(GRANDTOTAL).document(month_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            if(task.getResult().exists()){
+                        if (task.isSuccessful()) {
+                            if (task.getResult().exists()) {
                                 //exists
                                 double stored_gt = task.getResult().getDouble("grandtotal");
                                 double total_gt = final_confirmed_cost + stored_gt;
-                                GrandTotalModel model = new GrandTotalModel(total_gt,month_only);
+                                GrandTotalModel model = new GrandTotalModel(total_gt, month_only);
                                 tallyRef.document(MONTHLY).collection(GRANDTOTAL).document(month_only).
                                         set(model);
-                            }
-                            else{
+                            } else {
                                 //doesn't exist
-                                GrandTotalModel model = new GrandTotalModel(final_confirmed_cost,month_only);
-                                tallyRef.document(MONTHLY).collection(GRANDTOTAL).document(month_only).set(model,SetOptions.merge());
+                                GrandTotalModel model = new GrandTotalModel(final_confirmed_cost, month_only);
+                                tallyRef.document(MONTHLY).collection(GRANDTOTAL).document(month_only).set(model, SetOptions.merge());
                             }
                         }
                     }
@@ -934,14 +932,14 @@ public class ConfirmFinalBill extends AppCompatActivity {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
         Date date = new Date();
         String datetoday = format.format(date);
-        completed_date = datetoday.replaceAll("/","-");
+        completed_date = datetoday.replaceAll("/", "-");
     }
 
-    public void generateBillNo(){
+    public void generateBillNo() {
         Random r = new Random();
         Date date = new Date();
-        char a = (char)(r.nextInt(26) + 'a');
-        char b = (char)(r.nextInt(26) + 'a');
+        char a = (char) (r.nextInt(26) + 'a');
+        char b = (char) (r.nextInt(26) + 'a');
         long timelilli = date.getTime();
         String timeString = String.valueOf(timelilli);
         String randomMilli = timeString.substring(timeString.length() - 5);

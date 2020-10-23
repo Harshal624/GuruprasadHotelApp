@@ -20,32 +20,34 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.google.firebase.firestore.WriteBatch;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.CustomerFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass;
 import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
 
+import static ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer.CUSTOMERS;
+import static ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer.TABLES;
+import static ace.infosolutions.guruprasadhotelapp.Captain.ItemList.CURRENT_KOT;
+
 public class OrderFragment extends Fragment {
     public static final String PREF_DOCID = "PREF_DOCID";
     public static final String DOC_ID_KEY = "DOC_ID_KEY";
     private static final String TABLE_COLLECTION = "Tables";
-    private static final String CUSTOMER_COLLECTION = "CUSTOMERS";
-    private static final String CURRENT_KOT = "CURRENT_KOT";
     private FloatingActionButton add_customer;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference collectionReference = db.collection(CUSTOMER_COLLECTION);
+    private CollectionReference collectionReference = db.collection(CUSTOMERS);
     private CustomerFirestoreAdapter adapter;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
@@ -54,6 +56,7 @@ public class OrderFragment extends Fragment {
     private ProgressBar progressBar;
     private SharedPreferences sharedPreferences;
     private InternetConn internetConn;
+    private double current_cost, confirmed_cost;
 
 
     @Nullable
@@ -107,20 +110,80 @@ public class OrderFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 if (conn.haveNetworkConnection()) {
-                                    customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass.class);
+                                    final customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass.class);
                                     final String doc_id = documentSnapshot.getId();
-                                    final String table_no = String.valueOf(customerclass.getTable_no());
-                                    String table_type = customerclass.getTable_type();
-                                    progressBar.setVisibility(View.VISIBLE);
-                                    add_customer.setEnabled(false);
-                                    checkCosts(doc_id, table_no, pos, table_type);
+                                    final String tableNo = String.valueOf(customerclass.getTable_no());
+                                    // progressBar.setVisibility(View.VISIBLE);
+                                    // add_customer.setEnabled(false);
+                                    final DocumentReference custRef = db.collection(CUSTOMERS).document(doc_id);
+                                    final DocumentReference tableRef = db.collection(TABLES).document(customerclass.getTable_type());
 
+                                    custRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot snapshot) {
+                                            current_cost = snapshot.getDouble("current_cost");
+                                            confirmed_cost = snapshot.getDouble("confirmed_cost");
+                                            if (current_cost != 0.0 && confirmed_cost != 0.0) {
+                                                //delete current,confirmed_kot and parent
+                                                Toast.makeText(getContext(), "Cannot delete the order", Toast.LENGTH_SHORT).show();
+                                            } else if (current_cost == 0.0 && confirmed_cost == 0.0) {
+                                                //delete parent only
+                                                deleteParentDoc();
+                                            } else if (current_cost != 0.0 && confirmed_cost == 0.0) {
+                                                //delete current_kot and parent
+                                                deleteCurrentandParent();
+
+                                            } else if (current_cost == 0.0 && confirmed_cost != 0.0) {
+                                                //delete confirmed_kot and parent
+                                                Toast.makeText(getContext(), "Cannot delete the order", Toast.LENGTH_SHORT).show();
+                                            }
+
+                                        }
+
+                                        private void deleteCurrentandParent() {
+                                            final WriteBatch batch = db.batch();
+                                            custRef.collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                                            //deleting current_kot collection contents
+                                                            batch.delete(custRef.collection(CURRENT_KOT).document(snapshot.getId()));
+                                                        }
+                                                        //deleting parent doc
+                                                        batch.delete(custRef);
+                                                        //updating table no
+                                                        batch.update(tableRef, tableNo, true);
+                                                        batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                        private void deleteParentDoc() {
+                                            //delete document and update the table
+                                            WriteBatch batch = db.batch();
+                                            batch.delete(custRef);
+                                            batch.update(tableRef, tableNo, true);
+                                            batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
+
+                                        }
+                                    });
                                 } else {
                                     Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
                                 }
-
                             }
-
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -130,72 +193,6 @@ public class OrderFragment extends Fragment {
                         .setIcon(R.drawable.ic_delete);
                 alertDialog = builder.create();
                 alertDialog.show();
-
-
-            }
-        });
-    }
-
-    private void checkCosts(final String doc_id, final String table_no, final int pos, final String table_type) {
-        db.collection(CUSTOMER_COLLECTION).document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    double confirmed_cost = task.getResult().getDouble("confirmed_cost");
-                    double current_cost = task.getResult().getDouble("current_cost");
-                    if (confirmed_cost == 0 && current_cost != 0) {
-                        deleteCurrent_kot(doc_id, table_no, pos, table_type);
-                        deleteParentDoc(doc_id, table_no, pos, table_type);
-                    } else if (confirmed_cost == 0 && current_cost == 0) {
-                        deleteParentDoc(doc_id, table_no, pos, table_type);
-                    } else {
-                        alertDialog.dismiss();
-                        progressBar.setVisibility(View.GONE);
-                        add_customer.setEnabled(true);
-                        Toast.makeText(getContext(), "Cannot delete order", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
-    }
-
-    private void deleteCurrent_kot(final String doc_id, final String table_no, final int pos, final String table_type) {
-        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                        String current_kot_id = snapshot.getId();
-                        db.collection(CUSTOMER_COLLECTION).document(doc_id).collection(CURRENT_KOT).document(current_kot_id)
-                                .delete();
-                    }
-
-                }
-            }
-        });
-    }
-
-    private void deleteParentDoc(String doc_id, final String table_no, final int pos, final String table_type) {
-        db.collection(CUSTOMER_COLLECTION).document(doc_id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    updateTableStatus(table_no, table_type, pos);
-                }
-            }
-        });
-    }
-
-    private void updateTableStatus(String table_no, String table_type, final int pos) {
-        Map<String, Object> table_update = new HashMap<>();
-        table_update.put(table_no, true);
-        db.collection(TABLE_COLLECTION).document(table_type).update(table_update).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                adapter.notifyItemRemoved(pos);
-                adapter.notifyDataSetChanged();
-                progressBar.setVisibility(View.GONE);
-                add_customer.setEnabled(true);
             }
         });
     }
@@ -223,13 +220,4 @@ public class OrderFragment extends Fragment {
         adapter.stopListening();
     }
 
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (alertDialog != null) {
-            alertDialog.dismiss();
-            alertDialog = null;
-        }
-    }
 }

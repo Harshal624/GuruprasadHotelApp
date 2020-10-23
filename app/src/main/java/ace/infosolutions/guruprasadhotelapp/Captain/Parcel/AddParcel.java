@@ -1,8 +1,5 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.Parcel;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,30 +12,31 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
+import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class AddParcel extends AppCompatActivity {
+    public static final String SP_KEY = "SP_KEY";
+    public static final String PARCEL_ID_KEY = "PARCEL_ID_KEY";
     private static final String PARCELS = "PARCELS";
-    private EditText cust_name,cust_contact,cust_address;
+    private EditText cust_name, cust_contact, cust_address;
     private RadioGroup radioGroup;
     private Button confirm_parcel;
     private boolean ishomedelivery;
     private FirebaseFirestore db;
     private CollectionReference parcelRef;
     private ProgressBar progressBar;
-
-    public static final String SP_KEY = "SP_KEY";
-    public static final String PARCEL_ID_KEY = "PARCEL_ID_KEY";
     private SharedPreferences preferences;
 
     @Override
@@ -58,16 +56,15 @@ public class AddParcel extends AppCompatActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-              RadioButton  radioButton = (RadioButton) findViewById(i);
-              String parcelType = radioButton.getText().toString();
-              if(parcelType.equals("Parcel")){
-                  cust_address.setVisibility(View.GONE);
-                  ishomedelivery = false;
-              }
-              else if(parcelType.equals("Home Delivery")){
-                  cust_address.setVisibility(View.VISIBLE);
-                  ishomedelivery = true;
-              }
+                RadioButton radioButton = (RadioButton) findViewById(i);
+                String parcelType = radioButton.getText().toString();
+                if (parcelType.equals("Parcel")) {
+                    cust_address.setVisibility(View.GONE);
+                    ishomedelivery = false;
+                } else if (parcelType.equals("Home Delivery")) {
+                    cust_address.setVisibility(View.VISIBLE);
+                    ishomedelivery = true;
+                }
             }
         });
 
@@ -79,46 +76,39 @@ public class AddParcel extends AppCompatActivity {
                 String customerContact = cust_contact.getText().toString().trim();
                 String customerAddress = cust_address.getText().toString().trim();
 
-                if(customerName.equals("") && customerContact.equals("")){
-                    if(customerAddress.equals("") && ishomedelivery==true){
+                if (customerName.equals("") && customerContact.equals("")) {
+                    if (customerAddress.equals("") && ishomedelivery == true) {
                         cust_name.setError("Enter customer name");
                         cust_contact.setError("Enter contact");
                         cust_address.setError("Enter address");
-                    }
-                    else{
+                    } else {
                         cust_name.setError("Enter customer name");
                         cust_contact.setError("Enter contact");
                     }
-                }
-                else if(!customerName.equals("") && customerContact.equals("")){
-                    if(customerAddress.equals("") && ishomedelivery==true){
+                } else if (!customerName.equals("") && customerContact.equals("")) {
+                    if (customerAddress.equals("") && ishomedelivery == true) {
                         cust_contact.setError("Enter contact");
                         cust_address.setError("Enter address");
-                    }
-                    else{
+                    } else {
                         cust_contact.setError("Enter contact");
                     }
 
-                }
-                else if(customerName.equals("") && !customerContact.equals("")){
-                    if(customerAddress.equals("") && ishomedelivery==true){
+                } else if (customerName.equals("") && !customerContact.equals("")) {
+                    if (customerAddress.equals("") && ishomedelivery == true) {
                         cust_name.setError("Enter contact");
                         cust_address.setError("Enter address");
-                    }
-                    else{
+                    } else {
                         cust_name.setError("Enter contact");
                     }
-                }
-                else{
-                    if(customerAddress.equals("") && ishomedelivery==true){
+                } else {
+                    if (customerAddress.equals("") && ishomedelivery == true) {
                         cust_address.setError("Enter address");
-                    }
-                    else{
+                    } else {
                         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
                         Date date = new Date();
                         String datetoday = format.format(date);
-                        String final_date = datetoday.replaceAll("/","-");
-                        ParcelModel model = new ParcelModel(customerName,customerContact,ishomedelivery,customerAddress,0.0,0.0,final_date);
+                        String final_date = datetoday.replaceAll("/", "-");
+                        ParcelModel model = new ParcelModel(customerName, customerContact, ishomedelivery, customerAddress, 0.0, 0.0, final_date);
                         confirmParcel(model);
                     }
                 }
@@ -128,27 +118,29 @@ public class AddParcel extends AppCompatActivity {
     }
 
     private void confirmParcel(ParcelModel model) {
+        InternetConn conn = new InternetConn(this);
+        if (conn.haveNetworkConnection()) {
+            progressBar.setVisibility(View.VISIBLE);
+            WriteBatch batch = db.batch();
+            final DocumentReference reference = parcelRef.document();
+            batch.set(reference, model);
 
-        progressBar.setVisibility(View.VISIBLE);
-        parcelRef.add(model).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentReference> task) {
-                if(task.isSuccessful()){
-                    String parcel_id = task.getResult().getId();
-                    progressBar.setVisibility(View.GONE);
+            batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    String parcel_id = reference.getId();
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(PARCEL_ID_KEY,parcel_id);
+                    editor.putString(PARCEL_ID_KEY, parcel_id);
                     editor.commit();
+                    progressBar.setVisibility(View.GONE);
                     Toast.makeText(AddParcel.this, "Parcel Added", Toast.LENGTH_SHORT).show();
                     finishAffinity();
-                    startActivity(new Intent(getApplicationContext(),FoodMenuParcel.class));
+                    startActivity(new Intent(getApplicationContext(), FoodMenuParcel.class));
                 }
-                else{
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(AddParcel.this, "Failed to add parcel!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+            });
+        } else {
+            Toast.makeText(AddParcel.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
+        }
 
     }
 }
