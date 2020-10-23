@@ -17,6 +17,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.leo.simplearcloader.SimpleArcLoader;
 
+import ace.infosolutions.guruprasadhotelapp.Utils.CheckRole;
+import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
+
 public class MainActivity extends AppCompatActivity {
     String username, password;
     private Button login;

@@ -11,8 +11,6 @@ import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
-import com.anychart.chart.common.listener.Event;
-import com.anychart.chart.common.listener.ListenersInterface;
 import com.anychart.charts.Pie;
 import com.anychart.enums.Align;
 import com.anychart.enums.LegendLayout;
@@ -74,6 +72,8 @@ public class CalculateTallyTable extends AppCompatActivity {
                     }
                     if (!tables.isEmpty()) {
                         setupanychart();
+                    } else {
+                        Toast.makeText(CalculateTallyTable.this, "There is nothing to show", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -84,13 +84,6 @@ public class CalculateTallyTable extends AppCompatActivity {
         AnyChartView anyChartView;
         anyChartView = findViewById(R.id.anychart);
         Pie pie = AnyChart.pie();
-
-        pie.setOnClickListener(new ListenersInterface.OnClickListener(new String[]{"x", "value"}) {
-            @Override
-            public void onClick(Event event) {
-                Toast.makeText(CalculateTallyTable.this, event.getData().get("x") + ":" + event.getData().get("value"), Toast.LENGTH_SHORT).show();
-            }
-        });
 
         pie.data(tables);
         pie.title("Tablewise revenue on " + doc_id);

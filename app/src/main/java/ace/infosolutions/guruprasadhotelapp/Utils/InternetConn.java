@@ -1,4 +1,4 @@
-package ace.infosolutions.guruprasadhotelapp;
+package ace.infosolutions.guruprasadhotelapp.Utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

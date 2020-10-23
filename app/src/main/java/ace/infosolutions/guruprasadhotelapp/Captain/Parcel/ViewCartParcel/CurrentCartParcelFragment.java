@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,24 +20,27 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
-import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelFragment;
-import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCart;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartModel;
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.SP_KEY;
@@ -98,78 +100,61 @@ public class CurrentCartParcelFragment extends Fragment {
                             }
                             else{
                                 printKOT.setEnabled(false);
-                                parcelRef.document(DOC_ID).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if(task.isSuccessful()){
-                                            for(QueryDocumentSnapshot snapshot:task.getResult()){
-                                                FoodItemModel model = snapshot.toObject(FoodItemModel.class);
-                                                parcelRef.document(DOC_ID).collection(CONFIRMED_KOT).add(model);
+                                InternetConn conn = new InternetConn(getContext());
+                                if (conn.haveNetworkConnection()) {
+                                    final WriteBatch batch = db.batch();
+                                    parcelRef.document(DOC_ID).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                                    FoodItemModel model = snapshot.toObject(FoodItemModel.class);
+                                                    DocumentReference reference = parcelRef.document(DOC_ID).collection(CURRENT_KOT).document(snapshot.getId());
+                                                    DocumentReference reference1 = parcelRef.document(DOC_ID).collection(CONFIRMED_KOT).document();
+                                                    batch.set(reference1, model);
+                                                    batch.delete(reference);
+                                                }
+                                                //deleteCurrentKotColl();
+                                                batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        db.runTransaction(new Transaction.Function<Void>() {
+                                                            @Nullable
+                                                            @Override
+                                                            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                                                final DocumentReference parcelCostRef = parcelRef.document(DOC_ID);
+                                                                DocumentSnapshot snapshot1 = transaction.get(parcelCostRef);
+                                                                double current_cost = snapshot1.getDouble("current_cost");
+                                                                double confirmed_cost = snapshot1.getDouble("confirmed_cost");
+                                                                double final_cost = current_cost + confirmed_cost;
+                                                                transaction.update(parcelCostRef, "confirmed_cost", final_cost);
+                                                                transaction.update(parcelCostRef, "current_cost", 0);
+                                                                return null;
+                                                            }
+                                                        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Toast.makeText(getContext(), "Confirmed", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            } else {
+                                                Toast.makeText(getContext(), "Cannot request KOT", Toast.LENGTH_SHORT).show();
                                             }
-                                            deleteCurrentKotColl();
                                         }
-                                        else{
-                                            Toast.makeText(getContext(), "Cannot request KOT", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-
-                            }
-                        }
-                    }
-                });
-
-            }
-
-            private void deleteCurrentKotColl() {
-                parcelRef.document(DOC_ID).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            for(QueryDocumentSnapshot snapshot:task.getResult()){
-                                parcelRef.document(DOC_ID).collection(CURRENT_KOT).document(snapshot.getId()).delete();
-                            }
-                            updateConfirmedCost();
-                        }
-
-                    }
-                });
-            }
-
-            private void updateConfirmedCost() {
-                parcelRef.document(DOC_ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            double current_cost = task.getResult().getDouble("current_cost");
-                            double confirmed_cost = task.getResult().getDouble("confirmed_cost");
-                            double final_cost = confirmed_cost + current_cost;
-
-                            parcelRef.document(DOC_ID).update("confirmed_cost",final_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-                                        setCurrentCosttoZero();
-                                    }
+                                    });
+                                } else {
+                                    Toast.makeText(getContext(), "No Internet Connection!", Toast.LENGTH_SHORT).show();
                                 }
-                            });
+
+                            }
                         }
                     }
                 });
+
             }
 
-            private void setCurrentCosttoZero() {
-                Map<String,Object> setcurrentcost_zero = new HashMap<>();
-                setcurrentcost_zero.put("current_cost",0);
-                parcelRef.document(DOC_ID).update(setcurrentcost_zero).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            ParcelFragment.isconfirmed = true;
-                        }
-                    }
-                });
-            }
         });
 
         adapter.setOnQtyClickListener(new ViewCartFirestoreAdapter.onQtyClickListener() {

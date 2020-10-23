@@ -34,8 +34,8 @@ import com.google.firebase.firestore.WriteBatch;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.CustomerFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass;
-import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer.CUSTOMERS;
 import static ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer.TABLES;

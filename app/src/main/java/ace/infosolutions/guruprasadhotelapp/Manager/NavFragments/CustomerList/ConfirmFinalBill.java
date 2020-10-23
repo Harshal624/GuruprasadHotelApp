@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,16 +29,16 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.Transaction;
+import com.google.firebase.firestore.WriteBatch;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.FinalBillModel;
@@ -46,6 +47,8 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.OnlineTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.TableTotalModel;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
+import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ConfirmedCartParcelFragment.ONLINETOTAL;
 
@@ -91,6 +94,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
     private View paymentView;
     private TextView online_payment, cash_payment;
     private String Bill_NO;
+    private double current_costFinal;
 
 
     @Override
@@ -140,10 +144,10 @@ public class ConfirmFinalBill extends AppCompatActivity {
         addFoodTitle.setHint("Enter item name");
 
 
-        printBill = (Button) findViewById(R.id.final_billPrint);
-        tableNo = (TextView) findViewById(R.id.final_billtableno);
-        tableType = (TextView) findViewById(R.id.final_billtabletype);
-        totalCost = (TextView) findViewById(R.id.final_billTotalCost);
+        printBill = findViewById(R.id.final_billPrint);
+        tableNo = findViewById(R.id.final_billtableno);
+        tableType = findViewById(R.id.final_billtabletype);
+        totalCost = findViewById(R.id.final_billTotalCost);
 
         fetchTableInfoTotalcost();
         setupRecyclerView();
@@ -171,26 +175,31 @@ public class ConfirmFinalBill extends AppCompatActivity {
         payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                paymentAlertDialog.setView(paymentView);
-                paymentAlertDialog.setCancelable(true);
-                cash_payment.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        paymentAlertDialog.dismiss();
-                        String cash = "Cash";
-                        confirmFinalBill(cash);
-                    }
-                });
+                InternetConn conn = new InternetConn(ConfirmFinalBill.this);
+                if (conn.haveNetworkConnection()) {
+                    paymentAlertDialog.setView(paymentView);
+                    paymentAlertDialog.setCancelable(true);
+                    cash_payment.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            paymentAlertDialog.dismiss();
+                            String cash = "Cash";
+                            confirmFinalBill(cash);
+                        }
+                    });
 
-                online_payment.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        paymentAlertDialog.dismiss();
-                        String online = "Online";
-                        confirmFinalBill(online);
-                    }
-                });
-                paymentAlertDialog.show();
+                    online_payment.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            paymentAlertDialog.dismiss();
+                            String online = "Online";
+                            confirmFinalBill(online);
+                        }
+                    });
+                    paymentAlertDialog.show();
+                } else {
+                    Toast.makeText(ConfirmFinalBill.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -361,43 +370,25 @@ public class ConfirmFinalBill extends AppCompatActivity {
 
                     private void updateConfirmed_cost(final DocumentSnapshot snapshot, final int pos) {
                         final double cost_to_deduct = snapshot.getDouble("item_cost");
-                        custRef.document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    double confirmed_cost = task.getResult().getDouble("confirmed_cost");
-                                    double final_cost = confirmed_cost - cost_to_deduct;
-                                    custRef.document(doc_id).update("confirmed_cost", final_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                deleteCurrentItem(snapshot, pos);
-                                            } else {
-                                                //failed
-                                            }
-                                        }
-                                    });
-                                } else {
-                                    //failed
-                                }
-                            }
-                        });
-                    }
+                        final DocumentReference parentRef = custRef.document(doc_id);
+                        final DocumentReference confirmedKotRef = confirmedRef.document(snapshot.getId());
 
-                    private void deleteCurrentItem(DocumentSnapshot snapshot, final int pos) {
-                        String id = snapshot.getId();
-                        //TODO UPDATE THE CONFIRMED_COST FIRST
-                        confirmedRef.document(id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        db.runTransaction(new Transaction.Function<Void>() {
+                            @Nullable
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(ConfirmFinalBill.this, "Deleted!", Toast.LENGTH_SHORT).show();
-                                    adapter.notifyItemRemoved(pos);
-                                    adapter.notifyDataSetChanged();
-                                    updateTableCost();
-                                } else {
-                                    Toast.makeText(ConfirmFinalBill.this, "Failed to delete!", Toast.LENGTH_SHORT).show();
-                                }
+                            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                DocumentSnapshot currentsnapshot = transaction.get(parentRef);
+                                double confirmed_cost = currentsnapshot.getDouble("confirmed_cost");
+                                double final_cost = confirmed_cost - cost_to_deduct;
+                                transaction.update(parentRef, "confirmed_cost", final_cost);
+                                transaction.delete(confirmedKotRef);
+                                return null;
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(ConfirmFinalBill.this, "Deleted!", Toast.LENGTH_SHORT).show();
+                                updateTableCost();
                             }
                         });
                     }
@@ -407,46 +398,34 @@ public class ConfirmFinalBill extends AppCompatActivity {
         });
     }
 
-    private void addToFinalBill(FinalBillModel model) {
+    private void addToFinalBill(final FinalBillModel model) {
         final double cost = model.getItem_cost();
-        confirmedRef.add(model).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+        final DocumentReference confirmedKotRef = confirmedRef.document();
+        final DocumentReference parentKotRef = custRef.document(doc_id);
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
             @Override
-            public void onComplete(@NonNull Task<DocumentReference> task) {
-                if (task.isSuccessful()) {
-                    update_conf_cost(cost);
-                } else {
-                    Toast.makeText(ConfirmFinalBill.this, "Failed to add item!", Toast.LENGTH_SHORT);
-                }
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshot = transaction.get(parentKotRef);
+                double current_conf_cost = snapshot.getDouble("confirmed_cost");
+                double total_cost = current_conf_cost + cost;
+                transaction.set(confirmedKotRef, model);
+                transaction.update(parentKotRef, "confirmed_cost", total_cost);
+                return null;
             }
-
-            private void update_conf_cost(final double cost) {
-                custRef.document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            double current_conf_cost = task.getResult().getDouble("confirmed_cost");
-                            double total_cost = current_conf_cost + cost;
-                            custRef.document(doc_id).update("confirmed_cost", total_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    updateTableCost();
-                                    Toast.makeText(ConfirmFinalBill.this, "Added", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    }
-                });
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                updateTableCost();
+                Toast.makeText(ConfirmFinalBill.this, "Added", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void updateItemCost(DocumentSnapshot snapshot, final double cost) {
-        //TODO UPDATE IN FINAL_BILL COST REMAINING
-        //TODO FETCH THE CURRENT QTY FIRST AND THEN UPDATE ACCORDINGLY
         String id = snapshot.getId();
         int saved_qty = snapshot.getDouble("item_qty").intValue();
         double final_cost = cost * saved_qty;
-
         double saved_cost = snapshot.getDouble("item_cost");
         final double cost_difference = final_cost - saved_cost;
 
@@ -455,7 +434,6 @@ public class ConfirmFinalBill extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     updateConfCost(cost_difference);
-
                 } else {
                     Toast.makeText(ConfirmFinalBill.this, "Failed to update the cost!", Toast.LENGTH_SHORT).show();
                 }
@@ -473,15 +451,13 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         double roundedDouble = Math.round(f_cost * 100.0) / 100.0;
-                                        totalCost.setText("" + roundedDouble);
+                                        totalCost.setText(String.valueOf(roundedDouble));
                                         Toast.makeText(ConfirmFinalBill.this, "Cost updated", Toast.LENGTH_SHORT).show();
                                     } else {
-
                                     }
                                 }
                             });
                         } else {
-
                         }
                     }
                 });
@@ -489,64 +465,37 @@ public class ConfirmFinalBill extends AppCompatActivity {
         });
     }
 
-    private void updateItemQty(DocumentSnapshot snapshot, int qty) {
+    private void updateItemQty(DocumentSnapshot snapshot, final int qty) {
         //TODO UPDATE IN FINAL_BILL COST REMAINING
         final String id = snapshot.getId();
         double current_cost = snapshot.getDouble("item_cost");
         int current_qty = snapshot.getDouble("item_qty").intValue();
         double single_item_cost = current_cost / current_qty;
         final double new_cost = single_item_cost * qty;
-
         final double final_cost = new_cost - current_cost;
 
-        confirmedRef.document(id).update("item_qty", qty).addOnCompleteListener(new OnCompleteListener<Void>() {
+        final DocumentReference parentRef = custRef.document(doc_id);
+        final DocumentReference confKotRef = confirmedRef.document(id);
+
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    updateCost();
-                } else {
-                    Toast.makeText(ConfirmFinalBill.this, "Failed to update quantity!", Toast.LENGTH_SHORT).show();
-                }
-            }
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                double saved_cost = transaction.get(parentRef).getDouble("confirmed_cost");
+                double f_Cost = saved_cost + final_cost;
+                transaction.update(parentRef, "confirmed_cost", f_Cost);
+                transaction.update(confKotRef, "item_qty", qty);
+                transaction.update(confKotRef, "item_cost", new_cost);
 
-            private void updateCost() {
-                confirmedRef.document(id).update("item_cost", new_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            updateConfirmedCost();
-                        } else {
-                            Toast.makeText(ConfirmFinalBill.this, "Failed to update cost!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                return null;
             }
-
-            private void updateConfirmedCost() {
-                custRef.document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            double saved_cost = task.getResult().getDouble("confirmed_cost");
-                            double f_Cost = saved_cost + final_cost;
-                            custRef.document(doc_id).update("confirmed_cost", f_Cost).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        updateTableCost();
-                                        Toast.makeText(ConfirmFinalBill.this, "Quantity updated", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(ConfirmFinalBill.this, "Failed!", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                updateTableCost();
+                Toast.makeText(ConfirmFinalBill.this, "Quantity updated", Toast.LENGTH_SHORT).show();
             }
         });
-
-        // confirmedRef.document(id);
     }
 
     private void updateItemTitle(DocumentSnapshot snapshot, String newTitle) {
@@ -626,6 +575,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
 
     private void confirmFinalBill(final String payment_mode) {
         progressBar.setVisibility(View.VISIBLE);
+
         custRef.document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -635,6 +585,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                     no_of_cust = task.getResult().getDouble("no_of_cust").intValue();
                     table_type = task.getResult().getString("table_type");
                     date_time = task.getResult().getString("date_time");
+                    current_costFinal = task.getResult().getDouble("current_cost");
 
                     if (final_confirmed_cost == 0.0 || final_confirmed_cost == 0) {
                         progressBar.setVisibility(View.GONE);
@@ -647,76 +598,68 @@ public class ConfirmFinalBill extends AppCompatActivity {
             }
 
             private void savetoHistory(final String payment_mode) {
-                generateBillNo();
-                generateCompletedDateTime();
+                GenerateNumber number = new GenerateNumber();
+                Bill_NO = number.generateBillNo();
+                completed_date = number.generateCompletedDateTime();
                 HistoryModel model = new HistoryModel(date_time, payment_mode, final_confirmed_cost, table_type, table_no, Bill_NO, completed_date, no_of_cust);
-                historyRef.add(model).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+
+                final WriteBatch batch1 = db.batch();
+                final WriteBatch batch2 = db.batch();
+                final WriteBatch batch3 = db.batch();
+                final WriteBatch batch4 = db.batch();
+                DocumentReference histDocRef = historyRef.document();
+                batch1.set(histDocRef, model);
+                final String history_doc_id = histDocRef.getId();
+                batch1.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if (task.isSuccessful()) {
-                            final String history_doc_id = task.getResult().getId();
-
-                            confirmedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                                            FinalBillModel model = snapshot.toObject(FinalBillModel.class);
-                                            historyRef.document(history_doc_id).collection(CONFIRMED_KOT).add(model);
-                                        }
-                                        confirmedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                                                        confirmedRef.document(snapshot.getId()).delete();
-                                                    }
-                                                }
-                                            }
-                                        });
-                                        custRef.document(doc_id).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                                                        custRef.document(doc_id).collection(CURRENT_KOT)
-                                                                .document(snapshot.getId()).delete();
-                                                    }
-                                                }
-                                            }
-                                        });
-                                        custRef.document(doc_id).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    progressBar.setVisibility(View.GONE);
-                                                    db.collection("Tables").document(table_type)
-                                                            .update(String.valueOf(table_no), true).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            if (task.isSuccessful()) {
-                                                                addtoGrandTotal();
-                                                                if (payment_mode.equals("Online")) {
-                                                                    addToOnlineTotal();
-                                                                }
-                                                                addToTableWiseTotal();
-                                                                Toast.makeText(ConfirmFinalBill.this, "Order completed", Toast.LENGTH_SHORT).show();
-                                                                startActivity(new Intent(getApplicationContext(), Manager.class));
-                                                                overridePendingTransition(0, 0);
-                                                            }
-                                                        }
-                                                    });
-
-                                                }
-                                            }
-                                        });
-
-                                    }
+                    public void onSuccess(Void aVoid) {
+                        confirmedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                    FinalBillModel model2 = snapshot.toObject(FinalBillModel.class);
+                                    DocumentReference historyConfKotRef = historyRef.document(history_doc_id)
+                                            .collection(CONFIRMED_KOT).document(snapshot.getId());
+                                    batch2.set(historyConfKotRef, model2);
+                                    batch2.delete(confirmedRef.document(snapshot.getId()));
                                 }
-                            });
+                                batch2.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        if (current_costFinal != 0.0) {
+                                            db.collection(CUSTOMERS).document(doc_id).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot snapshot1 : task.getResult()) {
+                                                            batch4.delete(db.collection(CUSTOMERS).document(doc_id)
+                                                                    .collection(CURRENT_KOT).document(snapshot1.getId()));
+                                                        }
+                                                        batch4.commit();
+                                                    }
+                                                }
+                                            });
+                                        }
+                                        batch3.delete(custRef.document(doc_id));
+                                        batch3.update(db.collection(TABLES).document(table_type), String.valueOf(table_no), true);
+                                        batch3.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                addtoGrandTotal();
+                                                if (payment_mode.equals("Online")) {
+                                                    addToOnlineTotal();
+                                                }
+                                                addToTableWiseTotal();
+                                                Toast.makeText(ConfirmFinalBill.this, "Order completed", Toast.LENGTH_SHORT).show();
+                                                startActivity(new Intent(getApplicationContext(), Manager.class));
+                                                overridePendingTransition(0, 0);
+                                            }
+                                        });
+                                    }
+                                });
 
-                        } else {
-                        }//failed
+                            }
+                        });
                     }
                 });
             }
@@ -921,30 +864,8 @@ public class ConfirmFinalBill extends AppCompatActivity {
                         }
                     }
                 });
-
-
             }
         });
-    }
-
-
-    private void generateCompletedDateTime() {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-        Date date = new Date();
-        String datetoday = format.format(date);
-        completed_date = datetoday.replaceAll("/", "-");
-    }
-
-    public void generateBillNo() {
-        Random r = new Random();
-        Date date = new Date();
-        char a = (char) (r.nextInt(26) + 'a');
-        char b = (char) (r.nextInt(26) + 'a');
-        long timelilli = date.getTime();
-        String timeString = String.valueOf(timelilli);
-        String randomMilli = timeString.substring(timeString.length() - 5);
-        Bill_NO = String.valueOf(a).concat(String.valueOf(b)).toUpperCase().concat(randomMilli);
-
     }
 }
 

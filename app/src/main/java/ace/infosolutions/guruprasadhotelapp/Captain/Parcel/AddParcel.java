@@ -23,8 +23,8 @@ import com.google.firebase.firestore.WriteBatch;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 public class AddParcel extends AppCompatActivity {
     public static final String SP_KEY = "SP_KEY";
@@ -134,7 +134,9 @@ public class AddParcel extends AppCompatActivity {
                     editor.commit();
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(AddParcel.this, "Parcel Added", Toast.LENGTH_SHORT).show();
-                    finishAffinity();
+                    cust_name.setText("");
+                    cust_address.setText("");
+                    cust_contact.setText("");
                     startActivity(new Intent(getApplicationContext(), FoodMenuParcel.class));
                 }
             });

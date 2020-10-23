@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:id="@+id/date"
-    android:textSize="25sp"
-    android:textStyle="bold"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:layout_marginTop="@dimen/_10sdp"
     android:layout_marginStart="@dimen/_5sdp"
-    android:layout_marginEnd="@dimen/_5sdp"
-    android:layout_height="wrap_content">
+    android:layout_marginEnd="@dimen/_5sdp">
 
-</TextView>
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:layout_height="wrap_content">
+
+    </TextView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey" />
+</LinearLayout>

@@ -70,7 +70,6 @@ public class ParcelFragment extends Fragment {
         alertDialog = builder.create();
         if(auth.getUid().equals(getContext().getResources().getString(R.string.MANAGER_UID))){
             ismanager = true;
-
         }
         else{
             ismanager = false;

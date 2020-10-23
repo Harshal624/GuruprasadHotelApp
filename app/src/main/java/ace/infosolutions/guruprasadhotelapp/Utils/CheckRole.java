@@ -1,13 +1,13 @@
-package ace.infosolutions.guruprasadhotelapp;
+package ace.infosolutions.guruprasadhotelapp.Utils;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.CaptainMainFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
+import ace.infosolutions.guruprasadhotelapp.R;
 
 public class CheckRole extends AppCompatActivity {
     private String MANAGER_UID;

@@ -22,13 +22,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.gson.internal.$Gson$Preconditions;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishModel;
-import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 public class UpdateFishPricesFragment extends Fragment {
     private static final String FISH = "FISH";

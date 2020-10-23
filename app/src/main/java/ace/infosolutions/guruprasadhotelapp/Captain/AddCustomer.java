@@ -30,8 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.CustomerInfo;
-import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 public class AddCustomer extends AppCompatActivity {
     public static final String PREF_DOCID = "PREF_DOCID";

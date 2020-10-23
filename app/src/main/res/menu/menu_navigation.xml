@@ -42,13 +42,12 @@
         </menu>
     </item>
 
-    <item android:icon="@drawable/ic_social"
-        android:title="Social">
+    <item android:title="Settings">
         <menu>
             <item
-                android:id="@+id/feedback"
-                android:icon="@drawable/nav_feedback"
-                android:title="Feedback" />
+                android:id="@+id/manager_pin"
+                android:icon="@drawable/ic_password"
+                android:title="Change Manager PIN" />
         </menu>
     </item>
 

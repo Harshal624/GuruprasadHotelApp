@@ -37,8 +37,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
-import ace.infosolutions.guruprasadhotelapp.InternetConn;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 //TODO MULTIPLE ITEMS - WRONG CONFIRMED COST VALUES
 
 
@@ -127,6 +127,11 @@ public class CurrentCartFragment extends Fragment {
                                                             transaction.update(customerCostRef, "confirmed_cost", final_cost);
                                                             transaction.update(customerCostRef, "current_cost", 0);
                                                             return null;
+                                                        }
+                                                    }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Toast.makeText(getContext(), "Confirmed", Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
 
