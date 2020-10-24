@@ -35,6 +35,7 @@ public class CalculateTallyParcel extends AppCompatActivity {
     private Query query;
     private FirestoreRecyclerOptions<ParcelTotalModel> tally;
     private boolean ascending;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

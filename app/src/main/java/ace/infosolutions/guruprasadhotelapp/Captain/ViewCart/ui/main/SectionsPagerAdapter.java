@@ -15,7 +15,7 @@ import ace.infosolutions.guruprasadhotelapp.R;
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.cart_text_1,R.string.cart_text3};
+    private static final int[] TAB_TITLES = new int[]{R.string.cart_text_1, R.string.cart_text3};
     private final Context mContext;
 
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
@@ -25,14 +25,16 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-            Fragment fragment = null;
-            switch (position){
-                case 0: fragment = new CurrentCartFragment();
+        Fragment fragment = null;
+        switch (position) {
+            case 0:
+                fragment = new CurrentCartFragment();
                 break;
-                case 1:fragment = new ConfirmedCartFragment();
+            case 1:
+                fragment = new ConfirmedCartFragment();
                 break;
-            }
-            return fragment;
+        }
+        return fragment;
     }
 
     @Nullable

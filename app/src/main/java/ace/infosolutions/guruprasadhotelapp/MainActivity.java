@@ -78,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
                 } else if (!username.equals("") && !password.equals("")) {
 
-                    if(conn.haveNetworkConnection())
+                    if (conn.haveNetworkConnection())
                         usersignin(username, password);
-                    else{
+                    else {
                         progressBar.setVisibility(View.GONE);
                         Toast.makeText(MainActivity.this, "No Internet Connection!", Toast.LENGTH_SHORT).show();
                     }
@@ -101,8 +101,7 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(getApplicationContext(), CheckRole.class);
                             intent.putExtra("User", user.getUid());
                             startActivity(intent);
-                        }
-                        else{
+                        } else {
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(MainActivity.this, "Wrong credentials", Toast.LENGTH_SHORT).show();
                         }

@@ -27,8 +27,8 @@ import ace.infosolutions.guruprasadhotelapp.R;
 
 public class TallyFragment extends Fragment {
 
-    private Button daily_grand,monthly_grand,daily_online,monthly_online,daily_parcel,monthly_parcel;
-    private Button daily_table,monthly_table;
+    private Button daily_grand, monthly_grand, daily_online, monthly_online, daily_parcel, monthly_parcel;
+    private Button daily_table, monthly_table;
 
     private AlertDialog pinAlert;
     private View pinView;
@@ -40,8 +40,8 @@ public class TallyFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tallyfragment,container,false);
-        ((Manager) getActivity() ).toolbar.setTitle("Tally");
+        View view = inflater.inflate(R.layout.tallyfragment, container, false);
+        ((Manager) getActivity()).toolbar.setTitle("Tally");
         daily_grand = view.findViewById(R.id.daily_grand);
         monthly_grand = view.findViewById(R.id.monthly_grand);
         daily_table = view.findViewById(R.id.daily_table);
@@ -72,7 +72,7 @@ public class TallyFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), CalculateTallyGrand.class);
-                intent.putExtra("TALLYTYPE","DAILYGRAND");
+                intent.putExtra("TALLYTYPE", "DAILYGRAND");
                 setUpPinAlert(intent);
                 pinAlert.setView(pinView);
                 pinAlert.setCancelable(true);
@@ -85,7 +85,7 @@ public class TallyFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), CalculateTallyGrand.class);
-                intent.putExtra("TALLYTYPE","MONTHLYGRAND");
+                intent.putExtra("TALLYTYPE", "MONTHLYGRAND");
                 setUpPinAlert(intent);
                 pinAlert.setView(pinView);
                 pinAlert.setCancelable(true);
@@ -97,7 +97,7 @@ public class TallyFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), CalculateTallyParcel.class);
-                intent.putExtra("TALLYTYPE","DAILYPARCEL");
+                intent.putExtra("TALLYTYPE", "DAILYPARCEL");
                 setUpPinAlert(intent);
                 pinAlert.setView(pinView);
                 pinAlert.setCancelable(true);
@@ -109,7 +109,7 @@ public class TallyFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), CalculateTallyParcel.class);
-                intent.putExtra("TALLYTYPE","MONTHLYPARCEL");
+                intent.putExtra("TALLYTYPE", "MONTHLYPARCEL");
                 setUpPinAlert(intent);
                 pinAlert.setView(pinView);
                 pinAlert.setCancelable(true);
@@ -121,7 +121,7 @@ public class TallyFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), CalculateTallyOnline.class);
-                intent.putExtra("TALLYTYPE","DAILYONLINE");
+                intent.putExtra("TALLYTYPE", "DAILYONLINE");
                 setUpPinAlert(intent);
                 pinAlert.setView(pinView);
                 pinAlert.setCancelable(true);
@@ -133,7 +133,7 @@ public class TallyFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), CalculateTallyOnline.class);
-                intent.putExtra("TALLYTYPE","MONTHLYONLINE");
+                intent.putExtra("TALLYTYPE", "MONTHLYONLINE");
                 setUpPinAlert(intent);
                 pinAlert.setView(pinView);
                 pinAlert.setCancelable(true);

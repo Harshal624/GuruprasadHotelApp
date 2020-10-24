@@ -32,7 +32,7 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
     private ImageButton signout;
     private FirebaseAuth firebaseAuth;
     private DrawerLayout drawerLayout;
-    private  NavigationView navigationView;
+    private NavigationView navigationView;
     private long backPressedTime;
     private Toast backToast;
 
@@ -68,7 +68,7 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
         firebaseAuth.signOut();
         finishAffinity();
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
-        overridePendingTransition(0,0);
+        overridePendingTransition(0, 0);
     }
 
     @Override
@@ -77,21 +77,19 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
             drawerLayout.closeDrawer(GravityCompat.START);
 
         } else {
-            if(navigationView.getMenu().findItem(R.id.customer_list).isChecked()){
-                if(backPressedTime + 2000 > System.currentTimeMillis()){
+            if (navigationView.getMenu().findItem(R.id.customer_list).isChecked()) {
+                if (backPressedTime + 2000 > System.currentTimeMillis()) {
                     backToast.cancel();
                     finishAffinity();
                     finish();
                     super.onBackPressed();
                     return;
-                }
-                else{
-                    backToast = Toast.makeText(getBaseContext(),"Press back again to exit",Toast.LENGTH_SHORT);
+                } else {
+                    backToast = Toast.makeText(getBaseContext(), "Press back again to exit", Toast.LENGTH_SHORT);
                     backToast.show();
                 }
                 backPressedTime = System.currentTimeMillis();
-            }
-            else{
+            } else {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
                         , new CustomerListFragment()).commit();
                 navigationView.setCheckedItem(R.id.customer_list);
@@ -119,19 +117,22 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
 
             case R.id.parcel:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                ,new ParcelFragment()).commit();
+                        , new ParcelFragment()).commit();
                 break;
 
-            case R.id.cust_history: getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                    ,new HistoryFragment()).commit();
+            case R.id.cust_history:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                        , new HistoryFragment()).commit();
                 break;
 
-            case R.id.tally: getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                    ,new TallyFragment()).commit();
+            case R.id.tally:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                        , new TallyFragment()).commit();
                 break;
 
-            case R.id.parcel_history:getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                    ,new ParcelHistoryFragment()).commit();
+            case R.id.parcel_history:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                        , new ParcelHistoryFragment()).commit();
                 break;
 
             case R.id.manager_pin:

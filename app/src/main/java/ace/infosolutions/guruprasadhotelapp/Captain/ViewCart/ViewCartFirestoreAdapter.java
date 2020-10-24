@@ -18,7 +18,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 
-public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartModel, ViewCartFirestoreAdapter.CustomerHolder > {
+public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartModel, ViewCartFirestoreAdapter.CustomerHolder> {
     private OnItemClickListenerCart listener;
     private onQtyClickListener qtylistener;
     private TextView empty_cart;
@@ -34,6 +34,7 @@ public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartM
         empty_cart = view.findViewById(R.id.empty_cart);
         empty_cartIV = view.findViewById(R.id.empty_cartIV);
     }
+
     public ViewCartFirestoreAdapter(@NonNull FirestoreRecyclerOptions<ViewCartModel> options) {
         super(options);
     }
@@ -41,7 +42,7 @@ public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartM
     @Override
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull ViewCartModel model) {
         holder.food_title.setText(model.getItem_title());
-        holder.food_qty.setText(""+model.getItem_qty());
+        holder.food_qty.setText("" + model.getItem_qty());
     }
 
     @Override
@@ -49,28 +50,42 @@ public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartM
         super.onDataChanged();
 
         try {
-            if(getItemCount() == 0){
+            if (getItemCount() == 0) {
                 empty_cartIV.setVisibility(View.VISIBLE);
                 empty_cart.setVisibility(View.VISIBLE);
-            }
-            else{
+            } else {
                 empty_cartIV.setVisibility(View.GONE);
                 empty_cart.setVisibility(View.GONE);
             }
         } catch (Exception e) {
-            Log.e("Exception",e.toString());
+            Log.e("Exception", e.toString());
         }
     }
 
     @NonNull
     @Override
     public CustomerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_cart_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_cart_item, parent, false);
         return new CustomerHolder(view);
     }
 
+    public void setOnItemCartClickListener(OnItemClickListenerCart listener) {
+        this.listener = listener;
+    }
 
-    public class CustomerHolder extends RecyclerView.ViewHolder{
+    public void setOnQtyClickListener(onQtyClickListener qtylistener) {
+        this.qtylistener = qtylistener;
+    }
+
+    public interface OnItemClickListenerCart {
+        void onItemClickCart(DocumentSnapshot documentSnapshot, int position);
+    }
+
+    public interface onQtyClickListener {
+        void onQtyClick(DocumentSnapshot snapshot);
+    }
+
+    public class CustomerHolder extends RecyclerView.ViewHolder {
         private TextView food_title;
         private TextView food_qty;
         private ImageButton delete_order;
@@ -87,8 +102,8 @@ public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartM
                 public void onClick(View view) {
                     int pos = getAdapterPosition();
                     //if item is removed and it's in his remove animation
-                    if(pos != RecyclerView.NO_POSITION && listener!=null){
-                        listener.onItemClickCart(getSnapshots().getSnapshot(pos),pos);
+                    if (pos != RecyclerView.NO_POSITION && listener != null) {
+                        listener.onItemClickCart(getSnapshots().getSnapshot(pos), pos);
                     }
                 }
             });
@@ -100,27 +115,12 @@ public class ViewCartFirestoreAdapter extends FirestoreRecyclerAdapter<ViewCartM
                     Toast.makeText(itemView.getContext(), title, Toast.LENGTH_SHORT).show();*/
                     int pos = getAdapterPosition();
                     //if item is removed and it's in his remove animation
-                    if(pos != RecyclerView.NO_POSITION && listener!=null)
+                    if (pos != RecyclerView.NO_POSITION && listener != null)
                         qtylistener.onQtyClick(getSnapshots().getSnapshot(pos));
                 }
             });
         }
     }
-
-    public interface OnItemClickListenerCart{
-        void onItemClickCart(DocumentSnapshot documentSnapshot, int position);
-    }
-
-   public void setOnItemCartClickListener(OnItemClickListenerCart listener) {
-        this.listener = listener;
-   }
-
-   public interface onQtyClickListener{
-        void onQtyClick(DocumentSnapshot snapshot);
-   }
-   public void setOnQtyClickListener(onQtyClickListener qtylistener){
-        this.qtylistener = qtylistener;
-   }
 
 }
 

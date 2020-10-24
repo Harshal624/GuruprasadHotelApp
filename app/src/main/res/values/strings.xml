@@ -25,7 +25,7 @@
     <string name="table_no">टेबल नं:</string>
 
     <string-array name="starters_veg_title">
-        <item>व्हेज मंच्युररअन</item>
+        <item>व्हेज मंचुरियन</item>
         <item>व्हेज लॉलीपॉप</item>
         <item>व्हेज क्रिस्पी</item>
         <item>पनीर चिल्ली / पनीर ६५</item>
@@ -38,8 +38,8 @@
         <item>पनीर कबाब</item>
         <item>व्हेज सीख कबाब</item>
         <item>पनीर कबाब</item>
-        <item>पनीर चीज द रटक्का</item>
-        <item>आलू पनीर</item>
+        <item>पनीर चीज द टिक्का</item>
+        <item>आलु पनीर</item>
         <item>गोबी तंदुरी </item>
         <item>तंदुरी स्टाफ</item>
         <item>व्हेज हरभरा कबाब</item>
@@ -85,17 +85,17 @@
         <item>तंदुरी चिकन</item>
         <item>तंदुरी चिकन</item>
         <item>चिकन तंगडी कबाब</item>
-        <item>चिकन रटक्का</item>
+        <item>चिकन टिक्का</item>
         <item>चिकन बंजारा कबाब</item>
         <item>चिकन मलाई कबाब</item>
         <item>चिकन लसुनी कबाब</item>
         <item>चिकन शेख कबाब</item>
-        <item>चिकन कालीचमरी कबाब</item>
+        <item>चिकन कालीमिरी कबाब</item>
         <item>चिकन छोले कबाब</item>
         <item>चिकन पहाडी कबाब</item>
         <item>मस्तानी कबाब</item>
         <item>चिकन अंगारा कबाब</item>
-        <item>चिकन माँगनेट</item>
+        <item>चिकन मॅगनेट</item>
         <item>दमदार कबाब</item>
         <item>ठेचा कबाब</item>
         <item>चिकन लॉलीपॉप  </item>
@@ -104,9 +104,9 @@
         <item>चिकन ६५</item>
         <item>चिकन मंच्युररयन</item>
         <item>चिकन क्रिस्पी</item>
-        <item>चिकन क्रिस्पी बबग्स</item>
+        <item>चिकन क्रिस्पी विंग्स</item>
         <item>चिकन लॉलीपॉप मसाला</item>
-        <item>चिकन गार्लीक</item>
+        <item>चिकन गार्लिक</item>
     </string-array>
 
     <string-array name="starters_nonveg_cost">
@@ -132,7 +132,7 @@
         <item>150</item>
         <item>170</item>
         <item>170</item>
-        <item>150</item>
+        <item>180</item>
         <item>150</item>
         <item>180</item>
     </string-array>
@@ -163,18 +163,18 @@
         <item>मनच्याव सूप</item>
         <item>कॉर्न सूप</item>
         <item>कॉर्न सूप</item>
-        <item>हॉट अँड सौर सूप</item>
-        <item>हॉट अँड सौर सूप</item>
-        <item>लेमन कारिएंडर सूप</item>
-        <item>लेमन कारिएंडर सूप</item>
-        <item>क्रीम ऑफ टोमॅटो सूप</item>
-        <item>क्रीम ऑफ मशरूम सूप</item>
+        <item>हॉट अँड सोअर सूप</item>
+        <item>हॉट अँड सोअर सूप</item>
+        <item>लेमन कोरियंडर सूप</item>
+        <item>लेमन कोरियंडर सूप</item>
+        <item>क्रिम ऑफ टोमॅटो सूप</item>
+        <item>क्रिम ऑफ मशरूम सूप</item>
         <item>चिकन क्लिअर सूप</item>
 
     </string-array>
     <string-array name="veg_nonveg_soup_cost">
         <item>60</item>
-        <item>70</item>
+        <item>80</item>
         <item>70</item>
         <item>90</item>
         <item>60</item>
@@ -197,12 +197,12 @@
     </string-array>
     <string-array name="Rayata_Salad_title">
 
-        <item>पायनॅपल रायता</item>
+        <item>पायनापल रायता</item>
         <item>मिक्स व्हेज रायता</item>
         <item>बुंदी रायता</item>
         <item>ग्रीन सॅलेड</item>
         <item>टोमॅटो सॅलेड</item>
-        <item>ककुंबर सॅलेड</item>
+        <item>कुकुंबर सॅलेड</item>
     </string-array>
     <string-array name="Rayata_Salad_cost">
         <item>60</item>
@@ -241,16 +241,16 @@
         <item>पनीर तवा</item>
         <item>पनीर पसंदा</item>
         <item>पनीर मसाला</item>
-        <item>पनीर ताहोरी</item>
+        <item>पनीर लाहोरी</item>
         <item>पनीर कडाई</item>
         <item>पनीर बटर मसाला</item>
         <item>पनीर बुर्जी</item>
         <item>मटर पनीर /पालक पनीर</item>
-        <item>गुरुप्रसाद स्पे.पनीर मिक्स</item>
+        <item>गुरुप्रसाद रपे.पनीर मिक्स</item>
         <item>पनीर लबाबदार</item>
         <item>पनीर बंजारा मसाला</item>
         <item>पनीर काजु मसाला</item>
-        <item>पनीर थटपटा</item>
+        <item>पनीर चटपटा</item>
         <item>पनीर अंगारा मसाला</item>
         <item>पनीर लसूणी</item>
         <item>पनीर जोशीला</item>
@@ -294,8 +294,8 @@
         <item>व्हेज मराठा</item>
         <item>व्हेज खीमा मसाला</item>
         <item>दम आलु पंजाबी</item>
-        <item>भिंडी मसाला फ्राय</item>
-        <item>बैगन मसाला भरता</item>
+        <item>भिंडी मसाला / फ्राय</item>
+        <item>बैगन मसाला / भरता</item>
         <item>व्हेज लसुणी</item>
         <item>व्हेज कोप्ता करी</item>
         <item>काजू मसाला करी</item>
@@ -310,13 +310,11 @@
         <item>पिटल</item>
         <item>व्हेज जालफ्रायजी</item>
         <item>व्हेज जयपुरी</item>
-        <item>व्हेज कोप्ता</item>
+        <item>मलई कोप्ता</item>
         <item>व्हेज नवरत्न कूर्मा</item>
         <item>व्हेज हैद्राबादी</item>
         <item>मशरूम मसाला</item>
-        <item>व्हेज भु ना</item>
-        <item>चिकन स्प्रिंग रोल</item>
-        <item>व्हेज स्प्रिंग रोल</item>
+        <item>व्हेज भुना</item>
     </string-array>
     <string-array name="veg_maincourse_cost">
         <item>140</item>
@@ -360,28 +358,28 @@
         <item>चिकन पटियाला</item>
         <item>चिकन अफगाणी</item>
         <item>चिकन लसूणी</item>
-        <item>चिकन आदरफी मसाला</item>
+        <item>चिकन आद्रकी मसाला</item>
         <item>चिकन दो पायजा</item>
         <item>मुर्ग मुसल्लम हंडी हाफ</item>
         <item>मुर्ग मुसल्लम हंडी फूल</item>
         <item>चिकन खीमा मसाला</item>
         <item>चिकन टिक्का मसाला</item>
         <item>चिकन मराठा</item>
-        <item>चिकन नवाब हद्दी हा्फ</item>
-        <item>चिकन नवाब हद्दी फूल</item>
-        <item>चि कन भुना  हद्दी हाफ</item>
-        <item>चि कन भुना  हद्दी फूल</item>
-        <item>मटर चिकन हड्डी हाफ</item>
-        <item>मटर चिकन हड्डी फूल</item>
+        <item>चिकन नबाबी हंडी हा्फ</item>
+        <item>चिकन नबाबी हंडी फूल</item>
+        <item>चिकन भुना हंडी हाफ</item>
+        <item>चिकन भुना हंडी फूल</item>
+        <item>बटर चिकन हंडी हाफ</item>
+        <item>बटर चिकन हंडी फूल</item>
         <item>चिकन रांगण जोश</item>
         <item>चिकन हंडी हाफ</item>
         <item>चिकन हंडी फूल</item>
-        <item>चिकन  तंदुरी  हड्डी हाफ</item>
-        <item>चिकन  तंदुरी  हड्डी फूल</item>
+        <item>चिकन तंदुरी  हंडी हाफ</item>
+        <item>चिकन तंदुरी  हंडी फूल</item>
         <item>चिकन मालवणी हंडी हाफ</item>
         <item>चिकन मालवणी हंडी फूल</item>
         <item>चिकन महाराजा</item>
-        <item>चिकन बनजारा मसाला</item>
+        <item>चिकन बंजारा मसाला</item>
         <item>चिकन अंगारा मसाला</item>
         <item>चिकन महाराणी</item>
         <item>चिकन मख्खनवाला हाफ</item>
@@ -421,7 +419,6 @@
         <item>200</item>
         <item>190</item>
         <item>270</item>
-        <item>270</item>
         <item>470</item>
     </string-array>
 
@@ -441,7 +438,6 @@
         <item>60</item>
         <item>80</item>
         <item>80</item>
-        <item>120</item>
         <item>120</item>
         <item>120</item>
         <item>120</item>
@@ -612,15 +608,15 @@
         <item>शेजवान फ्राईड राईस</item>
         <item>हक्का नूडल्स</item>
         <item>शेजवान नूडल्स</item>
-        <item>टिपल राईस</item>
+        <item>ट्रिपल राईस</item>
         <item>पनीर फ्राईड राईस</item>
         <item>पनीर नूडल्स</item>
         <item>अंडा फ्राईड राईस</item>
         <item>अंडा नूडल्स</item>
         <item>व्हेज/चिकन सिंगापूरी राईस</item>
         <item>व्हेज/चिकन बन गार्लिक राईस</item>
-        <item>व्हेज/चिकन चिल्ली गार्लिक राईस</item>
-        <item>थॉपर राईस</item>
+        <item>व्हेज/चिकन चिल्ली गार्लिक नूडल्स</item>
+        <item>चॉपर राईस</item>
     </string-array>
 
     <string-array name="rice_ricenoodles_cost">

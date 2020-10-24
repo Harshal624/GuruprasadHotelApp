@@ -41,16 +41,16 @@ public class CalculateTallyTable extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculate_tally_table);
         table_tally_type = findViewById(R.id.table_tally_type);
-        boolean isdaily = getIntent().getBooleanExtra("ISDAILY",false);
+        boolean isdaily = getIntent().getBooleanExtra("ISDAILY", false);
         doc_id = getIntent().getStringExtra("DOCID");
         table_type = getIntent().getStringExtra("TYPE");
         tables = new ArrayList<>();
 
-        if(isdaily){
-            toolbar_title = table_type+"(Daily)";
+        if (isdaily) {
+            toolbar_title = table_type + "(Daily)";
             ref = db.collection(TABLETALLYDAILY);
-        } else{
-            toolbar_title = table_type+"(Monthly)";
+        } else {
+            toolbar_title = table_type + "(Monthly)";
             ref = db.collection(TABLETALLYMONTHLY);
         }
         table_tally_type.setText(toolbar_title);

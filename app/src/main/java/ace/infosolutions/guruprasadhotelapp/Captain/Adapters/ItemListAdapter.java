@@ -20,7 +20,6 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
     OnItemClickListener2 onItemClickListener2;
 
 
-
     public ItemListAdapter(ArrayList<String> itemtitle, ArrayList<String> itemcost) {
         this.itemtitle = itemtitle;
         this.itemcost = itemcost;
@@ -30,7 +29,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.menu_item_list,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.menu_item_list, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
@@ -38,7 +37,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.item_name.setText(itemtitle.get(position));
-        holder.item_cost.setText("Rs."+itemcost.get(position));
+        holder.item_cost.setText("Rs." + itemcost.get(position));
     }
 
     @Override
@@ -46,7 +45,15 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
         return itemtitle.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public void setOnItemClickListener2(OnItemClickListener2 onItemClickListener2) {
+        this.onItemClickListener2 = onItemClickListener2;
+    }
+
+    public interface OnItemClickListener2 {
+        void onItemClick(String title, int position, String cost);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView item_name;
         private TextView item_cost;
         private CardView food_item;
@@ -60,7 +67,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
             food_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onItemClickListener2.onItemClick(item_name.getText().toString(),getAdapterPosition(),item_cost.getText().toString());
+                    onItemClickListener2.onItemClick(item_name.getText().toString(), getAdapterPosition(), item_cost.getText().toString());
                 }
             });
 
@@ -74,15 +81,6 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
 
         }
     }
-
-    public interface OnItemClickListener2{
-        void onItemClick(String title,int position,String cost);
-    }
-
-    public void setOnItemClickListener2(OnItemClickListener2 onItemClickListener2){
-        this.onItemClickListener2 = onItemClickListener2;
-    }
-
 
 
 }

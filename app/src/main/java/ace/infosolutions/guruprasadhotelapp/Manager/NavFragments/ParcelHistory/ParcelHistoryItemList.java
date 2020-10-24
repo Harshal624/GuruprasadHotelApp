@@ -1,10 +1,10 @@
 package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.ParcelHistory;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -16,13 +16,13 @@ import ace.infosolutions.guruprasadhotelapp.R;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ConfirmedCartParcelFragment.PARCEL_HISTORY;
 import static ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.CurrentCartFragment.CONFIRMED_KOT;
-import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill.HISTORY;
 
 public class ParcelHistoryItemList extends AppCompatActivity {
     private String DOC_ID;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private FirebaseFirestore db= FirebaseFirestore.getInstance();;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    ;
     private ConfirmFinalBillFirestoreAdapter adapter;
 
     @Override
@@ -47,6 +47,7 @@ public class ParcelHistoryItemList extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }
+
     @Override
     protected void onStart() {
         super.onStart();

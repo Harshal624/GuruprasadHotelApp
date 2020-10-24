@@ -17,7 +17,7 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.R;
 
 
-public class ParcelTotalAdapter extends FirestoreRecyclerAdapter<ParcelTotalModel, ParcelTotalAdapter.CustomerHolder > {
+public class ParcelTotalAdapter extends FirestoreRecyclerAdapter<ParcelTotalModel, ParcelTotalAdapter.CustomerHolder> {
     private View view;
     private ImageView empty_cartIV;
     private TextView empty_cartTV;
@@ -26,6 +26,7 @@ public class ParcelTotalAdapter extends FirestoreRecyclerAdapter<ParcelTotalMode
     public ParcelTotalAdapter(@NonNull FirestoreRecyclerOptions<ParcelTotalModel> options) {
         super(options);
     }
+
     public ParcelTotalAdapter(@NonNull FirestoreRecyclerOptions<ParcelTotalModel> options, View view) {
         super(options);
         this.view = view;
@@ -33,15 +34,15 @@ public class ParcelTotalAdapter extends FirestoreRecyclerAdapter<ParcelTotalMode
 
     @Override
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull ParcelTotalModel model) {
-          holder.grandtotal.setText("Rs."+model.getParceltotal());
-          holder.date.setText(model.getDate());
+        holder.grandtotal.setText("Rs." + model.getParceltotal());
+        holder.date.setText(model.getDate());
     }
 
 
     @NonNull
     @Override
     public CustomerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.tally_grandtotal_items,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.tally_grandtotal_items, parent, false);
         return new CustomerHolder(view);
     }
 
@@ -51,22 +52,21 @@ public class ParcelTotalAdapter extends FirestoreRecyclerAdapter<ParcelTotalMode
         try {
             empty_cartIV = view.findViewById(R.id.empty_cartIV);
             empty_cartTV = view.findViewById(R.id.empty_cart);
-            if(getItemCount() == 0){
+            if (getItemCount() == 0) {
                 empty_cartIV.setVisibility(View.VISIBLE);
                 empty_cartTV.setVisibility(View.VISIBLE);
-            }
-            else{
+            } else {
                 empty_cartIV.setVisibility(View.GONE);
                 empty_cartTV.setVisibility(View.GONE);
             }
         } catch (Exception e) {
-            Log.e("Exception",e.toString());
+            Log.e("Exception", e.toString());
         }
     }
 
-    public class CustomerHolder extends RecyclerView.ViewHolder{
-      private TextView date;
-      private TextView grandtotal;
+    public class CustomerHolder extends RecyclerView.ViewHolder {
+        private TextView date;
+        private TextView grandtotal;
 
         public CustomerHolder(@NonNull View itemView) {
             super(itemView);

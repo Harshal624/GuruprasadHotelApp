@@ -4,7 +4,8 @@ public class ParcelTotalModel {
     private double parceltotal;
     private String date;
 
-    ParcelTotalModel(){}
+    ParcelTotalModel() {
+    }
 
     public double getParceltotal() {
         return parceltotal;

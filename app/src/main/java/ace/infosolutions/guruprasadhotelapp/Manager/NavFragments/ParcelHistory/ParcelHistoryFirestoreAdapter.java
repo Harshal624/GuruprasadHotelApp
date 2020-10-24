@@ -15,11 +15,10 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelHistoryModel;
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.HistoryModel;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 
-public class ParcelHistoryFirestoreAdapter extends FirestoreRecyclerAdapter<ParcelHistoryModel, ParcelHistoryFirestoreAdapter.CustomerHolder > {
+public class ParcelHistoryFirestoreAdapter extends FirestoreRecyclerAdapter<ParcelHistoryModel, ParcelHistoryFirestoreAdapter.CustomerHolder> {
     private View view;
     private ImageView empty_cartIV;
     private TextView empty_cartTV;
@@ -28,6 +27,7 @@ public class ParcelHistoryFirestoreAdapter extends FirestoreRecyclerAdapter<Parc
     public ParcelHistoryFirestoreAdapter(@NonNull FirestoreRecyclerOptions<ParcelHistoryModel> options) {
         super(options);
     }
+
     public ParcelHistoryFirestoreAdapter(@NonNull FirestoreRecyclerOptions<ParcelHistoryModel> options, View view) {
         super(options);
         this.view = view;
@@ -35,13 +35,12 @@ public class ParcelHistoryFirestoreAdapter extends FirestoreRecyclerAdapter<Parc
 
     @Override
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull ParcelHistoryModel model) {
-        holder.payment_mode.setText("("+model.getPayment_mode()+")");
-        holder.total_cost.setText(""+model.getConfirmed_cost());
+        holder.payment_mode.setText("(" + model.getPayment_mode() + ")");
+        holder.total_cost.setText("" + model.getConfirmed_cost());
         holder.date_time.setText(model.getDate_time_completed());
-        if(model.isIshomedelivery()){
+        if (model.isIshomedelivery()) {
             holder.delivery_type.setText("Home Delivery");
-        }
-        else{
+        } else {
             holder.delivery_type.setText("Parcel");
         }
         holder.cust_name.setText(model.getCustomer_name());
@@ -51,7 +50,7 @@ public class ParcelHistoryFirestoreAdapter extends FirestoreRecyclerAdapter<Parc
     @NonNull
     @Override
     public CustomerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.parcel_history_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.parcel_history_item, parent, false);
         return new CustomerHolder(view);
     }
 
@@ -61,27 +60,33 @@ public class ParcelHistoryFirestoreAdapter extends FirestoreRecyclerAdapter<Parc
         try {
             empty_cartIV = view.findViewById(R.id.empty_cartIV);
             empty_cartTV = view.findViewById(R.id.empty_cart);
-            if(getItemCount() == 0){
+            if (getItemCount() == 0) {
                 empty_cartIV.setVisibility(View.VISIBLE);
                 empty_cartTV.setVisibility(View.VISIBLE);
-            }
-            else{
+            } else {
                 empty_cartIV.setVisibility(View.GONE);
                 empty_cartTV.setVisibility(View.GONE);
             }
         } catch (Exception e) {
-            Log.e("Exception",e.toString());
+            Log.e("Exception", e.toString());
         }
     }
 
-    public class CustomerHolder extends RecyclerView.ViewHolder{
+    public void setOnFinalBillItemTitleClickListener(onFinalBillItemTitleClick listener) {
+        this.listener_title = listener;
+    }
+
+    public interface onFinalBillItemTitleClick {
+        void onItemClick(DocumentSnapshot snapshot, int pos);
+    }
+
+    public class CustomerHolder extends RecyclerView.ViewHolder {
         private TextView bill_no;
         private TextView cust_name;
         private TextView delivery_type;
         private TextView date_time;
         private TextView total_cost;
         private TextView payment_mode;
-
 
 
         public CustomerHolder(@NonNull View itemView) {
@@ -99,19 +104,12 @@ public class ParcelHistoryFirestoreAdapter extends FirestoreRecyclerAdapter<Parc
                 public void onClick(View view) {
                     int pos = getAdapterPosition();
                     //if item is removed and it's in his remove animation
-                    if(pos != RecyclerView.NO_POSITION && listener_title!=null){
-                        listener_title.onItemClick(getSnapshots().getSnapshot(pos),pos);
+                    if (pos != RecyclerView.NO_POSITION && listener_title != null) {
+                        listener_title.onItemClick(getSnapshots().getSnapshot(pos), pos);
                     }
                 }
             });
         }
-    }
-
-    public interface onFinalBillItemTitleClick{
-        void onItemClick(DocumentSnapshot snapshot, int pos);
-    }
-    public void setOnFinalBillItemTitleClickListener(onFinalBillItemTitleClick listener){
-        this.listener_title = listener;
     }
 }
 

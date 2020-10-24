@@ -13,14 +13,15 @@
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.1"
         app:layout_constraintTop_toTopOf="parent">
+
         <ImageView
             android:id="@+id/tally_type_image"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
             android:src="@drawable/daily"
             android:layout_marginStart="@dimen/_7sdp"
-            android:layout_gravity="center"
-            />
+            android:layout_gravity="center" />
+
         <TextView
             android:id="@+id/tally_type"
             android:layout_width="wrap_content"
@@ -29,8 +30,7 @@
             android:text="Daily Tally"
             android:layout_gravity="center"
             android:layout_marginStart="@dimen/_10sdp"
-            android:textSize="20sp"
-            />
+            android:textSize="20sp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

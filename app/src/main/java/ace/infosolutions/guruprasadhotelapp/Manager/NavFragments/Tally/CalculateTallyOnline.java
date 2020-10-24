@@ -93,7 +93,7 @@ public class CalculateTallyOnline extends AppCompatActivity {
 
 
     private void computeTallyType() {
-        switch (tally_type){
+        switch (tally_type) {
             case "DAILYONLINE":
                 query = db.collection(TALLY).document(DAILY).collection(ONLINETOTAL);
                 t_type.setText("Daily Online");
@@ -107,9 +107,10 @@ public class CalculateTallyOnline extends AppCompatActivity {
         }
 
     }
+
     private void setUpRecyclerView() {
         tally = new FirestoreRecyclerOptions.Builder<OnlineTotalModel>()
-                .setQuery(query,OnlineTotalModel.class)
+                .setQuery(query, OnlineTotalModel.class)
                 .build();
         adapter = new OnlineTotalAdapter(tally);
         recyclerView.setHasFixedSize(true);

@@ -10,7 +10,8 @@ public class ParcelModel {
     private String date_time;
 
 
-    ParcelModel(){}
+    ParcelModel() {
+    }
 
     public String getCustomer_name() {
         return customer_name;

@@ -4,7 +4,7 @@ public class FishModel {
     private String item_title;
     private double item_cost;
 
-   FishModel() {
+    FishModel() {
     }
 
     public String getItem_title() {

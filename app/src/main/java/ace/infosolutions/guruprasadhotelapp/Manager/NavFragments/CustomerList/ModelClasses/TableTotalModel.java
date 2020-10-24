@@ -4,7 +4,8 @@ public class TableTotalModel {
     private double tabletotal;
     private int table_no;
 
-    TableTotalModel(){}
+    TableTotalModel() {
+    }
 
     public double getTabletotal() {
         return tabletotal;

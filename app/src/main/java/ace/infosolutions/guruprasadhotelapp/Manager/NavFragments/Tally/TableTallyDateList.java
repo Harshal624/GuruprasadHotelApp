@@ -37,9 +37,9 @@ public class TableTallyDateList extends AppCompatActivity {
         adapter.setOnDateClickListener(new TableDateListAdapter.OnDateClickListener() {
             @Override
             public void OnDateClick(DocumentSnapshot snapshot) {
-                Intent intent = new Intent(getApplicationContext(),TableTally.class);
-                intent.putExtra("DOCID",snapshot.getId());
-                intent.putExtra("ISDAILY",true);
+                Intent intent = new Intent(getApplicationContext(), TableTally.class);
+                intent.putExtra("DOCID", snapshot.getId());
+                intent.putExtra("ISDAILY", true);
                 startActivity(intent);
             }
         });
@@ -49,7 +49,7 @@ public class TableTallyDateList extends AppCompatActivity {
 
         Query query = db.collection(TABLETALLYDAILY);
         FirestoreRecyclerOptions<DateModel> date_list = new FirestoreRecyclerOptions.Builder<DateModel>()
-                .setQuery(query,DateModel.class)
+                .setQuery(query, DateModel.class)
                 .build();
         adapter = new TableDateListAdapter(date_list);
         recyclerView.setHasFixedSize(true);

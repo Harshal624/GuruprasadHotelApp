@@ -10,7 +10,8 @@ public class HistoryModel {
     private String date_time_completed;
     private int no_of_cust;
 
-    HistoryModel(){}
+    HistoryModel() {
+    }
 
     public String getDate_time_arrived() {
         return date_time_arrived;

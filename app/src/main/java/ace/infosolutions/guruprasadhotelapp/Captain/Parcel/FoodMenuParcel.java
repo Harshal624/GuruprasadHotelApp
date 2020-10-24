@@ -189,8 +189,8 @@ public class FoodMenuParcel extends AppCompatActivity implements View.OnClickLis
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.cancel_order) {
             finishAffinity();
-            startActivity(new Intent(getApplicationContext(),CaptainMainFragment.class));
-            overridePendingTransition(0,0);
+            startActivity(new Intent(getApplicationContext(), CaptainMainFragment.class));
+            overridePendingTransition(0, 0);
         }
         return super.onOptionsItemSelected(item);
     }

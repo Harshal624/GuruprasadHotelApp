@@ -40,9 +40,6 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 
-
-
-
     <EditText
         android:id="@+id/username"
         android:layout_width="match_parent"

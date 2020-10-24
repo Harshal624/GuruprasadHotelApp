@@ -17,7 +17,7 @@ import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 
-public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerclass, CustomerFirestoreAdapter.CustomerHolder > {
+public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerclass, CustomerFirestoreAdapter.CustomerHolder> {
     private OnItemClickListener listener;
     private OnItemLongClickListener listener1;
     private View view;
@@ -25,19 +25,19 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
     private TextView nocustTV;
 
 
-    public CustomerFirestoreAdapter(@NonNull FirestoreRecyclerOptions<customerclass> options,View view) {
+    public CustomerFirestoreAdapter(@NonNull FirestoreRecyclerOptions<customerclass> options, View view) {
         super(options);
         this.view = view;
-        nocustIV = (ImageView)view.findViewById(R.id.nocustIV);
-        nocustTV = (TextView)view.findViewById(R.id.nocustsTV);
+        nocustIV = (ImageView) view.findViewById(R.id.nocustIV);
+        nocustTV = (TextView) view.findViewById(R.id.nocustsTV);
     }
 
     @Override
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull customerclass model) {
         holder.table_type.setText(model.getTable_type());
-        double roundedDouble = Math.round(model.getConfirmed_cost() * 100.0)/100.0;
-        holder.cost.setText(""+roundedDouble);
-        holder.table_no.setText(""+model.getTable_no());
+        double roundedDouble = Math.round(model.getConfirmed_cost() * 100.0) / 100.0;
+        holder.cost.setText("" + roundedDouble);
+        holder.table_no.setText("" + model.getTable_no());
 
     }
 
@@ -50,11 +50,10 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
     public void onDataChanged() {
         super.onDataChanged();
         try {
-            if(getItemCount() == 0){
+            if (getItemCount() == 0) {
                 nocustTV.setVisibility(View.VISIBLE);
                 nocustIV.setVisibility(View.VISIBLE);
-            }
-            else{
+            } else {
                 nocustTV.setVisibility(View.GONE);
                 nocustIV.setVisibility(View.GONE);
             }
@@ -70,8 +69,24 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
         return new CustomerHolder(view);
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
-    public class CustomerHolder extends RecyclerView.ViewHolder{
+    public void setOnItemLongClickListener(OnItemLongClickListener listener1) {
+        this.listener1 = listener1;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(DocumentSnapshot documentSnapshot, int position);
+    }
+
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(DocumentSnapshot documentSnapshot, int pos);
+    }
+
+    public class CustomerHolder extends RecyclerView.ViewHolder {
         private TextView table_no;
         private TextView table_type;
         private TextView cost;
@@ -87,8 +102,8 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
                 public void onClick(View view) {
                     int pos = getAdapterPosition();
                     //if item is removed and it's in his remove animation
-                    if(pos != RecyclerView.NO_POSITION && listener!=null){
-                        listener.onItemClick(getSnapshots().getSnapshot(pos),pos);
+                    if (pos != RecyclerView.NO_POSITION && listener != null) {
+                        listener.onItemClick(getSnapshots().getSnapshot(pos), pos);
                     }
                 }
             });
@@ -98,8 +113,8 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
                 public boolean onLongClick(View view) {
                     int pos = getAdapterPosition();
                     //if item is removed and it's in his remove animation
-                    if(pos != RecyclerView.NO_POSITION && listener!=null){
-                        listener1.onItemLongClick(getSnapshots().getSnapshot(pos),getAdapterPosition());
+                    if (pos != RecyclerView.NO_POSITION && listener != null) {
+                        listener1.onItemLongClick(getSnapshots().getSnapshot(pos), getAdapterPosition());
                     }
                     return false;
                 }
@@ -107,21 +122,6 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
         }
 
 
-    }
-
-    public interface OnItemClickListener{
-        void onItemClick(DocumentSnapshot documentSnapshot,int position);
-    }
-    public void setOnItemClickListener(OnItemClickListener listener){
-        this.listener = listener;
-    }
-
-
-    public interface OnItemLongClickListener{
-        void onItemLongClick(DocumentSnapshot documentSnapshot,int pos);
-    }
-    public void setOnItemLongClickListener(OnItemLongClickListener listener1){
-        this.listener1 = listener1;
     }
 }
 

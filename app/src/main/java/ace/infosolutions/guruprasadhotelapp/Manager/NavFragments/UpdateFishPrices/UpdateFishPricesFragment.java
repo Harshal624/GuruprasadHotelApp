@@ -46,20 +46,21 @@ public class UpdateFishPricesFragment extends Fragment {
     private View view1;
     String fish_doc_id;
     private InternetConn conn;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.manager_update_fish_prices,container,false);
-        ((Manager) getActivity() ).toolbar.setTitle("Update Fish Prices");
+        View view = inflater.inflate(R.layout.manager_update_fish_prices, container, false);
+        ((Manager) getActivity()).toolbar.setTitle("Update Fish Prices");
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_updatefish);
         layoutManager = new LinearLayoutManager(getContext());
         db = FirebaseFirestore.getInstance();
         fishRef = db.collection(FISH);
-        view1 = inflater.inflate(R.layout.updatefish_alertdialog,null);
+        view1 = inflater.inflate(R.layout.updatefish_alertdialog, null);
         builder = new AlertDialog.Builder(getContext());
         alertDialog = builder.create();
         alertDialog.setCancelable(false);
-        enter_cost = (EditText)view1.findViewById(R.id.fish_cost);
+        enter_cost = (EditText) view1.findViewById(R.id.fish_cost);
         conn = new InternetConn(getContext());
 
         return view;
@@ -75,16 +76,16 @@ public class UpdateFishPricesFragment extends Fragment {
         adapter.setOnItemClickListener(new FishFirestoreAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
-                    enter_cost.setHint("Rs.");
-                    enter_cost.setText(null);
-                    FishModel fishModel = documentSnapshot.toObject(FishModel.class);
-                    fish_doc_id = documentSnapshot.getId();
-                    String fish_title = fishModel.getItem_title();
-                    alertDialog.setTitle(fish_title);
-                    if(conn.haveNetworkConnection())
-                        alertDialog.show();
-                    else
-                        Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+                enter_cost.setHint("Rs.");
+                enter_cost.setText(null);
+                FishModel fishModel = documentSnapshot.toObject(FishModel.class);
+                fish_doc_id = documentSnapshot.getId();
+                String fish_title = fishModel.getItem_title();
+                alertDialog.setTitle(fish_title);
+                if (conn.haveNetworkConnection())
+                    alertDialog.show();
+                else
+                    Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -103,21 +104,21 @@ public class UpdateFishPricesFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String fish_cost = enter_cost.getText().toString().trim();
-                if(fish_cost.isEmpty())
+                if (fish_cost.isEmpty())
                     Toast.makeText(getContext(), "No cost entered", Toast.LENGTH_SHORT).show();
-                else{
+                else {
                     double cost_fish = Double.parseDouble(fish_cost);
-                    updateFishPrice(cost_fish,fish_doc_id);
+                    updateFishPrice(cost_fish, fish_doc_id);
                 }
             }
         });
     }
 
-    private void updateFishPrice(double cost_fish,String fish_doc_id) {
-        fishRef.document(fish_doc_id).update("item_cost",cost_fish).addOnCompleteListener(new OnCompleteListener<Void>() {
+    private void updateFishPrice(double cost_fish, String fish_doc_id) {
+        fishRef.document(fish_doc_id).update("item_cost", cost_fish).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful())
+                if (task.isSuccessful())
                     Toast.makeText(getContext(), "Updated", Toast.LENGTH_SHORT).show();
                 else
                     Toast.makeText(getContext(), "Failed to update the cost", Toast.LENGTH_SHORT).show();
@@ -129,7 +130,7 @@ public class UpdateFishPricesFragment extends Fragment {
         Query query = fishRef;
         FirestoreRecyclerOptions<FishModel> updateFishOptions = new
                 FirestoreRecyclerOptions.Builder<FishModel>()
-                .setQuery(query,FishModel.class)
+                .setQuery(query, FishModel.class)
                 .build();
         adapter = new FishFirestoreAdapter(updateFishOptions);
         recyclerView.setHasFixedSize(true);

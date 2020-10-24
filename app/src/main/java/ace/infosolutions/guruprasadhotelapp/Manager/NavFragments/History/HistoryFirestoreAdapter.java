@@ -18,7 +18,7 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.R;
 
 
-public class HistoryFirestoreAdapter extends FirestoreRecyclerAdapter<HistoryModel, HistoryFirestoreAdapter.CustomerHolder > {
+public class HistoryFirestoreAdapter extends FirestoreRecyclerAdapter<HistoryModel, HistoryFirestoreAdapter.CustomerHolder> {
     private View view;
     private ImageView empty_cartIV;
     private TextView empty_cartTV;
@@ -27,6 +27,7 @@ public class HistoryFirestoreAdapter extends FirestoreRecyclerAdapter<HistoryMod
     public HistoryFirestoreAdapter(@NonNull FirestoreRecyclerOptions<HistoryModel> options) {
         super(options);
     }
+
     public HistoryFirestoreAdapter(@NonNull FirestoreRecyclerOptions<HistoryModel> options, View view) {
         super(options);
         this.view = view;
@@ -36,18 +37,18 @@ public class HistoryFirestoreAdapter extends FirestoreRecyclerAdapter<HistoryMod
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull HistoryModel model) {
         holder.bill_no.setText(model.getBill_no());
         holder.date_time.setText(model.getDate_time_completed());
-        holder.payment_mode.setText("("+model.getPayment_mode()+")");
-        holder.table_no.setText(""+model.getTable_no());
-        holder.table_type.setText(model.getTable_type()+",");
-        double roundedDouble = Math.round(model.getTotal_cost() * 100.0)/100.0;
-        holder.total_cost.setText(""+roundedDouble);
+        holder.payment_mode.setText("(" + model.getPayment_mode() + ")");
+        holder.table_no.setText("" + model.getTable_no());
+        holder.table_type.setText(model.getTable_type() + ",");
+        double roundedDouble = Math.round(model.getTotal_cost() * 100.0) / 100.0;
+        holder.total_cost.setText("" + roundedDouble);
 
     }
 
     @NonNull
     @Override
     public CustomerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.customer_history_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.customer_history_item, parent, false);
         return new CustomerHolder(view);
     }
 
@@ -57,20 +58,27 @@ public class HistoryFirestoreAdapter extends FirestoreRecyclerAdapter<HistoryMod
         try {
             empty_cartIV = view.findViewById(R.id.empty_cartIV);
             empty_cartTV = view.findViewById(R.id.empty_cart);
-            if(getItemCount() == 0){
+            if (getItemCount() == 0) {
                 empty_cartIV.setVisibility(View.VISIBLE);
                 empty_cartTV.setVisibility(View.VISIBLE);
-            }
-            else{
+            } else {
                 empty_cartIV.setVisibility(View.GONE);
                 empty_cartTV.setVisibility(View.GONE);
             }
         } catch (Exception e) {
-            Log.e("Exception",e.toString());
+            Log.e("Exception", e.toString());
         }
     }
 
-    public class CustomerHolder extends RecyclerView.ViewHolder{
+    public void setOnFinalBillItemTitleClickListener(onFinalBillItemTitleClick listener) {
+        this.listener_title = listener;
+    }
+
+    public interface onFinalBillItemTitleClick {
+        void onItemClick(DocumentSnapshot snapshot, int pos);
+    }
+
+    public class CustomerHolder extends RecyclerView.ViewHolder {
         private TextView bill_no;
         private TextView date_time;
         private TextView table_type;
@@ -93,19 +101,12 @@ public class HistoryFirestoreAdapter extends FirestoreRecyclerAdapter<HistoryMod
                 public void onClick(View view) {
                     int pos = getAdapterPosition();
                     //if item is removed and it's in his remove animation
-                    if(pos != RecyclerView.NO_POSITION && listener_title!=null){
-                        listener_title.onItemClick(getSnapshots().getSnapshot(pos),pos);
+                    if (pos != RecyclerView.NO_POSITION && listener_title != null) {
+                        listener_title.onItemClick(getSnapshots().getSnapshot(pos), pos);
                     }
                 }
             });
         }
-    }
-
-    public interface onFinalBillItemTitleClick{
-        void onItemClick(DocumentSnapshot snapshot, int pos);
-    }
-    public void setOnFinalBillItemTitleClickListener(onFinalBillItemTitleClick listener){
-        this.listener_title = listener;
     }
 }
 

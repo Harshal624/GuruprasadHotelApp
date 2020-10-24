@@ -32,7 +32,7 @@ public class CaptainMainFragment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_captain_main_fragment);
         firebaseAuth = FirebaseAuth.getInstance();
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         currentUID = firebaseAuth.getUid();
         MANAGER_UID = this.getResources().getString(R.string.MANAGER_UID);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
@@ -47,21 +47,19 @@ public class CaptainMainFragment extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(currentUID.equals(MANAGER_UID)){
+        if (currentUID.equals(MANAGER_UID)) {
             finishAffinity();
             startActivity(new Intent(getApplicationContext(), Manager.class));
-            overridePendingTransition(0,0);
-        }
-        else{
-            if(backPressedTime + 2000 > System.currentTimeMillis()){
+            overridePendingTransition(0, 0);
+        } else {
+            if (backPressedTime + 2000 > System.currentTimeMillis()) {
                 backToast.cancel();
                 finishAffinity();
                 finish();
                 super.onBackPressed();
                 return;
-            }
-            else{
-                backToast = Toast.makeText(getBaseContext(),"Press back again to exit",Toast.LENGTH_SHORT);
+            } else {
+                backToast = Toast.makeText(getBaseContext(), "Press back again to exit", Toast.LENGTH_SHORT);
                 backToast.show();
             }
             backPressedTime = System.currentTimeMillis();
@@ -78,11 +76,11 @@ public class CaptainMainFragment extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.signout){
+        if (item.getItemId() == R.id.signout) {
             firebaseAuth.signOut();
             finishAffinity();
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
-            overridePendingTransition(0,0);
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            overridePendingTransition(0, 0);
         }
         return super.onOptionsItemSelected(item);
     }

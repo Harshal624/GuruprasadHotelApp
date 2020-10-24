@@ -1,63 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view"
-    >
+    tools:showIn="navigation_view">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/customer_list"
             android:icon="@drawable/nav_cust_list"
-            android:title="Customer List"
-            />
-        <item android:id="@+id/update_fishprices"
+            android:title="Customer List" />
+        <item
+            android:id="@+id/update_fishprices"
             android:icon="@drawable/nav_fish"
-            android:title="Update Fish Prices">
-        </item>
-        <item android:title="Tally"
-            android:icon="@drawable/tally"
+            android:title="Update Fish Prices"></item>
+        <item
             android:id="@+id/tally"
-            />
+            android:icon="@drawable/tally"
+            android:title="Tally" />
 
     </group>
-    <item android:title="@string/order_parcel" >
+    <item android:title="@string/order_parcel">
         <menu>
-        <group android:checkableBehavior="single">
-        <item android:title="Take Order"
-            android:icon="@drawable/nav_take_order"
-            android:id="@+id/take_order"/>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/take_order"
+                    android:icon="@drawable/nav_take_order"
+                    android:title="Take Order" />
 
-        <item
-            android:title="Parcel"
-            android:icon="@drawable/menu_parcel"
-            android:id="@+id/parcel"
-            />
-            <item  android:title="Customer History"
-                android:icon="@drawable/nav_history"
-                android:id="@+id/cust_history"/>
+                <item
+                    android:id="@+id/parcel"
+                    android:icon="@drawable/menu_parcel"
+                    android:title="Parcel" />
+                <item
+                    android:id="@+id/cust_history"
+                    android:icon="@drawable/nav_history"
+                    android:title="Customer History" />
 
-            <item  android:title="Parcel History"
-                android:icon="@drawable/parcel"
-                android:id="@+id/parcel_history"/>
-        </group>
+                <item
+                    android:id="@+id/parcel_history"
+                    android:icon="@drawable/parcel"
+                    android:title="Parcel History" />
+            </group>
         </menu>
     </item>
 
     <item android:title="Settings">
         <menu>
-            <item
-                android:id="@+id/manager_pin"
-                android:icon="@drawable/ic_password"
-                android:title="Change Manager PIN" />
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/manager_pin"
+                    android:icon="@drawable/ic_password"
+                    android:title="Change Manager PIN" />
+            </group>
         </menu>
     </item>
 
     <item android:title="Device">
 
         <menu>
-            <item android:title="Signout"
-                android:icon="@drawable/ic_signout"
+            <item
                 android:id="@+id/manager_signout"
-                />
+                android:icon="@drawable/ic_signout"
+                android:title="Signout" />
         </menu>
     </item>
 </menu>

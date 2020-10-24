@@ -5,7 +5,8 @@ public class FoodItemModel {
     private double item_cost;
     private int item_qty;
 
-    FoodItemModel(){}
+    FoodItemModel() {
+    }
 
     public String getItem_title() {
         return item_title;

@@ -4,7 +4,8 @@ public class OnlineTotalModel {
     private double onlinetotal;
     private String date;
 
-    OnlineTotalModel(){}
+    OnlineTotalModel() {
+    }
 
     public double getOnlinetotal() {
         return onlinetotal;

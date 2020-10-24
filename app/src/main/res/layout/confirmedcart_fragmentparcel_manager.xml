@@ -13,7 +13,7 @@
         android:layout_marginStart="@dimen/_2sdp"
         android:layout_marginEnd="@dimen/_2sdp"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
@@ -23,8 +23,8 @@
             android:textColor="@color/black"
             android:paddingStart="@dimen/_5sdp"
             android:paddingTop="@dimen/_5sdp"
-            android:layout_weight="3"
-            />
+            android:layout_weight="3" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,8 +35,8 @@
             android:layout_gravity="end"
             android:paddingEnd="@dimen/_5sdp"
             android:paddingTop="@dimen/_5sdp"
-            android:gravity="center"
-            />
+            android:gravity="center" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,8 +47,7 @@
             android:layout_gravity="end"
             android:paddingTop="@dimen/_5sdp"
             android:paddingEnd="@dimen/_5sdp"
-            android:gravity="end"
-            />
+            android:gravity="end" />
     </LinearLayout>
 
     <View
@@ -56,50 +55,51 @@
         android:layout_height="@dimen/_1sdp"
         android:background="@color/grey"
         android:elevation="@dimen/_4sdp" />
-   <androidx.constraintlayout.widget.ConstraintLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:layout_weight="1"
-       >
 
-       <androidx.recyclerview.widget.RecyclerView
-           android:id="@+id/recycler_parcel_manager"
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_parcel_manager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-       <ImageView
-           android:id="@+id/empty_cartIV"
-           android:layout_width="@dimen/_40sdp"
-           android:layout_height="@dimen/_40sdp"
-           android:src="@drawable/empty_cart"
-           android:visibility="gone"
-           android:layout_marginBottom="@dimen/_20sdp"
-           app:layout_constraintBottom_toTopOf="@+id/empty_cart"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintHorizontal_bias="0.465"
-           app:layout_constraintStart_toStartOf="parent" />
+        <ImageView
+            android:id="@+id/empty_cartIV"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:src="@drawable/empty_cart"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/empty_cart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.465"
+            app:layout_constraintStart_toStartOf="parent" />
 
-       <TextView
-           android:id="@+id/empty_cart"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:gravity="center"
-           android:text="There are no confirmed items!"
-           android:textColor="@color/grey"
-           android:visibility="gone"
-           android:textSize="25sp"
-           app:layout_constraintBottom_toBottomOf="@+id/recycler_parcel_manager"
-           app:layout_constraintTop_toTopOf="@+id/recycler_parcel_manager" />
+        <TextView
+            android:id="@+id/empty_cart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="There are no confirmed items!"
+            android:textColor="@color/grey"
+            android:textSize="25sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/recycler_parcel_manager"
+            app:layout_constraintTop_toTopOf="@+id/recycler_parcel_manager" />
 
-   </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.02"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/add_item"
             android:layout_width="wrap_content"
@@ -110,8 +110,7 @@
             android:textColor="@color/white"
             android:padding="@dimen/_5sdp"
             android:layout_weight="0.5"
-            android:layout_marginStart="@dimen/_5sdp"
-            />
+            android:layout_marginStart="@dimen/_5sdp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -124,17 +123,17 @@
             android:layout_marginEnd="@dimen/_5sdp"
             android:text="Loading..."
             android:textColor="@android:color/holo_red_dark"
-            android:textSize="20sp"
-            />
+            android:textSize="20sp" />
 
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.02"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -146,8 +145,7 @@
             android:padding="@dimen/_5sdp"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_5sdp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
 
         <Button
             android:layout_width="wrap_content"
@@ -160,14 +158,10 @@
             android:padding="@dimen/_5sdp"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_5sdp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
 
 
     </LinearLayout>
-
-
-
 
 
 </LinearLayout>

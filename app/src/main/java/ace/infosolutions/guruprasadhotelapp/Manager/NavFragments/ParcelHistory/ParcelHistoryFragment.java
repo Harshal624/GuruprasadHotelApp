@@ -30,10 +30,11 @@ public class ParcelHistoryFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference phistoryRef;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.parcel_history_fragment,container,false);
+        View view = inflater.inflate(R.layout.parcel_history_fragment, container, false);
         recyclerView = view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(getContext());
         phistoryRef = db.collection(PARCEL_HISTORY);
@@ -49,8 +50,8 @@ public class ParcelHistoryFragment extends Fragment {
         adapter.setOnFinalBillItemTitleClickListener(new ParcelHistoryFirestoreAdapter.onFinalBillItemTitleClick() {
             @Override
             public void onItemClick(DocumentSnapshot snapshot, int pos) {
-                Intent intent = new Intent(getContext(),ParcelHistoryItemList.class);
-                intent.putExtra("PARCELHISTORYITEMS",snapshot.getId());
+                Intent intent = new Intent(getContext(), ParcelHistoryItemList.class);
+                intent.putExtra("PARCELHISTORYITEMS", snapshot.getId());
                 startActivity(intent);
             }
         });
@@ -59,7 +60,7 @@ public class ParcelHistoryFragment extends Fragment {
     private void setupRecyclerView() {
         Query query = phistoryRef;
         FirestoreRecyclerOptions<ParcelHistoryModel> phistory = new FirestoreRecyclerOptions.Builder<ParcelHistoryModel>()
-                .setQuery(query,ParcelHistoryModel.class)
+                .setQuery(query, ParcelHistoryModel.class)
                 .build();
         adapter = new ParcelHistoryFirestoreAdapter(phistory);
         recyclerView.setHasFixedSize(true);

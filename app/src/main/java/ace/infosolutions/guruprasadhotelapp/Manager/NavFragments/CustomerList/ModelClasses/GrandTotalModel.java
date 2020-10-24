@@ -4,7 +4,8 @@ public class GrandTotalModel {
     private double grandtotal;
     private String date;
 
-    GrandTotalModel(){}
+    GrandTotalModel() {
+    }
 
     public GrandTotalModel(double grandtotal, String date) {
         this.grandtotal = grandtotal;

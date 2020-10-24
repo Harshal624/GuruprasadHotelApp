@@ -121,7 +121,7 @@ public class CalculateTallyGrand extends AppCompatActivity {
     }
 
     private void computeTallyType() {
-        switch (tally_type){
+        switch (tally_type) {
             case "DAILYGRAND":
                 query = db.collection(TALLY).document(DAILY).collection(GRANDTOTAL);
                 t_type.setText("Daily Grandtotal");
@@ -139,7 +139,7 @@ public class CalculateTallyGrand extends AppCompatActivity {
 
     private void setUpRecyclerView() {
         tally = new FirestoreRecyclerOptions.Builder<GrandTotalModel>()
-                .setQuery(query,GrandTotalModel.class)
+                .setQuery(query, GrandTotalModel.class)
                 .build();
         adapter = new GrandTotalAdapter(tally);
         recyclerView.setHasFixedSize(true);

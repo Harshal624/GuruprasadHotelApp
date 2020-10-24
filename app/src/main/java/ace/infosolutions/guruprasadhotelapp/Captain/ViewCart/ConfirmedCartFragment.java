@@ -36,7 +36,7 @@ public class ConfirmedCartFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.confirmedcart_fragment,container,false);
+        View view = inflater.inflate(R.layout.confirmedcart_fragment, container, false);
         recyclerView = view.findViewById(R.id.recycler_confirmed);
         layoutManager = new LinearLayoutManager(getContext());
         db = FirebaseFirestore.getInstance();
@@ -59,7 +59,7 @@ public class ConfirmedCartFragment extends Fragment {
                 new FirestoreRecyclerOptions.Builder<ViewCartModel>()
                         .setQuery(query, ViewCartModel.class)
                         .build();
-        adapter = new ConfirmedCartCaptainAdapter(viewcart,getView());
+        adapter = new ConfirmedCartCaptainAdapter(viewcart, getView());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);

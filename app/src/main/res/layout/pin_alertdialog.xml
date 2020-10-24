@@ -42,15 +42,13 @@
         android:textSize="20sp"
         android:gravity="center"
         android:layout_marginTop="@dimen/_8sdp"
-        android:layout_marginBottom="@dimen/_8sdp"
-        />
+        android:layout_marginBottom="@dimen/_8sdp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/_8sdp"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -63,8 +61,7 @@
             android:background="@drawable/pin_cancel"
             android:drawableStart="@drawable/ic_confirm"
             android:paddingTop="@dimen/_5sdp"
-            android:paddingBottom="@dimen/_5sdp"
-            />
+            android:paddingBottom="@dimen/_5sdp" />
 
         <ImageButton
             android:id="@+id/confirmpin"
@@ -77,8 +74,7 @@
             android:background="@drawable/pin_confirm"
             android:drawableStart="@drawable/ic_confirm"
             android:paddingTop="@dimen/_5sdp"
-            android:paddingBottom="@dimen/_5sdp"
-            />
+            android:paddingBottom="@dimen/_5sdp" />
 
     </LinearLayout>
 

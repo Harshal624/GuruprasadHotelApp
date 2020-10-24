@@ -30,10 +30,12 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
-        switch (position){
-            case 0: fragment = new CurrentCartParcelFragment();
+        switch (position) {
+            case 0:
+                fragment = new CurrentCartParcelFragment();
                 break;
-            case 1:fragment = new ConfirmedCartParcelFragment();
+            case 1:
+                fragment = new ConfirmedCartParcelFragment();
                 break;
         }
         return fragment;

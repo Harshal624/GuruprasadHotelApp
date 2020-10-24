@@ -19,7 +19,7 @@ import ace.infosolutions.guruprasadhotelapp.R;
 
 import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill.TABLETALLYMONTHLY;
 
-public class TableTallyMonthList extends AppCompatActivity{
+public class TableTallyMonthList extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -36,18 +36,19 @@ public class TableTallyMonthList extends AppCompatActivity{
         adapter.setOnMonthClickListener(new TableMonthListAdapter.OnMonthClickListener() {
             @Override
             public void OnMonthClick(DocumentSnapshot snapshot) {
-                Intent intent = new Intent(getApplicationContext(),TableTally.class);
-                intent.putExtra("DOCID",snapshot.getId());
-                intent.putExtra("ISDAILY",false);
+                Intent intent = new Intent(getApplicationContext(), TableTally.class);
+                intent.putExtra("DOCID", snapshot.getId());
+                intent.putExtra("ISDAILY", false);
                 startActivity(intent);
             }
         });
 
     }
+
     private void setUpRecyclerView() {
         Query query = db.collection(TABLETALLYMONTHLY);
         FirestoreRecyclerOptions<MonthModel> date_list = new FirestoreRecyclerOptions.Builder<MonthModel>()
-                .setQuery(query,MonthModel.class)
+                .setQuery(query, MonthModel.class)
                 .build();
         adapter = new TableMonthListAdapter(date_list);
         recyclerView.setHasFixedSize(true);

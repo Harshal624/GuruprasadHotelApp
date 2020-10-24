@@ -35,8 +35,8 @@ public class HistoryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.historyfragment,container,false);
-        ((Manager) getActivity() ).toolbar.setTitle("Customer history");
+        View view = inflater.inflate(R.layout.historyfragment, container, false);
+        ((Manager) getActivity()).toolbar.setTitle("Customer history");
         recyclerView = view.findViewById(R.id.recyclerview_history);
         layoutManager = new LinearLayoutManager(getContext());
         db = FirebaseFirestore.getInstance();
@@ -52,8 +52,8 @@ public class HistoryFragment extends Fragment {
         adapter.setOnFinalBillItemTitleClickListener(new HistoryFirestoreAdapter.onFinalBillItemTitleClick() {
             @Override
             public void onItemClick(DocumentSnapshot snapshot, int pos) {
-                Intent intent = new Intent(getContext(),HistoryItems.class);
-                intent.putExtra("itemhistorylist",snapshot.getId());
+                Intent intent = new Intent(getContext(), HistoryItems.class);
+                intent.putExtra("itemhistorylist", snapshot.getId());
                 startActivity(intent);
             }
         });
@@ -62,9 +62,9 @@ public class HistoryFragment extends Fragment {
     private void setupRecyclerView() {
         Query query = historyRef;
         FirestoreRecyclerOptions<HistoryModel> history = new FirestoreRecyclerOptions.Builder<HistoryModel>()
-                .setQuery(query,HistoryModel.class)
+                .setQuery(query, HistoryModel.class)
                 .build();
-        adapter = new HistoryFirestoreAdapter(history,getView());
+        adapter = new HistoryFirestoreAdapter(history, getView());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);

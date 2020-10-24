@@ -17,7 +17,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 
-public class TableMonthListAdapter extends FirestoreRecyclerAdapter<MonthModel, TableMonthListAdapter.CustomerHolder > {
+public class TableMonthListAdapter extends FirestoreRecyclerAdapter<MonthModel, TableMonthListAdapter.CustomerHolder> {
     private View view;
     private ImageView empty_cartIV;
     private TextView empty_cartTV;
@@ -27,6 +27,7 @@ public class TableMonthListAdapter extends FirestoreRecyclerAdapter<MonthModel, 
     public TableMonthListAdapter(@NonNull FirestoreRecyclerOptions<MonthModel> options) {
         super(options);
     }
+
     public TableMonthListAdapter(@NonNull FirestoreRecyclerOptions<MonthModel> options, View view) {
         super(options);
         this.view = view;
@@ -35,14 +36,14 @@ public class TableMonthListAdapter extends FirestoreRecyclerAdapter<MonthModel, 
     @Override
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull MonthModel model) {
 
-          holder.date.setText(model.getMonth());
+        holder.date.setText(model.getMonth());
     }
 
 
     @NonNull
     @Override
     public CustomerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.tabledatetally_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.tabledatetally_item, parent, false);
         return new CustomerHolder(view);
     }
 
@@ -52,21 +53,28 @@ public class TableMonthListAdapter extends FirestoreRecyclerAdapter<MonthModel, 
         try {
             empty_cartIV = view.findViewById(R.id.empty_cartIV);
             empty_cartTV = view.findViewById(R.id.empty_cart);
-            if(getItemCount() == 0){
+            if (getItemCount() == 0) {
                 empty_cartIV.setVisibility(View.VISIBLE);
                 empty_cartTV.setVisibility(View.VISIBLE);
-            }
-            else{
+            } else {
                 empty_cartIV.setVisibility(View.GONE);
                 empty_cartTV.setVisibility(View.GONE);
             }
         } catch (Exception e) {
-            Log.e("Exception",e.toString());
+            Log.e("Exception", e.toString());
         }
     }
 
-    public class CustomerHolder extends RecyclerView.ViewHolder{
-      private TextView date;
+    public void setOnMonthClickListener(OnMonthClickListener listener) {
+        this.listener = listener;
+    }
+
+    public interface OnMonthClickListener {
+        void OnMonthClick(DocumentSnapshot snapshot);
+    }
+
+    public class CustomerHolder extends RecyclerView.ViewHolder {
+        private TextView date;
 
         public CustomerHolder(@NonNull View itemView) {
             super(itemView);
@@ -76,19 +84,12 @@ public class TableMonthListAdapter extends FirestoreRecyclerAdapter<MonthModel, 
                 @Override
                 public void onClick(View view) {
                     int pos = getAdapterPosition();
-                    if(pos!= RecyclerView.NO_POSITION && listener!=null){
+                    if (pos != RecyclerView.NO_POSITION && listener != null) {
                         listener.OnMonthClick(getSnapshots().getSnapshot(pos));
                     }
                 }
             });
         }
-    }
-
-    public interface OnMonthClickListener{
-        void OnMonthClick(DocumentSnapshot snapshot);
-    }
-    public void setOnMonthClickListener(OnMonthClickListener listener){
-        this.listener = listener;
     }
 
 }

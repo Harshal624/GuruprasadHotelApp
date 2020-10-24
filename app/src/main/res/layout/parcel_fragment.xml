@@ -13,11 +13,11 @@
         android:layout_marginBottom="@dimen/_20sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recyclerViewParcel"
-        />
+        android:id="@+id/recyclerViewParcel" />
 
     <ImageView
         android:layout_width="@dimen/_40sdp"

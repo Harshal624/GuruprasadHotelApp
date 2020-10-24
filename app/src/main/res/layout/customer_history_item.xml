@@ -7,65 +7,65 @@
     android:layout_marginStart="@dimen/_5sdp"
     android:layout_marginEnd="@dimen/_5sdp"
     android:layout_height="wrap_content">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bill No:"
-        android:paddingStart="@dimen/_10sdp"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        />
-        <TextView
-            android:id="@+id/bill_no"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="BHM4313"
-            android:paddingStart="@dimen/_5sdp"
-            android:textSize="18sp"
-            android:textColor="@color/tomatored"
-            />
+        android:orientation="vertical">
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/_10sdp"
+                android:text="Bill No:"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/bill_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/_5sdp"
+                android:text="BHM4313"
+                android:textColor="@color/tomatored"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
             android:background="@color/grey"
             android:layout_marginTop="@dimen/_2sdp"
-            android:layout_marginBottom="@dimen/_2sdp"
-            />
+            android:layout_marginBottom="@dimen/_2sdp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="23-08-20 13:22:32"
             android:id="@+id/date_time"
             android:layout_marginTop="@dimen/_3sdp"
-            android:paddingStart="@dimen/_20sdp"
-            />
+            android:paddingStart="@dimen/_20sdp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="@dimen/_3sdp"
-            >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Family"
-            android:fontFamily="casual"
-            android:textSize="20sp"
-            android:id="@+id/table_type"
-            android:paddingStart="@dimen/_10sdp"
-            />
+            android:layout_marginTop="@dimen/_3sdp">
+
+            <TextView
+                android:id="@+id/table_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="casual"
+                android:paddingStart="@dimen/_10sdp"
+                android:text="Family"
+                android:textSize="20sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -73,6 +73,7 @@
                 android:paddingStart="@dimen/_10sdp"
                 android:text="Table No:"
                 android:textSize="20sp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -80,29 +81,28 @@
                 android:id="@+id/table_no"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:paddingStart="@dimen/_4sdp"
-                />
+                android:paddingStart="@dimen/_4sdp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="@dimen/_3sdp"
-            >
+            android:layout_marginTop="@dimen/_3sdp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Total Cost:"
                 android:textSize="15sp"
-                android:paddingStart="@dimen/_10sdp"
-                />
+                android:paddingStart="@dimen/_10sdp" />
+
             <ImageView
                 android:layout_width="@dimen/_15sdp"
                 android:layout_height="@dimen/_15sdp"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:src="@drawable/rupee"
-                android:paddingTop="@dimen/_3sdp"
-                />
+                android:paddingTop="@dimen/_3sdp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -112,14 +112,14 @@
                 android:textColor="@android:color/holo_red_dark"
                 android:text="1450"
                 android:textSize="15sp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="(online)"
                 android:id="@+id/payment_mode"
                 android:textStyle="italic"
-                android:paddingStart="@dimen/_4sdp"
-                />
+                android:paddingStart="@dimen/_4sdp" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
