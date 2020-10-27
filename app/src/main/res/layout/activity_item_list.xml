@@ -13,8 +13,9 @@
         android:layout_height="0dp"
         android:background="@color/colorPrimary"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHeight_percent="0.08"
         app:layout_constraintTop_toTopOf="parent">
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -46,6 +47,7 @@
 
     </LinearLayout>
 
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -53,8 +55,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.85"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/item_list_recycler"
@@ -62,24 +63,46 @@
             android:layout_height="match_parent" />
 
         <ProgressBar
+            android:id="@+id/progressbar_itemlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/progressbar_itemlist"
             android:layout_gravity="center"
             android:visibility="gone" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
             android:id="@+id/check_cart"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_shopping_cart"
-            android:background="@color/colorPrimary"
             android:layout_gravity="bottom|right"
             android:layout_margin="@dimen/_15sdp"
-            app:layout_anchorGravity="bottom|right|end"
-            app:layout_anchor="@id/item_list_recycler" />
+            android:background="@color/colorPrimary"
+            android:src="@drawable/ic_shopping_cart"
+            app:layout_anchor="@id/item_list_recycler"
+            app:layout_anchorGravity="bottom|right|end" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:drawableStart="@drawable/ic_search_grey"
+        android:drawablePadding="@dimen/_30sdp"
+        android:ems="10"
+        android:hint="Search Item"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        app:layout_constraintTop_toBottomOf="@id/searchBar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

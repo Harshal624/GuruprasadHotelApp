@@ -1,23 +1,33 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.ViewCart;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dantsu.escposprinter.EscPosPrinter;
+import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections;
+import com.dantsu.escposprinter.exceptions.EscPosBarcodeException;
+import com.dantsu.escposprinter.exceptions.EscPosConnectionException;
+import com.dantsu.escposprinter.exceptions.EscPosEncodingException;
+import com.dantsu.escposprinter.exceptions.EscPosParserException;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,13 +43,18 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
-//TODO MULTIPLE ITEMS - WRONG CONFIRMED COST VALUES
+
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTERNBRCHARACTERSPERLINE;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTER_DPI;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTER_WIDTHmm;
 
 
 public class CurrentCartFragment extends Fragment {
@@ -54,13 +69,15 @@ public class CurrentCartFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private FirebaseFirestore db;
     private ViewCartFirestoreAdapter adapter;
-    private Button printKOT;
+    private Button printKOT, printOnly;
     private CollectionReference customerRef, currentRef;
     private AlertDialog alertDialog, alertdialogEditQty;
     ;
     private AlertDialog.Builder builder;
     private View editQtyView;
     private EditText editQtyET;
+
+    private ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -72,6 +89,8 @@ public class CurrentCartFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getContext());
         db = FirebaseFirestore.getInstance();
         printKOT = view.findViewById(R.id.printkot);
+        progressBar = view.findViewById(R.id.progressbar);
+        printOnly = view.findViewById(R.id.pribtonly);
         customerRef = db.collection(CUSTOMERS);
         currentRef = customerRef.document(DOC_ID).collection(CURRENT_KOT);
         builder = new AlertDialog.Builder(getContext());
@@ -86,15 +105,104 @@ public class CurrentCartFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setUpRecyclerView();
+        printOnly.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                printOnly.setEnabled(false);
+                getDatabaseValues();
+            }
+
+            private void bluetoothPrint(final StringBuffer buffer, final String kot_no, final String table_no, String table_type, String date) throws EscPosConnectionException, EscPosParserException, EscPosEncodingException, EscPosBarcodeException {
+
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH) ==
+                        PackageManager.PERMISSION_GRANTED) {
+                    EscPosPrinter posPrinter = new EscPosPrinter(BluetoothPrintersConnections.selectFirstPaired(),
+                            PRINTER_DPI, PRINTER_WIDTHmm, PRINTERNBRCHARACTERSPERLINE);
+                    posPrinter.printFormattedText(
+                            "[C]<u><font size='big'>KOT:" + kot_no + "</font></u>" +
+                                    "[L]\n" +
+                                    "[C]================================\n" +
+                                    "[L]\n" +
+                                    "[L]Date:" + "[R]" + table_no + "\n" +
+                                    "[L]Table No:" + "[R]" + table_no + "\n" +
+                                    "[L]Table Type:" + "[R]" + table_no + "\n" +
+                                    "[C]================================\n" +
+                                    buffer.toString() +
+                                    "[C]---------------------------------\n"
+                    );
+                } else {
+                    Toast.makeText(getContext(), "Bluetooth Service is not granted", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            private void getDatabaseValues() {
+                final ArrayList<ViewCartModel> arrayList = new ArrayList<>();
+                final StringBuffer buffer = new StringBuffer();
+
+                customerRef.document(DOC_ID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot snapshot) {
+                        final String table_no = String.valueOf(snapshot.getDouble("table_no").intValue());
+                        final String table_type = snapshot.getString("table_type");
+                        GenerateNumber number = new GenerateNumber();
+                        final String date_time = number.generateCompletedDateTime();
+                        final String kot_no = number.generateBillNo();
+                        double curr_cost = snapshot.getDouble("current_cost");
+                        if (curr_cost == 0.0) {
+                            Toast.makeText(getContext(), "Cart is empty", Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            currentRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+
+                                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                            double item_Cost = snapshot.getDouble("item_cost");
+                                            String item_Title = snapshot.getString("item_title");
+                                            int item_Qty = snapshot.getDouble("item_qty").intValue();
+                                            ViewCartModel getModel = new ViewCartModel(item_Title, item_Cost, item_Qty);
+                                            if (getModel != null) {
+                                                arrayList.add(getModel);
+                                            }
+                                        }
+                                        if (!arrayList.isEmpty()) {
+                                            for (int i = 0; i < arrayList.size(); i++) {
+                                                buffer.append("\"[L]" + arrayList.get(i).getItem_title() + "[R]" + arrayList.get(i).getItem_qty() + "\\n\"" + "\n");
+                                            }
+                                            try {
+                                                bluetoothPrint(buffer, kot_no, table_no, table_type, date_time);
+                                            } catch (EscPosConnectionException e) {
+                                                e.printStackTrace();
+                                            } catch (EscPosParserException e) {
+                                                e.printStackTrace();
+                                            } catch (EscPosEncodingException e) {
+                                                e.printStackTrace();
+                                            } catch (EscPosBarcodeException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+
+
+            }
+        });
         printKOT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setVisibility(View.VISIBLE);
                 customerRef.document(DOC_ID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(final DocumentSnapshot snapshot) {
                         double current_cost = snapshot.getDouble("current_cost");
                         if (current_cost == 0) {
                             printKOT.setEnabled(false);
+                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Cart is empty!", Toast.LENGTH_SHORT).show();
                         } else {
                             InternetConn conn = new InternetConn(getContext());
@@ -131,6 +239,7 @@ public class CurrentCartFragment extends Fragment {
                                                     }).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
+                                                            progressBar.setVisibility(View.GONE);
                                                             Toast.makeText(getContext(), "Confirmed", Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
@@ -141,12 +250,13 @@ public class CurrentCartFragment extends Fragment {
                                     }
                                 });
                             } else {
+                                progressBar.setVisibility(View.GONE);
                                 Toast.makeText(getContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
                             }
-
                         }
                     }
                 });
+
             }
         });
 
@@ -211,6 +321,7 @@ public class CurrentCartFragment extends Fragment {
             }
 
             private void updateQtyItem(final DocumentSnapshot snapshot, final int qty, final DocumentReference reference) {
+                progressBar.setVisibility(View.VISIBLE);
                 db.runTransaction(new Transaction.Function<Void>() {
                     @Nullable
                     @Override
@@ -235,6 +346,7 @@ public class CurrentCartFragment extends Fragment {
                 }).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        progressBar.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Quantity updated", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -246,7 +358,7 @@ public class CurrentCartFragment extends Fragment {
         String current_kotdocid = documentSnapshot.getId();
         final DocumentReference currentKotRef = currentRef.document(current_kotdocid);
         final DocumentReference parentRef = customerRef.document(DOC_ID);
-
+        progressBar.setVisibility(View.VISIBLE);
 
         db.runTransaction(new Transaction.Function<Void>() {
             @Nullable
@@ -266,8 +378,8 @@ public class CurrentCartFragment extends Fragment {
         }).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Deleted!", Toast.LENGTH_SHORT).show();
-                adapter.notifyItemRemoved(position);
             }
         });
     }

@@ -8,6 +8,7 @@ public class CustomerInfo {
     private double current_cost;
     private double confirmed_cost;
 
+
     public int getTable_no() {
         return table_no;
     }

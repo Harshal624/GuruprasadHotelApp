@@ -304,7 +304,7 @@ public class CustomerListFragment extends Fragment {
 
 
     private void setupRecyclerview() {
-        Query query = collectionReference;
+        Query query = collectionReference.orderBy("date_time", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<customerclass> cust = new FirestoreRecyclerOptions.Builder<customerclass>()
                 .setQuery(query, customerclass.class)
                 .build();

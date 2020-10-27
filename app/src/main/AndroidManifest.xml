@@ -4,8 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <uses-feature android:name="android.hardware.usb.host" />
 
     <application
         android:allowBackup="true"
@@ -34,7 +36,11 @@
             android:name=".Captain.ViewCart.ViewCart"
             android:label="@string/title_activity_view_cart"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Captain.ItemList" />
+        <activity
+            android:name=".Captain.ItemList"
+            android:windowSoftInputMode="adjustNothing">
+
+        </activity>
         <activity
             android:name=".Captain.FoodMenu"
             android:label="@string/title_activity_food_menu"

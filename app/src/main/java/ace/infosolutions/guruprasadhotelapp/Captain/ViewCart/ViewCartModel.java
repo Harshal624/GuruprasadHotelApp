@@ -20,9 +20,21 @@ public class ViewCartModel {
         return item_qty;
     }
 
-    public ViewCartModel(String item_title, int item_cost, int item_qty) {
+    public ViewCartModel(String item_title, double item_cost, int item_qty) {
         this.item_title = item_title;
         this.item_cost = item_cost;
+        this.item_qty = item_qty;
+    }
+
+    public void setItem_title(String item_title) {
+        this.item_title = item_title;
+    }
+
+    public void setItem_cost(double item_cost) {
+        this.item_cost = item_cost;
+    }
+
+    public void setItem_qty(int item_qty) {
         this.item_qty = item_qty;
     }
 }

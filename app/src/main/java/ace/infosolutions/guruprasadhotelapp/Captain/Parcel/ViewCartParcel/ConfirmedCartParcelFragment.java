@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,6 +97,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
     private AlertDialog alertDialogAddyourself;
 
     private Button add_item;
+    private ProgressBar progressBar;
 
 
     @Nullable
@@ -105,6 +107,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
         View view2 = inflater.inflate(R.layout.confirmedcart_fragmentparcel_manager, container, false);
         recyclerView = view.findViewById(R.id.recycler_confirmed);
         recyclerView2 = view2.findViewById(R.id.recycler_parcel_manager);
+
         print_finalbill = view2.findViewById(R.id.print);
         payment = view2.findViewById(R.id.payment);
         total_cost = view2.findViewById(R.id.total_cost);
@@ -117,6 +120,8 @@ public class ConfirmedCartParcelFragment extends Fragment {
         DOC_ID = sharedPreferences.getString(PARCEL_ID_KEY, "");
         confirmedRef = db.collection(PARCELS).document(DOC_ID).collection(CONFIRMED_KOT);
         parcelRef = db.collection(PARCELS);
+
+
         //payment alertdialog
         paymentView = inflater.inflate(R.layout.payment_alertdialog, null);
         online_payment = paymentView.findViewById(R.id.online_payment);
@@ -128,6 +133,8 @@ public class ConfirmedCartParcelFragment extends Fragment {
             editTitleView = inflater.inflate(R.layout.edittitlecurrentcart_alertdialog, null);
             editTitleET = editTitleView.findViewById(R.id.edit_title);
             alertDialogTitle = builder.create();
+
+            progressBar = view2.findViewById(R.id.progressbar);
 
             editCostView = inflater.inflate(R.layout.editcostcurrentcart_alertdialog, null);
             editCostET = editCostView.findViewById(R.id.edit_cost);
@@ -276,15 +283,17 @@ public class ConfirmedCartParcelFragment extends Fragment {
 
             private void addToFinalBill(FinalBillModel model) {
                 final double cost = model.getItem_cost();
-
+                progressBar.setVisibility(View.VISIBLE);
                 //adding singl food document to confirmed_kot
                 //
                 confirmedRef.add(model).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
                         if (task.isSuccessful()) {
+                            progressBar.setVisibility(View.GONE);
                             update_conf_cost(cost);
                         } else {
+                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Failed to add item!", Toast.LENGTH_SHORT);
                         }
                     }
@@ -338,6 +347,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                 //transaction to delete the food item
                 final DocumentReference parentRef = parcelRef.document(DOC_ID);
                 final DocumentReference confirmedKOTRef = confirmedRef.document(id);
+                progressBar.setVisibility(View.VISIBLE);
                 db.runTransaction(new Transaction.Function<Void>() {
                     @Nullable
                     @Override
@@ -352,6 +362,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                 }).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        progressBar.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Deleted!", Toast.LENGTH_SHORT).show();
                         setTotalCost();
                     }
@@ -384,7 +395,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                 double single_item_cost = current_cost / current_qty;
                 final double new_cost = single_item_cost * qty;
                 final double final_cost = new_cost - current_cost;
-
+                progressBar.setVisibility(View.VISIBLE);
                 //transaction to update food item quantity
                 final DocumentReference parentRef = parcelRef.document(DOC_ID);
                 final DocumentReference confirmedKOTRef = confirmedRef.document(id);
@@ -405,6 +416,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                     @Override
                     public void onSuccess(Void aVoid) {
                         setTotalCost();
+                        progressBar.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Quantity updated", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -442,6 +454,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
             }
 
             private void updateItemCost(DocumentSnapshot snapshot, double cost) {
+                progressBar.setVisibility(View.VISIBLE);
                 String id = snapshot.getId();
                 int saved_qty = snapshot.getDouble("item_qty").intValue();
                 final double final_cost = cost * saved_qty;
@@ -466,6 +479,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                     @Override
                     public void onSuccess(Void aVoid) {
                         setTotalCost();
+                        progressBar.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Cost updated", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -498,13 +512,16 @@ public class ConfirmedCartParcelFragment extends Fragment {
             }
 
             private void updateItemTitle(DocumentSnapshot snapshot, String itemT) {
+                progressBar.setVisibility(View.VISIBLE);
                 String id = snapshot.getId();
                 confirmedRef.document(id).update("item_title", itemT).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
+                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Title updated", Toast.LENGTH_SHORT).show();
                         } else {
+                            progressBar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Failed to update the title", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -698,17 +715,24 @@ public class ConfirmedCartParcelFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     if (task.getResult().exists()) {
-                        double stored_gt = task.getResult().getDouble("onlinetotal");
-                        double total_gt = stored_gt + final_confirmed_cost;
-                        OnlineTotalModel model = new OnlineTotalModel(total_gt, date_only);
-                        tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only)
-                                .set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                        final DocumentReference reference = tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only);
+                        db.runTransaction(new Transaction.Function<Void>() {
+                            @Nullable
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                double stored_gt = transaction.get(reference).getDouble("onlinetotal");
+                                double total_gt = stored_gt + final_confirmed_cost;
+                                OnlineTotalModel model = new OnlineTotalModel(total_gt, date_only);
+                                transaction.set(reference, model);
+                                return null;
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
                                 addtoOnlineMonthly();
                             }
                         });
-
                     } else {
                         OnlineTotalModel model = new OnlineTotalModel(final_confirmed_cost, date_only);
                         tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -729,12 +753,21 @@ public class ConfirmedCartParcelFragment extends Fragment {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             if (task.getResult().exists()) {
+
+                                final DocumentReference reference = tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only);
                                 //exists
-                                double stored_gt = task.getResult().getDouble("onlinetotal");
-                                double total_gt = final_confirmed_cost + stored_gt;
-                                OnlineTotalModel model = new OnlineTotalModel(total_gt, month_only);
-                                tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only).
-                                        set(model);
+                                db.runTransaction(new Transaction.Function<Void>() {
+                                    @Nullable
+                                    @Override
+                                    public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                        double stored_gt = transaction.get(reference).getDouble("onlinetotal");
+                                        double total_gt = final_confirmed_cost + stored_gt;
+                                        OnlineTotalModel model = new OnlineTotalModel(total_gt, month_only);
+                                        transaction.set(reference, model);
+                                        return null;
+                                    }
+                                });
+
                             } else {
                                 //doesn't exist
                                 OnlineTotalModel model = new OnlineTotalModel(final_confirmed_cost, month_only);
@@ -758,13 +791,20 @@ public class ConfirmedCartParcelFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     if (task.getResult().exists()) {
-                        double stored_gt = task.getResult().getDouble("parceltotal");
-                        double total_gt = stored_gt + final_confirmed_cost;
-                        ParcelTotalModel model = new ParcelTotalModel(total_gt, date_only);
-                        tallyRef.document(DAILY).collection(PARCELS).document(date_only)
-                                .set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        final DocumentReference reference = tallyRef.document(DAILY).collection(PARCELS).document(date_only);
+                        db.runTransaction(new Transaction.Function<Void>() {
+                            @Nullable
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                double stored_gt = transaction.get(reference).getDouble("parceltotal");
+                                double total_gt = stored_gt + final_confirmed_cost;
+                                ParcelTotalModel model = new ParcelTotalModel(total_gt, date_only);
+                                transaction.set(reference, model);
+                                return null;
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
                                 addtoParcelMonthly();
                             }
                         });
@@ -789,12 +829,19 @@ public class ConfirmedCartParcelFragment extends Fragment {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             if (task.getResult().exists()) {
+                                final DocumentReference reference = tallyRef.document(MONTHLY).collection(PARCELS).document(month_only);
                                 //exists
-                                double stored_gt = task.getResult().getDouble("parceltotal");
-                                double total_gt = final_confirmed_cost + stored_gt;
-                                ParcelTotalModel model = new ParcelTotalModel(total_gt, month_only);
-                                tallyRef.document(MONTHLY).collection(PARCELS).document(month_only).
-                                        set(model);
+                                db.runTransaction(new Transaction.Function<Void>() {
+                                    @Nullable
+                                    @Override
+                                    public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                        double stored_gt = transaction.get(reference).getDouble("parceltotal");
+                                        double total_gt = final_confirmed_cost + stored_gt;
+                                        ParcelTotalModel model = new ParcelTotalModel(total_gt, month_only);
+                                        transaction.set(reference, model);
+                                        return null;
+                                    }
+                                });
                             } else {
                                 //doesn't exist
                                 ParcelTotalModel model = new ParcelTotalModel(final_confirmed_cost, month_only);
@@ -815,16 +862,23 @@ public class ConfirmedCartParcelFragment extends Fragment {
 
         tallyRef.document(DAILY).collection(GRANDTOTAL).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            public void onComplete(@NonNull final Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     if (task.getResult().exists()) {
-                        double stored_gt = task.getResult().getDouble("grandtotal");
-                        double total_gt = stored_gt + final_confirmed_cost;
-                        GrandTotalModel model = new GrandTotalModel(total_gt, date_only);
-                        tallyRef.document(DAILY).collection(GRANDTOTAL).document(date_only)
-                                .set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        final DocumentReference reference = tallyRef.document(DAILY).collection(GRANDTOTAL).document(date_only);
+                        db.runTransaction(new Transaction.Function<Void>() {
+                            @Nullable
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                double stored_gt = transaction.get(reference).getDouble("grandtotal");
+                                double total_gt = stored_gt + final_confirmed_cost;
+                                GrandTotalModel model = new GrandTotalModel(total_gt, date_only);
+                                transaction.set(reference, model);
+                                return null;
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
                                 addToGTMonthly();
                             }
                         });
@@ -850,11 +904,18 @@ public class ConfirmedCartParcelFragment extends Fragment {
                         if (task.isSuccessful()) {
                             if (task.getResult().exists()) {
                                 //exists
-                                double stored_gt = task.getResult().getDouble("grandtotal");
-                                double total_gt = final_confirmed_cost + stored_gt;
-                                GrandTotalModel model = new GrandTotalModel(total_gt, month_only);
-                                tallyRef.document(MONTHLY).collection(GRANDTOTAL).document(month_only).
-                                        set(model);
+                                final DocumentReference childRef = tallyRef.document(MONTHLY).collection(GRANDTOTAL).document(month_only);
+                                db.runTransaction(new Transaction.Function<Void>() {
+                                    @Nullable
+                                    @Override
+                                    public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                        double stored_gt = transaction.get(childRef).getDouble("grandtotal");
+                                        double total_gt = final_confirmed_cost + stored_gt;
+                                        GrandTotalModel model = new GrandTotalModel(total_gt, month_only);
+                                        transaction.set(childRef, model);
+                                        return null;
+                                    }
+                                });
                             } else {
                                 //doesn't exist
                                 GrandTotalModel model = new GrandTotalModel(final_confirmed_cost, month_only);

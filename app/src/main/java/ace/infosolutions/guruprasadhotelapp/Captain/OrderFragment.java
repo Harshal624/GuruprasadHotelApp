@@ -198,7 +198,7 @@ public class OrderFragment extends Fragment {
     }
 
     private void setupReyclerview() {
-        Query query = collectionReference;
+        Query query = collectionReference.orderBy("date_time", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<customerclass> cust = new FirestoreRecyclerOptions.Builder<customerclass>()
                 .setQuery(query, customerclass.class)
                 .build();

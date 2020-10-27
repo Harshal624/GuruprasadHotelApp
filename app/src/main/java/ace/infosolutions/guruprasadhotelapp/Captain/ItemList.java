@@ -279,7 +279,6 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
                 progressBar.setVisibility(View.GONE);
                 check_cart.setEnabled(true);
                 Toast.makeText(ItemList.this, "Added", Toast.LENGTH_SHORT).show();
-
             }
         });
     }
