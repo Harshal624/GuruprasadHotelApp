@@ -60,7 +60,9 @@ public class HistoryFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        Query query = historyRef;
+
+        Query query = historyRef.orderBy("date_time_completed", Query.Direction.DESCENDING);
+
         FirestoreRecyclerOptions<HistoryModel> history = new FirestoreRecyclerOptions.Builder<HistoryModel>()
                 .setQuery(query, HistoryModel.class)
                 .build();

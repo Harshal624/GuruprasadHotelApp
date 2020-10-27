@@ -68,10 +68,10 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
         rice_ricenoodles = (Button) findViewById(R.id.rice_ricenoodles);
         rice_ricenoodles.setOnClickListener(this);
         //
-        /*springroll_chicken = (Button) findViewById(R.id.springroll_chicken);
+        springroll_chicken = (Button) findViewById(R.id.springroll_chicken);
         springroll_chicken.setOnClickListener(this);
         springroll_veg = (Button) findViewById(R.id.springroll_veg);
-        springroll_veg.setOnClickListener(this);*/
+        springroll_veg.setOnClickListener(this);
         //
         roti = findViewById(R.id.roti);
         soup = findViewById(R.id.soup);

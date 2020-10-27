@@ -79,7 +79,6 @@ public class ConfirmedCartParcelFragment extends Fragment {
     private TextView online_payment, cash_payment;
     private AlertDialog paymentAlert;
     private AlertDialog.Builder builder;
-    private String Bill_NO;
     private String completed_date;
 
 
@@ -614,11 +613,6 @@ public class ConfirmedCartParcelFragment extends Fragment {
         }
     }
 
-    public void generateBillNo() {
-        GenerateNumber number = new GenerateNumber();
-        Bill_NO = number.generateBillNo();
-    }
-
     private void confirmFinalBill() {
         db.collection(PARCELS).document(DOC_ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -630,17 +624,16 @@ public class ConfirmedCartParcelFragment extends Fragment {
                     cust_address = task.getResult().getString("customer_address");
                     customer_name = task.getResult().getString("customer_name");
                     customer_contact = task.getResult().getString("customer_contact");
-
+                    String BILL_NO = task.getResult().getString("bill_no");
                     if (final_confirmed_cost == 0.0 || final_confirmed_cost == 0) {
                         Toast.makeText(getContext(), "There is nothing to confirm!", Toast.LENGTH_SHORT).show();
                     } else {
-                        saveToHistory();
+                        saveToHistory(BILL_NO);
                     }
                 }
             }
 
-            private void saveToHistory() {
-                generateBillNo();
+            private void saveToHistory(String Bill_NO) {
                 generateCompletedDateTime();
                 ParcelHistoryModel model = new ParcelHistoryModel(Bill_NO, customer_name, customer_contact, ishomedelivery, cust_address,
                         final_confirmed_cost, date_time, completed_date, payment_mode);

@@ -32,6 +32,7 @@ import java.util.Date;
 
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
+import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 public class AddParcel extends AppCompatActivity {
@@ -131,7 +132,9 @@ public class AddParcel extends AppCompatActivity {
                         Date date = new Date();
                         String datetoday = format.format(date);
                         String final_date = datetoday.replaceAll("/", "-");
-                        ParcelModel model = new ParcelModel(customerName, customerContact, ishomedelivery, customerAddress, 0.0, 0.0, final_date);
+                        GenerateNumber generateNumber = new GenerateNumber();
+                        String bill_no = generateNumber.generateBillNo();
+                        ParcelModel model = new ParcelModel(customerName, customerContact, ishomedelivery, customerAddress, 0.0, 0.0, final_date, bill_no);
                         confirmParcel(model);
                     }
                 }

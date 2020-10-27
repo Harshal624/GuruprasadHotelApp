@@ -8,7 +8,22 @@ public class ParcelModel {
     private double current_cost;
     private double confirmed_cost;
     private String date_time;
+    private String bill_no;
 
+    public ParcelModel(String customer_name, String customer_contact, boolean ishomedelivery, String customer_address, double current_cost, double confirmed_cost, String date_time, String bill_no) {
+        this.customer_name = customer_name;
+        this.customer_contact = customer_contact;
+        this.ishomedelivery = ishomedelivery;
+        this.customer_address = customer_address;
+        this.current_cost = current_cost;
+        this.confirmed_cost = confirmed_cost;
+        this.date_time = date_time;
+        this.bill_no = bill_no;
+    }
+
+    public String getBill_no() {
+        return bill_no;
+    }
 
     ParcelModel() {
     }

@@ -58,7 +58,7 @@ public class ParcelHistoryFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        Query query = phistoryRef;
+        Query query = phistoryRef.orderBy("date_time_completed", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<ParcelHistoryModel> phistory = new FirestoreRecyclerOptions.Builder<ParcelHistoryModel>()
                 .setQuery(query, ParcelHistoryModel.class)
                 .build();

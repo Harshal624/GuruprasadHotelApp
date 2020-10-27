@@ -16,6 +16,13 @@ public class GenerateNumber {
         return completed_date;
     }
 
+  /* public String generateTime(){
+       SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
+
+   }
+    */
+
+
     public String generateBillNo() {
         Random r = new Random();
         Date date = new Date();

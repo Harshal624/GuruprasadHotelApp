@@ -72,7 +72,7 @@ public class AddCustomer extends AppCompatActivity {
         customerRef = db.collection(CUSTOMERS);
         tableRef = db.collection(TABLES);
 
-        table_noNP.setMaxValue(5);
+        table_noNP.setMaxValue(20);
         table_noNP.setMinValue(1);
         noofcustNP.setMaxValue(6);
         noofcustNP.setMinValue(1);
@@ -85,17 +85,17 @@ public class AddCustomer extends AppCompatActivity {
         table_typeRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                radioButton = (RadioButton) findViewById(i);
+                radioButton = findViewById(i);
                 table_typeString = radioButton.getText().toString();
                 updateRadioButtonColor(table_typeString);
                 if (table_typeString.equals("Family")) {
-                    table_noNP.setMaxValue(12);
+                    table_noNP.setMaxValue(20);
                 } else if (table_typeString.equals("AC Family")) {
-                    table_noNP.setMaxValue(5);
+                    table_noNP.setMaxValue(20);
                 } else if (table_typeString.equals("Bar Dining"))
-                    table_noNP.setMaxValue(12);
+                    table_noNP.setMaxValue(20);
                 else if (table_typeString.equals("VIP Dining"))
-                    table_noNP.setMaxValue(5);
+                    table_noNP.setMaxValue(20);
                 checkIfTableisAvail(table_typeString, table_noInt);
             }
 
