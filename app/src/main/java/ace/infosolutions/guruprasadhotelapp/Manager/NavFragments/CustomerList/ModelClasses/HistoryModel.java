@@ -6,11 +6,32 @@ public class HistoryModel {
     private double total_cost;
     private String table_type;
     private int table_no;
-    private String bill_no;
     private String date_time_completed;
     private int no_of_cust;
+    private String bill_no;
 
     HistoryModel() {
+    }
+
+    public HistoryModel(String date_time_arrived, String payment_mode, double total_cost, String table_type, int table_no, String date_time_completed, int no_of_cust, String bill_no) {
+        this.date_time_arrived = date_time_arrived;
+        this.payment_mode = payment_mode;
+        this.total_cost = total_cost;
+        this.table_type = table_type;
+        this.table_no = table_no;
+        this.date_time_completed = date_time_completed;
+        this.no_of_cust = no_of_cust;
+        this.bill_no = bill_no;
+    }
+
+    public HistoryModel(String date_time_arrived, String payment_mode, double total_cost, String table_type, int table_no, String date_time_completed, int no_of_cust) {
+        this.date_time_arrived = date_time_arrived;
+        this.payment_mode = payment_mode;
+        this.total_cost = total_cost;
+        this.table_type = table_type;
+        this.table_no = table_no;
+        this.date_time_completed = date_time_completed;
+        this.no_of_cust = no_of_cust;
     }
 
     public String getDate_time_arrived() {
@@ -33,10 +54,6 @@ public class HistoryModel {
         return table_no;
     }
 
-    public String getBill_no() {
-        return bill_no;
-    }
-
     public String getDate_time_completed() {
         return date_time_completed;
     }
@@ -45,14 +62,7 @@ public class HistoryModel {
         return no_of_cust;
     }
 
-    public HistoryModel(String date_time_arrived, String payment_mode, double total_cost, String table_type, int table_no, String bill_no, String date_time_completed, int no_of_cust) {
-        this.date_time_arrived = date_time_arrived;
-        this.payment_mode = payment_mode;
-        this.total_cost = total_cost;
-        this.table_type = table_type;
-        this.table_no = table_no;
-        this.bill_no = bill_no;
-        this.date_time_completed = date_time_completed;
-        this.no_of_cust = no_of_cust;
+    public String getBill_no() {
+        return bill_no;
     }
 }

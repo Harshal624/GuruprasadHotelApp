@@ -31,6 +31,7 @@ import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.CustomerInfo;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 public class AddCustomer extends AppCompatActivity {
@@ -47,7 +48,6 @@ public class AddCustomer extends AppCompatActivity {
     private RadioButton radioButton;
     private Map<String, Object> cost;
     private SharedPreferences preferences;
-    private String doc_id;
     private String table_typeString = "VIP Dining";
     private int table_noInt = 1;
     private CollectionReference customerRef, tableRef;
@@ -191,12 +191,14 @@ public class AddCustomer extends AppCompatActivity {
     private void addCustomer() {
         double final_cost = 0;
         double current_cost = 0;
+        GenerateNumber number = new GenerateNumber();
+        String BILL_NO = number.generateBillNo();
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
         Date date = new Date();
         String datetoday = format.format(date);
         String final_date = datetoday.replaceAll("/", "-");
         int no_cust = noofcustNP.getValue();
-        CustomerInfo customerInfo = new CustomerInfo(table_noInt, no_cust, final_date, table_typeString, final_cost, current_cost);
+        CustomerInfo customerInfo = new CustomerInfo(table_noInt, no_cust, final_date, table_typeString, final_cost, current_cost, BILL_NO);
 
         final DocumentReference reference = db.collection(CUSTOMERS).document();
         WriteBatch batch = db.batch();

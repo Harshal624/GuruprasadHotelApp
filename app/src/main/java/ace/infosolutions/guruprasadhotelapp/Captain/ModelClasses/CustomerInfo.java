@@ -7,7 +7,7 @@ public class CustomerInfo {
     private String table_type;
     private double current_cost;
     private double confirmed_cost;
-
+    private String bill_no;
 
     public int getTable_no() {
         return table_no;
@@ -33,13 +33,18 @@ public class CustomerInfo {
         return confirmed_cost;
     }
 
-    public CustomerInfo(int table_no, int no_of_cust, String date_time, String table_type, double current_cost, double confirmed_cost) {
+    public CustomerInfo(int table_no, int no_of_cust, String date_time, String table_type, double current_cost, double confirmed_cost, String bill_no) {
         this.table_no = table_no;
         this.no_of_cust = no_of_cust;
         this.date_time = date_time;
         this.table_type = table_type;
         this.current_cost = current_cost;
         this.confirmed_cost = confirmed_cost;
+        this.bill_no = bill_no;
+    }
+
+    public String getBill_no() {
+        return bill_no;
     }
 
     //no-arg constructor is needed

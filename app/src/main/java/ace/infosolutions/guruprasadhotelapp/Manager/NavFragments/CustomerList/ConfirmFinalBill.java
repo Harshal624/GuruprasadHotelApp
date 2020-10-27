@@ -1,9 +1,7 @@
 package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList;
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dantsu.escposprinter.EscPosPrinter;
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,14 +46,12 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.HistoryModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.OnlineTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.TableTotalModel;
+import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ConfirmedCartParcelFragment.ONLINETOTAL;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTERNBRCHARACTERSPERLINE;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTER_DPI;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTER_WIDTHmm;
 
 public class ConfirmFinalBill extends AppCompatActivity {
     //Strings for Tally
@@ -100,14 +93,12 @@ public class ConfirmFinalBill extends AppCompatActivity {
     private AlertDialog paymentAlertDialog;
     private View paymentView;
     private TextView online_payment, cash_payment;
-    private String Bill_NO;
     private double current_costFinal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_final_bill);
-        Bill_NO = number.generateBillNo();
         completed_date = number.generateCompletedDateTime();
         db = FirebaseFirestore.getInstance();
         recyclerView = findViewById(R.id.final_bill_recycler);
@@ -181,7 +172,6 @@ public class ConfirmFinalBill extends AppCompatActivity {
                         if (conf_cost == 0.0) {
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(ConfirmFinalBill.this, "Cart is empty", Toast.LENGTH_SHORT).show();
-
                         } else {
                             progressBar.setVisibility(View.GONE);
                             confirmedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -197,14 +187,18 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                                 arrayList.add(getModel);
                                             }
                                         }
-                                        if (!arrayList.isEmpty() && Bill_NO != null && table_no != null &&
-                                                table_type != null && date_time != null) {
+                                        if (!arrayList.isEmpty()) {
                                             for (int i = 0; i < arrayList.size(); i++) {
                                                 buffer.append("\"[L]" + arrayList.get(i).getItem_title() + "\"[C]" + arrayList.get(i).getItem_qty() + "[R]" + arrayList.get(i).getItem_cost() + "\\n\"" + "\n");
                                             }
-                                            bluetoothPrint(buffer, Bill_NO, table_no, table_type, date_time);
+                                            bluetoothPrint(buffer, table_no, table_type, date_time);
                                         }
                                     }
+                                }
+
+                                private void bluetoothPrint(StringBuffer buffer, String table_no, String table_type, String date_time) {
+                                    Intent intent = new Intent(getApplicationContext(), PrintingMain.class);
+
                                 }
                             });
                         }
@@ -214,47 +208,6 @@ public class ConfirmFinalBill extends AppCompatActivity {
 
             }
 
-            private void bluetoothPrint(final StringBuffer buffer, final String BILL_N, final String table_no, final String table_type, final String date) {
-
-                if (ContextCompat.checkSelfPermission(ConfirmFinalBill.this, Manifest.permission.BLUETOOTH) ==
-                        PackageManager.PERMISSION_GRANTED) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                EscPosPrinter posPrinter = new EscPosPrinter(BluetoothPrintersConnections.selectFirstPaired(),
-                                        PRINTER_DPI, PRINTER_WIDTHmm, PRINTERNBRCHARACTERSPERLINE);
-                                posPrinter.printFormattedText(
-                                        "[C]<u><font size='big'>Hotel Guruprasad</font></u>" +
-                                                "[L]\n" +
-                                                "[C]<font size='small'>Mahadevnagar, Islampur</font>" +
-                                                "[L]\n" +
-                                                "[C]================================\n" +
-                                                "[L]\n" +
-                                                "[C]<b>BILL NO:" + "[R]" + BILL_N + "</b>" + "\n" +
-                                                "[L]Date:" + "[R]" + date + "\n" +
-                                                "[L]Table No:" + "[R]" + table_no + "\n" +
-                                                "[L]Table Type:" + "[R]" + table_type + "\n" +
-                                                "[C]================================\n" +
-                                                "[L]Item" + "[C]Qty" + "[R]Rate" + "\n" +
-                                                "[C]--------------------------------\n" +
-                                                buffer.toString() +
-                                                "[C]---------------------------------\n" +
-                                                "[R]Total:" + "[R]" + totalCost + "\n" +
-                                                "[C]Thank you for your visit\n"
-                                );
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                progressBar.setVisibility(View.GONE);
-                            }
-                        }
-                    }).start();
-                    progressBar.setVisibility(View.GONE);
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ConfirmFinalBill.this, "Bluetooth Service is not granted", Toast.LENGTH_SHORT).show();
-                }
-            }
 
         });
 
@@ -684,19 +637,20 @@ public class ConfirmFinalBill extends AppCompatActivity {
                     table_type = task.getResult().getString("table_type");
                     date_time = task.getResult().getString("date_time");
                     current_costFinal = task.getResult().getDouble("current_cost");
+                    String bill_no = task.getResult().getString("bill_no");
 
                     if (final_confirmed_cost == 0.0 || final_confirmed_cost == 0) {
                         progressBar.setVisibility(View.GONE);
                         Toast.makeText(ConfirmFinalBill.this, "There is nothing to confirm", Toast.LENGTH_SHORT).show();
                     } else {
-                        savetoHistory(payment_mode);
+                        savetoHistory(payment_mode, bill_no);
                     }
                 } else {
                 }
             }
 
-            private void savetoHistory(final String payment_mode) {
-                HistoryModel model = new HistoryModel(date_time, payment_mode, final_confirmed_cost, table_type, table_no, Bill_NO, completed_date, no_of_cust);
+            private void savetoHistory(final String payment_mode, final String bill_no) {
+                HistoryModel model = new HistoryModel(date_time, payment_mode, final_confirmed_cost, table_type, table_no, completed_date, no_of_cust, bill_no);
 
                 final WriteBatch batch1 = db.batch();
                 final WriteBatch batch2 = db.batch();
