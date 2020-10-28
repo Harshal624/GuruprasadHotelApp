@@ -7,8 +7,10 @@ public class ParcelHistoryModel {
     private boolean ishomedelivery;
     private String customer_address;
     private double confirmed_cost;
-    private String date_time_arrived;
-    private String date_time_completed;
+    private String date_arrived;
+    private String date_completed;
+    private String time_arrived;
+    private String time_completed;
     private String payment_mode;
 
     ParcelHistoryModel() {
@@ -39,27 +41,37 @@ public class ParcelHistoryModel {
         return confirmed_cost;
     }
 
-    public String getDate_time_arrived() {
-        return date_time_arrived;
-    }
-
-    public String getDate_time_completed() {
-        return date_time_completed;
-    }
-
-    public String getPayment_mode() {
-        return payment_mode;
-    }
-
-    public ParcelHistoryModel(String bill_no, String customer_name, String customer_contact, boolean ishomedelivery, String customer_address, double confirmed_cost, String date_time_arrived, String date_time_completed, String payment_mode) {
+    public ParcelHistoryModel(String bill_no, String customer_name, String customer_contact, boolean ishomedelivery, String customer_address, double confirmed_cost, String date_arrived, String date_completed, String time_arrived, String time_completed, String payment_mode) {
         this.bill_no = bill_no;
         this.customer_name = customer_name;
         this.customer_contact = customer_contact;
         this.ishomedelivery = ishomedelivery;
         this.customer_address = customer_address;
         this.confirmed_cost = confirmed_cost;
-        this.date_time_arrived = date_time_arrived;
-        this.date_time_completed = date_time_completed;
+        this.date_arrived = date_arrived;
+        this.date_completed = date_completed;
+        this.time_arrived = time_arrived;
+        this.time_completed = time_completed;
         this.payment_mode = payment_mode;
+    }
+
+    public String getDate_arrived() {
+        return date_arrived;
+    }
+
+    public String getDate_completed() {
+        return date_completed;
+    }
+
+    public String getTime_arrived() {
+        return time_arrived;
+    }
+
+    public String getPayment_mode() {
+        return payment_mode;
+    }
+
+    public String getTime_completed() {
+        return time_completed;
     }
 }

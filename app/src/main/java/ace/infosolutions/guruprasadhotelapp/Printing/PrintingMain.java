@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -21,7 +24,11 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
+import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartModel;
 import ace.infosolutions.guruprasadhotelapp.R;
+
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PrintingPOJOConstant;
 
 public class PrintingMain extends Activity implements Runnable {
     protected static final String TAG = "TAG";
@@ -30,11 +37,12 @@ public class PrintingMain extends Activity implements Runnable {
     Button mScan, mPrint, mDisc;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mBluetoothDevice;
+    String BILL = "";
+    private SharedPreferences sharedPreferences;
     private UUID applicationUUID = UUID
             .fromString("00001101-0000-1000-8000-00805F9B34FB");
     private ProgressDialog mBluetoothConnectProgressDialog;
     private BluetoothSocket mBluetoothSocket;
-    private ArrayList<String> item_title, item_cost, item_qty;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -58,30 +66,17 @@ public class PrintingMain extends Activity implements Runnable {
     public void onCreate(Bundle mSavedInstanceState) {
         super.onCreate(mSavedInstanceState);
         setContentView(R.layout.printing_main);
-        mScan = (Button) findViewById(R.id.Scan);
-        item_cost = new ArrayList<>();
-        item_qty = new ArrayList<>();
-        item_title = new ArrayList<>();
+        mScan = findViewById(R.id.Scan);
+        sharedPreferences = getSharedPreferences(PREF_DOCID, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(PrintingPOJOConstant, "");
+        PrintingPOJO printingPOJO = gson.fromJson(json, PrintingPOJO.class);
 
-        item_title.add("Roti");
-        item_title.add("Chapati");
-        item_title.add("Pane");
-        item_title.add("fsaf");
-        item_title.add("fdsfaf");
-
-        //qty
-
-        item_cost.add("14");
-        item_cost.add("5325");
-        item_cost.add("342");
-        item_cost.add("43");
-        item_cost.add("432");
-
-        item_qty.add("3");
-        item_qty.add("5");
-        item_qty.add("1");
-        item_qty.add("4");
-        item_qty.add("4");
+        if (printingPOJO.isIskot()) {
+            createKOT(printingPOJO);
+        } else {
+            createBill(printingPOJO);
+        }
 
         mScan.setOnClickListener(new View.OnClickListener() {
             public void onClick(View mView) {
@@ -108,40 +103,12 @@ public class PrintingMain extends Activity implements Runnable {
         mPrint = (Button) findViewById(R.id.mPrint);
         mPrint.setOnClickListener(new View.OnClickListener() {
             public void onClick(View mView) {
+                Log.e("HORSHBILL", BILL);
                 Thread t = new Thread() {
                     public void run() {
                         try {
                             OutputStream os = mBluetoothSocket
                                     .getOutputStream();
-                            String BILL = "";
-
-                            BILL = "                   XXXX MART    \n"
-                                    + "                   XX.AA.BB.CC.     \n " +
-                                    "                 NO 25 ABC ABCDE    \n" +
-                                    "                  XXXXX YYYYYY      \n" +
-                                    "                   MMM 590019091      \n";
-                            BILL = BILL
-                                    + "-----------------------------------------------\n";
-
-
-                            BILL = BILL + String.format("%1$-10s %2$10s %3$10s", "Item", "Qty", "Totel");
-                            BILL = BILL + "\n";
-                            BILL = BILL
-                                    + "-----------------------------------------------";
-                            for (int i = 0; i < item_title.size(); i++) {
-                                BILL = BILL + "\n " + String.format("%1$-10s %2$10s %3$11s", item_title.get(i), item_qty.get(i), item_cost.get(i));
-                            }
-
-                            BILL = BILL
-                                    + "\n-----------------------------------------------";
-                            BILL = BILL + "\n\n ";
-
-                            BILL = BILL + "                   Total Qty:" + "      " + "85" + "\n";
-                            BILL = BILL + "                   Total Value:" + "     " + "700.00" + "\n";
-
-                            BILL = BILL
-                                    + "-----------------------------------------------\n";
-                            BILL = BILL + "\n\n\n ";
                             os.write(BILL.getBytes());
                             //This is printer specific code you can comment ==== > Start
 
@@ -160,8 +127,6 @@ public class PrintingMain extends Activity implements Runnable {
                             os.write(intToByteArray(w));
                             int n_width = 2;
                             os.write(intToByteArray(n_width));
-
-
                         } catch (Exception e) {
                             Log.e("MainActivity", "Exe ", e);
                         }
@@ -180,6 +145,125 @@ public class PrintingMain extends Activity implements Runnable {
         });
 
     }// onCreate
+
+    private void createBill(PrintingPOJO print) {
+        ArrayList<ViewCartModel> arrayList = new ArrayList<>();
+        arrayList.addAll(print.getArrayList());
+        if (print.isIsorder()) {
+            //TODO get rounded values of subtotal and total
+            //order final bill design
+            BILL = "";
+            BILL = "                   GURUPRASAD HOTEL    \n"
+                    + "                   Mahadevnagar, Urun Islampur" + print.getBill_no() + "\n " +
+                    "                   Date&Time:" + print.getDate() + " " + print.getTime() + "\n " +
+                    "                   Bill No:" + print.getBill_no() + "\n " +
+                    "                   Table No:" + print.getTable_no() + " (" + print.getTable_type() + ")" + "\n ";
+
+            BILL = BILL
+                    + "-----------------------------------------------\n";
+            String format = "%1$4s %2$10s %3$10s%n";
+            BILL = BILL + String.format(format, "Item", "Qty", "Amount");
+            BILL = BILL + "\n";
+            BILL = BILL
+                    + "-----------------------------------------------";
+            for (int i = 0; i < arrayList.size(); i++) {
+                BILL = BILL + "\n " + String.format(format, arrayList.get(i).getItem_title(),
+                        arrayList.get(i).getItem_qty(), arrayList.get(i).getItem_cost());
+            }
+            BILL = BILL
+                    + "\n-----------------------------------------------";
+            BILL = BILL +
+                    "                          SUBTOTAL:" + print.getSubtotal() + "\n";
+            BILL = BILL +
+                    "                          DISCOUNT:" + print.getDiscount() + "\n";
+            BILL = BILL +
+                    "                           TOTAL:" + print.getTotal() + "\n";
+            BILL = BILL + "\n\n ";
+        } else {
+            //parcel final bill design
+
+            BILL = "";
+            BILL = "                   GURUPRASAD HOTEL    \n"
+                    + "                   Mahadevnagar, Urun Islampur" + print.getBill_no() + "\n " +
+                    "                   Date&Time:" + print.getDate() + " " + print.getTime() + "\n " +
+                    "                   Bill No:" + print.getBill_no() + "\n " +
+                    "                   Parcel to - " + print.getCustomer_name() + "\n " +
+                    "                   Address: " + print.getCustomer_address() + "\n ";
+
+            BILL = BILL
+                    + "-----------------------------------------------\n";
+            String format = "%1$4s %2$10s %3$10s%n";
+            BILL = BILL + String.format(format, "Item", "Qty", "Amount");
+            BILL = BILL + "\n";
+            BILL = BILL
+                    + "-----------------------------------------------";
+            for (int i = 0; i < arrayList.size(); i++) {
+                BILL = BILL + "\n " + String.format(format, arrayList.get(i).getItem_title(),
+                        arrayList.get(i).getItem_qty(), arrayList.get(i).getItem_cost());
+            }
+            BILL = BILL
+                    + "\n-----------------------------------------------";
+            BILL = BILL +
+                    "                          SUBTOTAL:" + print.getSubtotal() + "\n";
+            BILL = BILL +
+                    "                          DISCOUNT:" + print.getDiscount() + "\n";
+            BILL = BILL +
+                    "                           TOTAL:" + print.getTotal() + "\n";
+            BILL = BILL + "\n\n ";
+        }
+    }
+
+    private void createKOT(PrintingPOJO print) {
+        ArrayList<ViewCartModel> arrayList = new ArrayList<>();
+        arrayList.addAll(print.getArrayList());
+        if (print.isIsorder()) {
+            //order kot design
+            BILL = "";
+            BILL = "                   GURUPRASAD HOTEL    \n"
+                    + "                   KOT NO:" + print.getBill_no() + "\n " +
+                    "                   Date&Time:" + print.getDate() + " " + print.getTime() + "\n " +
+                    "                   Table No:" + print.getTable_no() + " (" + print.getTable_type() + ")" + "\n ";
+
+            BILL = BILL
+                    + "-----------------------------------------------\n";
+            String format = "%1$4s %2$10s";
+            BILL = BILL + String.format(format, "Item", "Qty");
+            BILL = BILL + "\n";
+            BILL = BILL
+                    + "-----------------------------------------------";
+            for (int i = 0; i < arrayList.size(); i++) {
+                BILL = BILL + "\n " + String.format(format, arrayList.get(i).getItem_title(),
+                        arrayList.get(i).getItem_qty());
+            }
+            BILL = BILL
+                    + "\n-----------------------------------------------";
+            BILL = BILL + "\n\n ";
+        } else {
+            //parcel kot design
+            BILL = "";
+            BILL = "                   GURUPRASAD HOTEL    \n"
+                    + "                   KOT NO:" + print.getBill_no() + "\n " +
+                    "                   Date&Time:" + print.getDate() + " " + print.getTime() + "\n " +
+                    "                   Parcel - " + print.getCustomer_name() + "\n ";
+            BILL = BILL
+                    + "-----------------------------------------------\n";
+
+
+            String format = "%1$4s %2$10s";
+            BILL = BILL + String.format(format, "Item", "Qty");
+            BILL = BILL + "\n";
+            BILL = BILL
+                    + "-----------------------------------------------";
+            for (int i = 0; i < arrayList.size(); i++) {
+                BILL = BILL + "\n " + String.format(format, arrayList.get(i).getItem_title(),
+                        arrayList.get(i).getItem_qty());
+            }
+
+            BILL = BILL
+                    + "\n-----------------------------------------------";
+            BILL = BILL + "\n\n ";
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -219,7 +303,7 @@ public class PrintingMain extends Activity implements Runnable {
                             .getRemoteDevice(mDeviceAddress);
                     mBluetoothConnectProgressDialog = ProgressDialog.show(this,
                             "Connecting...", mBluetoothDevice.getName() + " : "
-                                    + mBluetoothDevice.getAddress(), true, false);
+                                    + mBluetoothDevice.getAddress(), true, true);
                     Thread mBlutoothConnectThread = new Thread(this);
                     mBlutoothConnectThread.start();
                     // pairToDevice(mBluetoothDevice); This method is replaced by
@@ -234,7 +318,7 @@ public class PrintingMain extends Activity implements Runnable {
                             DeviceListActivity.class);
                     startActivityForResult(connectIntent, REQUEST_CONNECT_DEVICE);
                 } else {
-                    Toast.makeText(PrintingMain.this, "Message", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PrintingMain.this, "Denied", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

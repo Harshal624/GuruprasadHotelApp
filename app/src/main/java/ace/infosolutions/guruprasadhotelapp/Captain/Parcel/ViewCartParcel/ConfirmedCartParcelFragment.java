@@ -70,7 +70,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private FirebaseFirestore db;
     private CollectionReference confirmedRef, parcelRef, tallyRef;
-
+    GenerateNumber number = new GenerateNumber();
 
     private ConfirmFinalBillFirestoreAdapter adapter2;
     private TextView total_cost;
@@ -79,11 +79,11 @@ public class ConfirmedCartParcelFragment extends Fragment {
     private TextView online_payment, cash_payment;
     private AlertDialog paymentAlert;
     private AlertDialog.Builder builder;
-    private String completed_date;
+    private String date_completed;
 
 
     private double final_confirmed_cost;
-    private String date_time, payment_mode;
+    private String date_arrived, time_arrived, time_completed, payment_mode;
     private boolean ishomedelivery;
     private String cust_address, customer_contact, customer_name;
 
@@ -106,6 +106,9 @@ public class ConfirmedCartParcelFragment extends Fragment {
         View view2 = inflater.inflate(R.layout.confirmedcart_fragmentparcel_manager, container, false);
         recyclerView = view.findViewById(R.id.recycler_confirmed);
         recyclerView2 = view2.findViewById(R.id.recycler_parcel_manager);
+
+        date_completed = number.generateDateOnly();
+        time_completed = number.generateTimeOnly();
 
         print_finalbill = view2.findViewById(R.id.print);
         payment = view2.findViewById(R.id.payment);
@@ -597,11 +600,6 @@ public class ConfirmedCartParcelFragment extends Fragment {
 
     }
 
-    private void generateCompletedDateTime() {
-        GenerateNumber number = new GenerateNumber();
-        completed_date = number.generateCompletedDateTime();
-    }
-
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -619,12 +617,13 @@ public class ConfirmedCartParcelFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     final_confirmed_cost = task.getResult().getDouble("confirmed_cost");
-                    date_time = task.getResult().getString("date_time");
+                    date_arrived = task.getResult().getString("date_arrived");
                     ishomedelivery = task.getResult().getBoolean("ishomedelivery");
                     cust_address = task.getResult().getString("customer_address");
                     customer_name = task.getResult().getString("customer_name");
                     customer_contact = task.getResult().getString("customer_contact");
                     String BILL_NO = task.getResult().getString("bill_no");
+                    time_arrived = task.getResult().getString("time_arrived");
                     if (final_confirmed_cost == 0.0 || final_confirmed_cost == 0) {
                         Toast.makeText(getContext(), "There is nothing to confirm!", Toast.LENGTH_SHORT).show();
                     } else {
@@ -634,9 +633,8 @@ public class ConfirmedCartParcelFragment extends Fragment {
             }
 
             private void saveToHistory(String Bill_NO) {
-                generateCompletedDateTime();
                 ParcelHistoryModel model = new ParcelHistoryModel(Bill_NO, customer_name, customer_contact, ishomedelivery, cust_address,
-                        final_confirmed_cost, date_time, completed_date, payment_mode);
+                        final_confirmed_cost, date_arrived, date_completed, time_arrived, time_completed, payment_mode);
                 db.collection(PARCEL_HISTORY).add(model).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -700,8 +698,8 @@ public class ConfirmedCartParcelFragment extends Fragment {
     }
 
     private void addToOnlineTotal() {
-        final String date_only = date_time.substring(0, 8);
-        final String month_only = date_time.substring(3, 8);
+        final String date_only = date_completed;
+        final String month_only = date_completed.substring(3, 8);
 
         tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -776,8 +774,8 @@ public class ConfirmedCartParcelFragment extends Fragment {
     }
 
     private void addToParcelTotal() {
-        final String date_only = date_time.substring(0, 8);
-        final String month_only = date_time.substring(3, 8);
+        final String date_only = date_completed;
+        final String month_only = date_completed.substring(3, 8);
 
         tallyRef.document(DAILY).collection(PARCELS).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -849,8 +847,8 @@ public class ConfirmedCartParcelFragment extends Fragment {
     }
 
     private void addToGrandTotal() {
-        final String date_only = date_time.substring(0, 8);
-        final String month_only = date_time.substring(3, 8);
+        final String date_only = date_completed;
+        final String month_only = date_completed.substring(3, 8);
 
 
         tallyRef.document(DAILY).collection(GRANDTOTAL).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

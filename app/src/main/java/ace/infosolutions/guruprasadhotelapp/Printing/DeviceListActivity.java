@@ -25,8 +25,6 @@ public class DeviceListActivity extends Activity {
         public void onItemClick(AdapterView<?> mAdapterView, View mView, int mPosition, long mLong) {
 
             try {
-
-
                 mBluetoothAdapter.cancelDiscovery();
                 String mDeviceInfo = ((TextView) mView).getText().toString();
                 String mDeviceAddress = mDeviceInfo.substring(mDeviceInfo.length() - 17);
@@ -77,5 +75,10 @@ public class DeviceListActivity extends Activity {
         if (mBluetoothAdapter != null) {
             mBluetoothAdapter.cancelDiscovery();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 }

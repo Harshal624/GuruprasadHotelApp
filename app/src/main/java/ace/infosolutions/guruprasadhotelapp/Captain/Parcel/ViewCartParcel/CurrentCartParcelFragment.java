@@ -1,10 +1,8 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,13 +15,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dantsu.escposprinter.EscPosPrinter;
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -53,9 +48,6 @@ import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.SP_KEY;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTERNBRCHARACTERSPERLINE;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTER_DPI;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTER_WIDTHmm;
 
 public class CurrentCartParcelFragment extends Fragment {
     private static final String PARCELS = "PARCELS";
@@ -78,7 +70,6 @@ public class CurrentCartParcelFragment extends Fragment {
 
     private GenerateNumber number = new GenerateNumber();
     private String kot_no;
-    private String dateCurrent;
 
     @Nullable
     @Override
@@ -88,7 +79,6 @@ public class CurrentCartParcelFragment extends Fragment {
         DOC_ID = sharedPreferences.getString(PARCEL_ID_KEY, "");
         recyclerView = view.findViewById(R.id.currentcart_recycler);
         layoutManager = new LinearLayoutManager(getContext());
-        dateCurrent = number.generateCompletedDateTime();
         kot_no = number.generateBillNo();
         db = FirebaseFirestore.getInstance();
         printOnly = view.findViewById(R.id.pribtonly);
@@ -115,37 +105,6 @@ public class CurrentCartParcelFragment extends Fragment {
                 getDatabaseValues();
             }
 
-            private void bluetoothPrint(final StringBuffer buffer, final String order_type) {
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH) ==
-                        PackageManager.PERMISSION_GRANTED) {
-                    //run background thread
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                EscPosPrinter posPrinter = new EscPosPrinter(BluetoothPrintersConnections.selectFirstPaired(),
-                                        PRINTER_DPI, PRINTER_WIDTHmm, PRINTERNBRCHARACTERSPERLINE);
-                                posPrinter.printFormattedText(
-                                        "[C]<u><font size='big'>KOT:" + kot_no + "</font></u>" +
-                                                "[L]\n" +
-                                                "[C]================================\n" +
-                                                "[L]\n" +
-                                                "[C]<b>Parcel<b>" + "\n" +
-                                                "[L]Parcel Type:" + "[R]" + order_type + "\n" +
-                                                "[L]Time&Date:" + "[R]" + dateCurrent + "\n" +
-                                                "[C]================================\n" +
-                                                buffer.toString() +
-                                                "[C]---------------------------------\n"
-                                );
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
-                } else {
-                    Toast.makeText(getContext(), "Bluetooth Service is not granted", Toast.LENGTH_SHORT).show();
-                }
-            }
 
             private void getDatabaseValues() {
 
@@ -189,7 +148,7 @@ public class CurrentCartParcelFragment extends Fragment {
                                             for (int i = 0; i < arrayList.size(); i++) {
                                                 buffer.append("\"[L]" + arrayList.get(i).getItem_title() + "[R]" + arrayList.get(i).getItem_qty() + "\\n\"" + "\n");
                                             }
-                                            bluetoothPrint(buffer, order_type);
+                                            //bluetoothPrint(buffer, order_type);
                                         }
                                     }
                                 }

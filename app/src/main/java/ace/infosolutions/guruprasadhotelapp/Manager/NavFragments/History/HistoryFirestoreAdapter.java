@@ -36,7 +36,7 @@ public class HistoryFirestoreAdapter extends FirestoreRecyclerAdapter<HistoryMod
     @Override
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull HistoryModel model) {
         holder.bill_no.setText(model.getBill_no());
-        holder.date_time.setText(model.getDate_time_completed());
+        holder.date_time.setText(model.getDate_completed() + " " + model.getTime_completed());
         holder.payment_mode.setText("(" + model.getPayment_mode() + ")");
         holder.table_no.setText("" + model.getTable_no());
         holder.table_type.setText(model.getTable_type() + ",");

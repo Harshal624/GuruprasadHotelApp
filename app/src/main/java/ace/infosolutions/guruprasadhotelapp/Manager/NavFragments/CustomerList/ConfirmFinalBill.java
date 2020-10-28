@@ -2,12 +2,15 @@ package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,12 +49,13 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.HistoryModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.OnlineTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.TableTotalModel;
-import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ConfirmedCartParcelFragment.ONLINETOTAL;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.DISCOUNT_TALLY;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
 
 public class ConfirmFinalBill extends AppCompatActivity {
     //Strings for Tally
@@ -71,6 +75,8 @@ public class ConfirmFinalBill extends AppCompatActivity {
     GenerateNumber number = new GenerateNumber();
     private String completed_date;
     //
+    RadioButton type;
+    String discount_type = "Amount";
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private ConfirmFinalBillFirestoreAdapter adapter;
@@ -85,26 +91,31 @@ public class ConfirmFinalBill extends AppCompatActivity {
     private EditText editqtyET, editCostET, editTitleET;
     private View addYourself;
     private EditText addFoodTitle, addFoodCost, addFoodQty;
-    private String table_type, date_time;
+    private String table_type, time_arrived, time_completed, date_arrived;
     private int table_no, no_of_cust;
     private ProgressBar progressBar;
-    private double final_confirmed_cost;
+    private double final_confirmed_cost, total_cost_final, discount_final;
     private Button payment;
     private AlertDialog paymentAlertDialog;
     private View paymentView;
     private TextView online_payment, cash_payment;
     private double current_costFinal;
 
+    private SharedPreferences sharedPreferences;
+    private TextView discount_textview, total_cost_textview;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_final_bill);
-        completed_date = number.generateCompletedDateTime();
         db = FirebaseFirestore.getInstance();
+        sharedPreferences = getSharedPreferences(PREF_DOCID, MODE_PRIVATE);
         recyclerView = findViewById(R.id.final_bill_recycler);
         doc_id = getIntent().getStringExtra("FinalDOCID");
         addItem = findViewById(R.id.add_item);
         payment = findViewById(R.id.payment);
+        discount_textview = findViewById(R.id.discount);
+        total_cost_textview = findViewById(R.id.total);
         layoutManager = new LinearLayoutManager(this);
         confirmedRef = db.collection(CUSTOMERS).document(doc_id).collection(CONFIRMED_KOT);
         custRef = db.collection(CUSTOMERS);
@@ -117,6 +128,9 @@ public class ConfirmFinalBill extends AppCompatActivity {
         paymentAlertDialog = builder.create();
         progressBar = findViewById(R.id.progressBar);
         tallyRef = db.collection(TALLY);
+
+        time_completed = number.generateTimeOnly();
+        completed_date = number.generateDateOnly();
 
         historyRef = db.collection(HISTORY);
 
@@ -150,6 +164,94 @@ public class ConfirmFinalBill extends AppCompatActivity {
 
         fetchTableInfoTotalcost();
         setupRecyclerView();
+        Button apply_discount = findViewById(R.id.apply_discount);
+        apply_discount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final View view1 = LayoutInflater.from(ConfirmFinalBill.this).inflate(R.layout.discountview_alert, null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ConfirmFinalBill.this);
+                final AlertDialog alertDialog = builder.create();
+                final TextView subtotal = view1.findViewById(R.id.subtotal);
+                final EditText discount_enter = view1.findViewById(R.id.discount_amount);
+                discount_enter.setHint("Rs.");
+                RadioGroup radioGroup = view1.findViewById(R.id.radiogroup);
+                custRef.document(doc_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot snapshot) {
+                        subtotal.setText(String.valueOf(snapshot.getDouble("confirmed_cost")));
+                    }
+                });
+                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                        type = view1.findViewById(i);
+                        discount_type = type.getText().toString();
+                        if (discount_type.equals("Amount")) {
+                            discount_enter.setHint("Rs.");
+                        } else {
+                            discount_enter.setHint("%");
+                        }
+                    }
+                });
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (discount_enter.getText().toString().trim().equals("") || discount_enter.getText().toString().trim().equals(null)) {
+                            alertDialog.dismiss();
+                            Toast.makeText(ConfirmFinalBill.this, "No value entered", Toast.LENGTH_SHORT).show();
+                        } else {
+                            double discount = Double.parseDouble(discount_enter.getText().toString().trim());
+                            if (discount == 0.0) {
+                                alertDialog.dismiss();
+                                Toast.makeText(ConfirmFinalBill.this, "No discount added", Toast.LENGTH_SHORT).show();
+                            } else {
+                                alertDialog.dismiss();
+                                progressBar.setVisibility(View.VISIBLE);
+                                applyDiscount(discount);
+                            }
+                        }
+                    }
+
+                    private void applyDiscount(final double discount) {
+                        final DocumentReference reference = custRef.document(doc_id);
+                        db.runTransaction(new Transaction.Function<Void>() {
+                            @Nullable
+                            @Override
+                            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                double subtotal = transaction.get(reference).getDouble("confirmed_cost");
+                                double total;
+                                if (discount_type.equals("Amount")) {
+                                    total = subtotal - discount;
+                                    transaction.update(reference, "discount", discount);
+                                } else {
+                                    double perc = ((discount / 100) * subtotal);
+                                    total = subtotal - perc;
+                                    transaction.update(reference, "discount", perc);
+                                }
+                                transaction.update(reference, "total_cost", total);
+                                return null;
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                updateTableCost();
+                                progressBar.setVisibility(View.GONE);
+                                Toast.makeText(ConfirmFinalBill.this, "Discount applied", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        alertDialog.dismiss();
+                    }
+                });
+                alertDialog.setView(view1);
+                alertDialog.show();
+            }
+        });
+
         printBill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -188,17 +290,16 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                             }
                                         }
                                         if (!arrayList.isEmpty()) {
-                                            for (int i = 0; i < arrayList.size(); i++) {
-                                                buffer.append("\"[L]" + arrayList.get(i).getItem_title() + "\"[C]" + arrayList.get(i).getItem_qty() + "[R]" + arrayList.get(i).getItem_cost() + "\\n\"" + "\n");
-                                            }
-                                            bluetoothPrint(buffer, table_no, table_type, date_time);
+                                           /* PrintingPOJO printingPOJO = new
+                                                    PrintingPOJO(false,true,);
+                                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                                            Gson gson = new Gson();
+                                            String json = gson.toJson(printingPOJO);
+                                            editor.putString(PrintingPOJOConstant,json);
+                                            editor.commit();
+                                            startActivity(new Intent(ConfirmFinalBill.this, PrintingMain.class));*/
                                         }
                                     }
-                                }
-
-                                private void bluetoothPrint(StringBuffer buffer, String table_no, String table_type, String date_time) {
-                                    Intent intent = new Intent(getApplicationContext(), PrintingMain.class);
-
                                 }
                             });
                         }
@@ -453,6 +554,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                 double total_cost = current_conf_cost + cost;
                 transaction.set(confirmedKotRef, model);
                 transaction.update(parentKotRef, "confirmed_cost", total_cost);
+                transaction.update(parentKotRef, "total_cost", total_cost);
                 return null;
             }
         }).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -468,45 +570,31 @@ public class ConfirmFinalBill extends AppCompatActivity {
     private void updateItemCost(DocumentSnapshot snapshot, final double cost) {
         String id = snapshot.getId();
         int saved_qty = snapshot.getDouble("item_qty").intValue();
-        double final_cost = cost * saved_qty;
+        final double final_cost = cost * saved_qty;
         double saved_cost = snapshot.getDouble("item_cost");
         final double cost_difference = final_cost - saved_cost;
 
         progressBar.setVisibility(View.VISIBLE);
 
-        confirmedRef.document(id).update("item_cost", final_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
+        final DocumentReference reference = custRef.document(doc_id);
+        final DocumentReference reference1 = confirmedRef.document(id);
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    updateConfCost(cost_difference);
-                } else {
-                    Toast.makeText(ConfirmFinalBill.this, "Failed to update the cost!", Toast.LENGTH_SHORT).show();
-                }
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                double confirmed_cost = transaction.get(reference).getDouble("confirmed_cost");
+                final double f_cost = confirmed_cost + cost_difference;
+                transaction.update(reference1, "item_cost", final_cost);
+                transaction.update(reference, "confirmed_cost", f_cost);
+                transaction.update(reference, "total_cost", f_cost);
+                return null;
             }
-
-            private void updateConfCost(final double cost_difference) {
-                custRef.document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            double confirmed_cost = task.getResult().getDouble("confirmed_cost");
-                            final double f_cost = confirmed_cost + cost_difference;
-                            custRef.document(doc_id).update("confirmed_cost", f_cost).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        double roundedDouble = Math.round(f_cost * 100.0) / 100.0;
-                                        totalCost.setText(String.valueOf(roundedDouble));
-                                        progressBar.setVisibility(View.GONE);
-                                        Toast.makeText(ConfirmFinalBill.this, "Cost updated", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                    }
-                                }
-                            });
-                        } else {
-                        }
-                    }
-                });
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                updateTableCost();
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(ConfirmFinalBill.this, "Cost updated", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -531,9 +619,9 @@ public class ConfirmFinalBill extends AppCompatActivity {
                 double saved_cost = transaction.get(parentRef).getDouble("confirmed_cost");
                 double f_Cost = saved_cost + final_cost;
                 transaction.update(parentRef, "confirmed_cost", f_Cost);
+                transaction.update(parentRef, "total_cost", f_Cost);
                 transaction.update(confKotRef, "item_qty", qty);
                 transaction.update(confKotRef, "item_cost", new_cost);
-
                 return null;
             }
         }).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -611,6 +699,12 @@ public class ConfirmFinalBill extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 double conf_cost = documentSnapshot.getDouble("confirmed_cost");
+                double discount = documentSnapshot.getDouble("discount");
+                double total = documentSnapshot.getDouble("total_cost");
+                String total_discount = String.valueOf(Math.round(discount * 100.0) / 100.0);
+                discount_textview.setText(total_discount);
+                String t_cost = String.valueOf(Math.round(total * 100.0) / 100.0);
+                total_cost_textview.setText(t_cost);
                 double roundedDouble = Math.round(conf_cost * 100.0) / 100.0;
                 String total_cost = String.valueOf(roundedDouble);
                 totalCost.setText(total_cost);
@@ -632,10 +726,13 @@ public class ConfirmFinalBill extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     final_confirmed_cost = task.getResult().getDouble("confirmed_cost");
+                    total_cost_final = task.getResult().getDouble("total_cost");
+                    discount_final = task.getResult().getDouble("discount");
                     table_no = task.getResult().getDouble("table_no").intValue();
                     no_of_cust = task.getResult().getDouble("no_of_cust").intValue();
                     table_type = task.getResult().getString("table_type");
-                    date_time = task.getResult().getString("date_time");
+                    date_arrived = task.getResult().getString("date_arrived");
+                    time_arrived = task.getResult().getString("time_arrived");
                     current_costFinal = task.getResult().getDouble("current_cost");
                     String bill_no = task.getResult().getString("bill_no");
 
@@ -650,7 +747,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
             }
 
             private void savetoHistory(final String payment_mode, final String bill_no) {
-                HistoryModel model = new HistoryModel(date_time, payment_mode, final_confirmed_cost, table_type, table_no, completed_date, no_of_cust, bill_no);
+                HistoryModel model = new HistoryModel(date_arrived, completed_date, time_arrived, time_completed, payment_mode, final_confirmed_cost, discount_final, total_cost_final, table_type, table_no, no_of_cust, bill_no);
 
                 final WriteBatch batch1 = db.batch();
                 final WriteBatch batch2 = db.batch();
@@ -699,6 +796,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                                     addToOnlineTotal();
                                                 }
                                                 addToTableWiseTotal();
+                                                addDiscountTotal();
                                                 Toast.makeText(ConfirmFinalBill.this, "Order completed", Toast.LENGTH_SHORT).show();
                                                 startActivity(new Intent(getApplicationContext(), Manager.class));
                                                 overridePendingTransition(0, 0);
@@ -716,9 +814,11 @@ public class ConfirmFinalBill extends AppCompatActivity {
 
     }
 
+
     private void addToTableWiseTotal() {
-        final String date_only = date_time.substring(0, 8);
-        final String month_only = date_time.substring(3, 8);
+        final String date_only = completed_date;
+        final String month_only = completed_date.substring(3, 8);
+
         Map<String, Object> datemap = new HashMap<>();
         datemap.put("date", date_only);
         final Map<String, Object> monthmap = new HashMap<>();
@@ -742,7 +842,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                         public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                                             //daily date is already available
                                             double stored_cost = transaction.get(reference).getDouble("tabletotal");
-                                            double total_cost = stored_cost + final_confirmed_cost;
+                                            double total_cost = stored_cost + total_cost_final;
                                             TableTotalModel model = new TableTotalModel(total_cost, table_no);
                                             transaction.set(reference, model);
                                             return null;
@@ -756,7 +856,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
 
                                 } else {
                                     //first daily entry
-                                    TableTotalModel model = new TableTotalModel(final_confirmed_cost, table_no);
+                                    TableTotalModel model = new TableTotalModel(total_cost_final, table_no);
                                     db.collection(TABLETALLYDAILY).document(date_only).collection(table_type)
                                             .document(String.valueOf(table_no)).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
@@ -793,7 +893,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                                 public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                                                     //daily date is already available
                                                     double stored_cost = transaction.get(reference).getDouble("tabletotal");
-                                                    double total_cost = stored_cost + final_confirmed_cost;
+                                                    double total_cost = stored_cost + total_cost_final;
                                                     TableTotalModel model = new TableTotalModel(total_cost, table_no);
                                                     transaction.set(reference, model);
                                                     return null;
@@ -802,7 +902,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
 
                                         } else {
                                             //first daily entry
-                                            TableTotalModel model = new TableTotalModel(final_confirmed_cost, table_no);
+                                            TableTotalModel model = new TableTotalModel(total_cost_final, table_no);
                                             db.collection(TABLETALLYMONTHLY).document(month_only).collection(table_type)
                                                     .document(String.valueOf(table_no)).set(model);
                                         }
@@ -817,8 +917,8 @@ public class ConfirmFinalBill extends AppCompatActivity {
     }
 
     private void addToOnlineTotal() {
-        final String date_only = date_time.substring(0, 8);
-        final String month_only = date_time.substring(3, 8);
+        final String date_only = completed_date;
+        final String month_only = completed_date.substring(3, 8);
 
         tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -832,7 +932,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                             @Override
                             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                                 double stored_gt = transaction.get(reference).getDouble("onlinetotal");
-                                double total_gt = stored_gt + final_confirmed_cost;
+                                double total_gt = stored_gt + total_cost_final;
                                 OnlineTotalModel model = new OnlineTotalModel(total_gt, date_only);
                                 transaction.set(reference, model);
                                 return null;
@@ -845,7 +945,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                         });
 
                     } else {
-                        OnlineTotalModel model = new OnlineTotalModel(final_confirmed_cost, date_only);
+                        OnlineTotalModel model = new OnlineTotalModel(total_cost_final, date_only);
                         tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -871,7 +971,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                     public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                                         //exists
                                         double stored_gt = transaction.get(reference).getDouble("onlinetotal");
-                                        double total_gt = final_confirmed_cost + stored_gt;
+                                        double total_gt = total_cost_final + stored_gt;
                                         OnlineTotalModel model = new OnlineTotalModel(total_gt, month_only);
                                         transaction.set(reference, model);
                                         return null;
@@ -880,7 +980,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
 
                             } else {
                                 //doesn't exist
-                                OnlineTotalModel model = new OnlineTotalModel(final_confirmed_cost, month_only);
+                                OnlineTotalModel model = new OnlineTotalModel(total_cost_final, month_only);
                                 tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only).set(model);
                             }
                         }
@@ -893,8 +993,8 @@ public class ConfirmFinalBill extends AppCompatActivity {
     }
 
     private void addtoGrandTotal() {
-        final String date_only = date_time.substring(0, 8);
-        final String month_only = date_time.substring(3, 8);
+        final String date_only = completed_date;
+        final String month_only = completed_date.substring(3, 8);
 
 
         tallyRef.document(DAILY).collection(GRANDTOTAL).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -908,7 +1008,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                             @Override
                             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                                 double stored_gt = transaction.get(reference).getDouble("grandtotal");
-                                double total_gt = stored_gt + final_confirmed_cost;
+                                double total_gt = stored_gt + total_cost_final;
                                 GrandTotalModel model = new GrandTotalModel(total_gt, date_only);
                                 transaction.set(reference, model);
                                 return null;
@@ -920,7 +1020,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                             }
                         });
                     } else {
-                        GrandTotalModel model = new GrandTotalModel(final_confirmed_cost, date_only);
+                        GrandTotalModel model = new GrandTotalModel(total_cost_final, date_only);
                         tallyRef.document(DAILY).collection(GRANDTOTAL).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -946,7 +1046,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                     public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                                         //exists
                                         double stored_gt = transaction.get(reference).getDouble("grandtotal");
-                                        double total_gt = final_confirmed_cost + stored_gt;
+                                        double total_gt = total_cost_final + stored_gt;
                                         GrandTotalModel model = new GrandTotalModel(total_gt, month_only);
                                         transaction.set(reference, model);
                                         return null;
@@ -955,7 +1055,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
 
                             } else {
                                 //doesn't exist
-                                GrandTotalModel model = new GrandTotalModel(final_confirmed_cost, month_only);
+                                GrandTotalModel model = new GrandTotalModel(total_cost_final, month_only);
                                 tallyRef.document(MONTHLY).collection(GRANDTOTAL).document(month_only).set(model, SetOptions.merge());
                             }
                         }
@@ -963,6 +1063,80 @@ public class ConfirmFinalBill extends AppCompatActivity {
                 });
             }
         });
+    }
+
+
+    private void addDiscountTotal() {
+        final String date_only = completed_date;
+        final String month_only = completed_date.substring(3, 8);
+
+        tallyRef.document(DAILY).collection(DISCOUNT_TALLY).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    if (task.getResult().exists()) {
+                        final DocumentReference reference = tallyRef.document(DAILY).collection(DISCOUNT_TALLY).document(date_only);
+                        db.runTransaction(new Transaction.Function<Void>() {
+                            @Nullable
+                            @Override
+                            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                double stored_gt = transaction.get(reference).getDouble("grandtotal");
+                                double total_gt = stored_gt + discount_final;
+                                GrandTotalModel model = new GrandTotalModel(total_gt, date_only);
+                                transaction.set(reference, model);
+                                return null;
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                addTODiscountMonthly();
+                            }
+                        });
+                    } else {
+                        GrandTotalModel model = new GrandTotalModel(discount_final, date_only);
+                        tallyRef.document(DAILY).collection(DISCOUNT_TALLY).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    addTODiscountMonthly();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+            private void addTODiscountMonthly() {
+                tallyRef.document(MONTHLY).collection(DISCOUNT_TALLY).document(month_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if (task.getResult().exists()) {
+                                final DocumentReference reference = tallyRef.document(MONTHLY).collection(DISCOUNT_TALLY).document(month_only);
+                                db.runTransaction(new Transaction.Function<Void>() {
+                                    @Nullable
+                                    @Override
+                                    public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                        //exists
+                                        double stored_gt = transaction.get(reference).getDouble("grandtotal");
+                                        double total_gt = discount_final + stored_gt;
+                                        GrandTotalModel model = new GrandTotalModel(total_gt, month_only);
+                                        transaction.set(reference, model);
+                                        return null;
+                                    }
+                                });
+
+                            } else {
+                                //doesn't exist
+                                GrandTotalModel model = new GrandTotalModel(discount_final, month_only);
+                                tallyRef.document(MONTHLY).collection(DISCOUNT_TALLY).document(month_only).set(model, SetOptions.merge());
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
     }
 }
 

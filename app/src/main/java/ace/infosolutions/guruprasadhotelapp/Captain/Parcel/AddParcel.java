@@ -27,9 +27,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
@@ -128,13 +125,11 @@ public class AddParcel extends AppCompatActivity {
                     if (customerAddress.equals("") && ishomedelivery == true) {
                         cust_address.setError("Enter address");
                     } else {
-                        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-                        Date date = new Date();
-                        String datetoday = format.format(date);
-                        String final_date = datetoday.replaceAll("/", "-");
                         GenerateNumber generateNumber = new GenerateNumber();
                         String bill_no = generateNumber.generateBillNo();
-                        ParcelModel model = new ParcelModel(customerName, customerContact, ishomedelivery, customerAddress, 0.0, 0.0, final_date, bill_no);
+                        String date_arrived = generateNumber.generateDateOnly();
+                        String time_arrived = generateNumber.generateTimeOnly();
+                        ParcelModel model = new ParcelModel(customerName, customerContact, ishomedelivery, customerAddress, 0.0, 0.0, date_arrived, time_arrived, bill_no);
                         confirmParcel(model);
                     }
                 }

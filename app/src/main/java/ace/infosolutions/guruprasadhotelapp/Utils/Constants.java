@@ -15,4 +15,10 @@ public interface Constants {
     String FISH = "FISH";
     String CUSTOMERS = "CUSTOMERS";
     String CURRENT_KOT = "CURRENT_KOT";
+
+    //PrintingPOJO Constant
+    String PrintingPOJOConstant = "PRINTINGPOJO";
+
+    //discount collection
+    String DISCOUNT_TALLY = "DISCOUNT";
 }

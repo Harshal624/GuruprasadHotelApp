@@ -25,6 +25,9 @@
         <activity android:name=".Manager.NavFragments.Tally.CalculateTallyGrand" />
         <activity android:name=".Manager.NavFragments.Tally.TableTallyMonthList" />
         <activity android:name=".Manager.NavFragments.History.HistoryItems" />
+        <activity android:name=".Printing.PrintingMain" />
+        <activity android:name=".Printing.DeviceListActivity" />
+
         <activity
             android:name=".Captain.Parcel.ViewCartParcel.ViewCartParcel"
             android:label="@string/title_activity_view_cart_parcel"
@@ -51,7 +54,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Utils.CheckRole" />
         <activity android:name=".Captain.AddCustomer" />
-        <activity android:name=".Manager.Manager" />
+        <activity
+            android:name=".Manager.Manager"
+            android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".Captain.Parcel.FoodMenuParcel" />
         <activity android:name=".Captain.Parcel.ItemListParcel" />
         <activity android:name=".Captain.Parcel.FishListParcel" />

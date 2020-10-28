@@ -24,8 +24,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -193,12 +191,10 @@ public class AddCustomer extends AppCompatActivity {
         double current_cost = 0;
         GenerateNumber number = new GenerateNumber();
         String BILL_NO = number.generateBillNo();
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-        Date date = new Date();
-        String datetoday = format.format(date);
-        String final_date = datetoday.replaceAll("/", "-");
+        String date_arrived = number.generateDateOnly();
+        String arrived_time = number.generateTimeOnly();
         int no_cust = noofcustNP.getValue();
-        CustomerInfo customerInfo = new CustomerInfo(table_noInt, no_cust, final_date, table_typeString, final_cost, current_cost, BILL_NO);
+        CustomerInfo customerInfo = new CustomerInfo(table_noInt, no_cust, date_arrived, arrived_time, table_typeString, final_cost, current_cost, BILL_NO, 0.0, 0.0);
 
         final DocumentReference reference = db.collection(CUSTOMERS).document();
         WriteBatch batch = db.batch();

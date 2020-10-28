@@ -8,19 +8,20 @@ public class GenerateNumber {
     private String completed_date;
     private String Bill_NO;
 
-    public String generateCompletedDateTime() {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+    public String generateDateOnly() {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
         Date date = new Date();
-        String datetoday = format.format(date);
-        completed_date = datetoday.replaceAll("/", "-");
-        return completed_date;
+        String dateCurrent = format.format(date);
+        return dateCurrent.replaceAll("/", "-");
     }
 
-  /* public String generateTime(){
-       SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");
-
-   }
-    */
+    public String generateTimeOnly() {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        Date date = new Date();
+        String timeCurrent = format.format(date);
+        return timeCurrent;
+    }
+    
 
 
     public String generateBillNo() {

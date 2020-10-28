@@ -37,7 +37,7 @@ public class ParcelHistoryFirestoreAdapter extends FirestoreRecyclerAdapter<Parc
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull ParcelHistoryModel model) {
         holder.payment_mode.setText("(" + model.getPayment_mode() + ")");
         holder.total_cost.setText("" + model.getConfirmed_cost());
-        holder.date_time.setText(model.getDate_time_completed());
+        holder.date_time.setText(model.getDate_completed() + " " + model.getTime_completed());
         if (model.isIshomedelivery()) {
             holder.delivery_type.setText("Home Delivery");
         } else {

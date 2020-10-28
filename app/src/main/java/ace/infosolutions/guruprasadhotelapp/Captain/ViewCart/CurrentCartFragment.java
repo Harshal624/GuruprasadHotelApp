@@ -1,10 +1,9 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.ViewCart;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,17 +16,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dantsu.escposprinter.EscPosPrinter;
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections;
-import com.dantsu.escposprinter.exceptions.EscPosBarcodeException;
-import com.dantsu.escposprinter.exceptions.EscPosConnectionException;
-import com.dantsu.escposprinter.exceptions.EscPosEncodingException;
-import com.dantsu.escposprinter.exceptions.EscPosParserException;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,24 +34,26 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
+import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
+import ace.infosolutions.guruprasadhotelapp.Printing.PrintingPOJO;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTERNBRCHARACTERSPERLINE;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTER_DPI;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PRINTER_WIDTHmm;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.DOC_ID_KEY;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PrintingPOJOConstant;
 
 
 public class CurrentCartFragment extends Fragment {
-    public static final String PREF_DOCID = "PREF_DOCID";
-    public static final String DOC_ID_KEY = "DOC_ID_KEY";
+
     public static final String CONFIRMED_KOT = "CONFIRMED_KOT";
     private static final String CUSTOMERS = "CUSTOMERS";
     private static final String CURRENT_KOT = "CURRENT_KOT";
@@ -112,28 +106,6 @@ public class CurrentCartFragment extends Fragment {
                 getDatabaseValues();
             }
 
-            private void bluetoothPrint(final StringBuffer buffer, final String kot_no, final String table_no, String table_type, String date) throws EscPosConnectionException, EscPosParserException, EscPosEncodingException, EscPosBarcodeException {
-
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH) ==
-                        PackageManager.PERMISSION_GRANTED) {
-                    EscPosPrinter posPrinter = new EscPosPrinter(BluetoothPrintersConnections.selectFirstPaired(),
-                            PRINTER_DPI, PRINTER_WIDTHmm, PRINTERNBRCHARACTERSPERLINE);
-                    posPrinter.printFormattedText(
-                            "[C]<u><font size='big'>KOT:" + kot_no + "</font></u>" +
-                                    "[L]\n" +
-                                    "[C]================================\n" +
-                                    "[L]\n" +
-                                    "[L]Date:" + "[R]" + table_no + "\n" +
-                                    "[L]Table No:" + "[R]" + table_no + "\n" +
-                                    "[L]Table Type:" + "[R]" + table_no + "\n" +
-                                    "[C]================================\n" +
-                                    buffer.toString() +
-                                    "[C]---------------------------------\n"
-                    );
-                } else {
-                    Toast.makeText(getContext(), "Bluetooth Service is not granted", Toast.LENGTH_SHORT).show();
-                }
-            }
 
             private void getDatabaseValues() {
                 final ArrayList<ViewCartModel> arrayList = new ArrayList<>();
@@ -145,8 +117,9 @@ public class CurrentCartFragment extends Fragment {
                         final String table_no = String.valueOf(snapshot.getDouble("table_no").intValue());
                         final String table_type = snapshot.getString("table_type");
                         GenerateNumber number = new GenerateNumber();
-                        final String date_time = number.generateCompletedDateTime();
                         final String kot_no = number.generateBillNo();
+                        final String date = number.generateDateOnly();
+                        final String time = number.generateTimeOnly();
                         double curr_cost = snapshot.getDouble("current_cost");
                         if (curr_cost == 0.0) {
                             Toast.makeText(getContext(), "Cart is empty", Toast.LENGTH_SHORT).show();
@@ -167,20 +140,14 @@ public class CurrentCartFragment extends Fragment {
                                             }
                                         }
                                         if (!arrayList.isEmpty()) {
-                                            for (int i = 0; i < arrayList.size(); i++) {
-                                                buffer.append("\"[L]" + arrayList.get(i).getItem_title() + "[R]" + arrayList.get(i).getItem_qty() + "\\n\"" + "\n");
-                                            }
-                                            try {
-                                                bluetoothPrint(buffer, kot_no, table_no, table_type, date_time);
-                                            } catch (EscPosConnectionException e) {
-                                                e.printStackTrace();
-                                            } catch (EscPosParserException e) {
-                                                e.printStackTrace();
-                                            } catch (EscPosEncodingException e) {
-                                                e.printStackTrace();
-                                            } catch (EscPosBarcodeException e) {
-                                                e.printStackTrace();
-                                            }
+                                            PrintingPOJO printingPOJO = new
+                                                    PrintingPOJO(true, true, arrayList, table_no, table_type, date, time, kot_no);
+                                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                                            Gson gson = new Gson();
+                                            String json = gson.toJson(printingPOJO);
+                                            editor.putString(PrintingPOJOConstant, json);
+                                            editor.commit();
+                                            startActivity(new Intent(getContext(), PrintingMain.class));
                                         }
                                     }
                                 }
@@ -234,6 +201,7 @@ public class CurrentCartFragment extends Fragment {
                                                             double final_cost = current_cost + confirmed_cost;
                                                             transaction.update(customerCostRef, "confirmed_cost", final_cost);
                                                             transaction.update(customerCostRef, "current_cost", 0);
+                                                            transaction.update(customerCostRef, "total_cost", final_cost);
                                                             return null;
                                                         }
                                                     }).addOnSuccessListener(new OnSuccessListener<Void>() {
