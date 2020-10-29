@@ -36,8 +36,10 @@ public class ParcelHistoryFirestoreAdapter extends FirestoreRecyclerAdapter<Parc
     @Override
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull ParcelHistoryModel model) {
         holder.payment_mode.setText("(" + model.getPayment_mode() + ")");
-        holder.total_cost.setText("" + model.getConfirmed_cost());
-        holder.date_time.setText(model.getDate_completed() + " " + model.getTime_completed());
+        double totalcost = Math.round(model.getTotal_cost() * 100.0) / 100.0;
+        holder.total_cost.setText("" + totalcost);
+        holder.date_time_arrived.setText(model.getDate_arrived() + " " + model.getTime_arrived());
+        holder.date_time_completed.setText(model.getDate_completed() + " " + model.getTime_completed());
         if (model.isIshomedelivery()) {
             holder.delivery_type.setText("Home Delivery");
         } else {
@@ -45,6 +47,8 @@ public class ParcelHistoryFirestoreAdapter extends FirestoreRecyclerAdapter<Parc
         }
         holder.cust_name.setText(model.getCustomer_name());
         holder.bill_no.setText(model.getBill_no());
+        double totaldiscount = Math.round(model.getDiscount() * 100.0) / 100.0;
+        holder.discount.setText(String.valueOf(totaldiscount));
     }
 
     @NonNull
@@ -84,19 +88,22 @@ public class ParcelHistoryFirestoreAdapter extends FirestoreRecyclerAdapter<Parc
         private TextView bill_no;
         private TextView cust_name;
         private TextView delivery_type;
-        private TextView date_time;
+        private TextView date_time_arrived;
+        private TextView date_time_completed;
         private TextView total_cost;
         private TextView payment_mode;
-
+        private TextView discount;
 
         public CustomerHolder(@NonNull View itemView) {
             super(itemView);
             bill_no = itemView.findViewById(R.id.bill_no);
             cust_name = itemView.findViewById(R.id.cust_name);
             delivery_type = itemView.findViewById(R.id.delivery);
-            date_time = itemView.findViewById(R.id.date_time);
+            date_time_arrived = itemView.findViewById(R.id.date_time_arrived);
+            date_time_completed = itemView.findViewById(R.id.date_time_completed);
             total_cost = itemView.findViewById(R.id.total_cost);
             payment_mode = itemView.findViewById(R.id.payment_mode);
+            discount = itemView.findViewById(R.id.discount_total);
 
 
             itemView.setOnClickListener(new View.OnClickListener() {

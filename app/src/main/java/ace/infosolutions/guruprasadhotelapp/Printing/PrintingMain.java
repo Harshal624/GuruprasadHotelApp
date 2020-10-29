@@ -103,7 +103,6 @@ public class PrintingMain extends Activity implements Runnable {
         mPrint = (Button) findViewById(R.id.mPrint);
         mPrint.setOnClickListener(new View.OnClickListener() {
             public void onClick(View mView) {
-                Log.e("HORSHBILL", BILL);
                 Thread t = new Thread() {
                     public void run() {
                         try {
@@ -150,7 +149,6 @@ public class PrintingMain extends Activity implements Runnable {
         ArrayList<ViewCartModel> arrayList = new ArrayList<>();
         arrayList.addAll(print.getArrayList());
         if (print.isIsorder()) {
-            //TODO get rounded values of subtotal and total
             //order final bill design
             BILL = "";
             BILL = "                   GURUPRASAD HOTEL    \n"

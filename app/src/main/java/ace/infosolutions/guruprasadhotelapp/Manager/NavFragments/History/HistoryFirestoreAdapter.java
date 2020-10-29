@@ -36,12 +36,15 @@ public class HistoryFirestoreAdapter extends FirestoreRecyclerAdapter<HistoryMod
     @Override
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull HistoryModel model) {
         holder.bill_no.setText(model.getBill_no());
-        holder.date_time.setText(model.getDate_completed() + " " + model.getTime_completed());
+        holder.date_time_arrived.setText(model.getDate_arrived() + " " + model.getTime_arrived());
+        holder.date_time_completed.setText(model.getDate_completed() + " " + model.getTime_completed());
         holder.payment_mode.setText("(" + model.getPayment_mode() + ")");
         holder.table_no.setText("" + model.getTable_no());
         holder.table_type.setText(model.getTable_type() + ",");
         double roundedDouble = Math.round(model.getTotal_cost() * 100.0) / 100.0;
         holder.total_cost.setText("" + roundedDouble);
+        double roundedDiscount = Math.round(model.getDiscount() * 100.0) / 100.0;
+        holder.discount.setText("" + roundedDiscount);
 
     }
 
@@ -80,7 +83,9 @@ public class HistoryFirestoreAdapter extends FirestoreRecyclerAdapter<HistoryMod
 
     public class CustomerHolder extends RecyclerView.ViewHolder {
         private TextView bill_no;
-        private TextView date_time;
+        private TextView date_time_arrived;
+        private TextView date_time_completed;
+        private TextView discount;
         private TextView table_type;
         private TextView table_no;
         private TextView payment_mode;
@@ -90,7 +95,9 @@ public class HistoryFirestoreAdapter extends FirestoreRecyclerAdapter<HistoryMod
         public CustomerHolder(@NonNull View itemView) {
             super(itemView);
             bill_no = itemView.findViewById(R.id.bill_no);
-            date_time = itemView.findViewById(R.id.date_time);
+            date_time_arrived = itemView.findViewById(R.id.date_time_arrived);
+            date_time_completed = itemView.findViewById(R.id.date_time_completed);
+            discount = itemView.findViewById(R.id.discount_amount);
             table_type = itemView.findViewById(R.id.table_type);
             table_no = itemView.findViewById(R.id.table_no);
             total_cost = itemView.findViewById(R.id.total_cost);

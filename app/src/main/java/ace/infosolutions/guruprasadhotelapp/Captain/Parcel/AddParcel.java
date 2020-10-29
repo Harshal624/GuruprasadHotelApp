@@ -129,7 +129,7 @@ public class AddParcel extends AppCompatActivity {
                         String bill_no = generateNumber.generateBillNo();
                         String date_arrived = generateNumber.generateDateOnly();
                         String time_arrived = generateNumber.generateTimeOnly();
-                        ParcelModel model = new ParcelModel(customerName, customerContact, ishomedelivery, customerAddress, 0.0, 0.0, date_arrived, time_arrived, bill_no);
+                        ParcelModel model = new ParcelModel(customerName, customerContact, ishomedelivery, customerAddress, 0.0, 0.0, 0.0, 0.0, date_arrived, time_arrived, bill_no);
                         confirmParcel(model);
                     }
                 }

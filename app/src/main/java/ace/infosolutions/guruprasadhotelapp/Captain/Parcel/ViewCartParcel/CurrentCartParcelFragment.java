@@ -203,6 +203,7 @@ public class CurrentCartParcelFragment extends Fragment {
                                                                 double confirmed_cost = snapshot1.getDouble("confirmed_cost");
                                                                 double final_cost = current_cost + confirmed_cost;
                                                                 transaction.update(parcelCostRef, "confirmed_cost", final_cost);
+                                                                transaction.update(parcelCostRef, "total_cost", final_cost);
                                                                 transaction.update(parcelCostRef, "current_cost", 0);
                                                                 return null;
                                                             }
