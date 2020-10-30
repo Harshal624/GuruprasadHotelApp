@@ -21,4 +21,18 @@ public interface Constants {
 
     //discount collection
     String DISCOUNT_TALLY = "DISCOUNT";
+    String SP_PRINT_TYPE = "SP_PRINT_TYPE";
+
+    //collection - foodmenu
+    String FoodMenu = "FoodMenu";
+    String Starters = "Starters";
+    String Veg = "Veg";
+    String NonVeg = "Non-Veg";
+    String Rice = "Rice";
+    String Papad = "Papad";
+    String Roti = "Roti";
+    String Soup = "Soup";
+    String RaytaSalad = "RaytaSalad";
+    String SpringRolls = "String SpringRolls";
+    String colddrinkandstarters = "colddrinkandstarters";
 }

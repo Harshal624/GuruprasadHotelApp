@@ -41,8 +41,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
+import ace.infosolutions.guruprasadhotelapp.Printing.OrderKOTPOJO;
 import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
-import ace.infosolutions.guruprasadhotelapp.Printing.PrintingPOJO;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
@@ -50,6 +50,7 @@ import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.DOC_ID_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PrintingPOJOConstant;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.SP_PRINT_TYPE;
 
 
 public class CurrentCartFragment extends Fragment {
@@ -109,7 +110,6 @@ public class CurrentCartFragment extends Fragment {
 
             private void getDatabaseValues() {
                 final ArrayList<ViewCartModel> arrayList = new ArrayList<>();
-                final StringBuffer buffer = new StringBuffer();
 
                 customerRef.document(DOC_ID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -140,12 +140,12 @@ public class CurrentCartFragment extends Fragment {
                                             }
                                         }
                                         if (!arrayList.isEmpty()) {
-                                            PrintingPOJO printingPOJO = new
-                                                    PrintingPOJO(true, true, arrayList, table_no, table_type, date, time, kot_no);
+                                            OrderKOTPOJO orderKOTPOJO = new OrderKOTPOJO(kot_no, date, time, arrayList, table_no, table_type);
                                             SharedPreferences.Editor editor = sharedPreferences.edit();
                                             Gson gson = new Gson();
-                                            String json = gson.toJson(printingPOJO);
+                                            String json = gson.toJson(orderKOTPOJO);
                                             editor.putString(PrintingPOJOConstant, json);
+                                            editor.putString(SP_PRINT_TYPE, "order_kot");
                                             editor.commit();
                                             startActivity(new Intent(getContext(), PrintingMain.class));
                                         }

@@ -1,10 +1,10 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.Fish;
 
-public class FishModel {
+public class FoodMenuModel {
     private String item_title;
     private double item_cost;
 
-    FishModel() {
+    FoodMenuModel() {
     }
 
     public String getItem_title() {
@@ -15,7 +15,7 @@ public class FishModel {
         return item_cost;
     }
 
-    public FishModel(String item_title, int item_cost) {
+    public FoodMenuModel(String item_title, int item_cost) {
         this.item_title = item_title;
         this.item_cost = item_cost;
     }

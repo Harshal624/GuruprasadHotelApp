@@ -93,14 +93,6 @@ public class FoodMenuParcel extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        // finishAffinity();
-        // startActivity(new Intent(getApplicationContext(), CaptainMainFragment.class));
-        // overridePendingTransition(0, 0);
-    }
-
-    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.starters_veg:

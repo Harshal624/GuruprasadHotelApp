@@ -27,7 +27,7 @@ import com.google.firebase.firestore.Transaction;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishFirestoreAdapter;
-import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishModel;
+import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FoodMenuModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.ItemAlertDialog;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ViewCartParcel;
 import ace.infosolutions.guruprasadhotelapp.R;
@@ -74,7 +74,7 @@ public class FishListParcel extends AppCompatActivity implements ItemAlertDialog
         adapter.setOnItemClickListener(new FishFirestoreAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
-                FishModel model = documentSnapshot.toObject(FishModel.class);
+                FoodMenuModel model = documentSnapshot.toObject(FoodMenuModel.class);
                 String item_title = model.getItem_title();
                 String item_cost = "Rs." + model.getItem_cost();
                 openDialog(item_title, item_cost);
@@ -96,8 +96,8 @@ public class FishListParcel extends AppCompatActivity implements ItemAlertDialog
 
     private void setUpRecyclerView() {
         Query query = fishRef;
-        FirestoreRecyclerOptions<FishModel> fishOptions = new FirestoreRecyclerOptions.Builder<FishModel>()
-                .setQuery(query, FishModel.class)
+        FirestoreRecyclerOptions<FoodMenuModel> fishOptions = new FirestoreRecyclerOptions.Builder<FoodMenuModel>()
+                .setQuery(query, FoodMenuModel.class)
                 .build();
         adapter = new FishFirestoreAdapter(fishOptions);
         recyclerView.setHasFixedSize(true);

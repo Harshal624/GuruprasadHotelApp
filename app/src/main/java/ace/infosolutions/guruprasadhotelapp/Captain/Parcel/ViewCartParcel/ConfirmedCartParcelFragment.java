@@ -1,13 +1,11 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +37,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.Transaction;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelFragment;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelHistoryModel;
@@ -50,6 +51,8 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.GrandTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.OnlineTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.ParcelTotalModel;
+import ace.infosolutions.guruprasadhotelapp.Printing.ParcelFinalBillPOJO;
+import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 
@@ -61,6 +64,9 @@ import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Customer
 import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill.MONTHLY;
 import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill.TALLY;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.DISCOUNT_TALLY;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PrintingPOJOConstant;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.SP_PRINT_TYPE;
 
 public class ConfirmedCartParcelFragment extends Fragment {
     public static final String PARCEL_HISTORY = "PARCEL_HISTORY";
@@ -68,7 +74,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
     private static final String PARCELS = "PARCELS";
     private static final String CONFIRMED_KOT = "CONFIRMED_KOT";
     GenerateNumber number = new GenerateNumber();
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences, sharedPreferences2;
     private String DOC_ID = "";
     private ConfirmedCartCaptainAdapter adapter;
     private RecyclerView recyclerView, recyclerView2;
@@ -119,6 +125,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
 
         date_completed = number.generateDateOnly();
         time_completed = number.generateTimeOnly();
+        sharedPreferences2 = getContext().getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
 
         print_finalbill = view2.findViewById(R.id.print);
         payment = view2.findViewById(R.id.payment);
@@ -277,18 +284,66 @@ public class ConfirmedCartParcelFragment extends Fragment {
             print_finalbill.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final ProgressDialog progressDialog = ProgressDialog.show(getContext(),
-                            "Print Bill", "Printing Final Bill", false);
+                    progressBar.setVisibility(View.VISIBLE);
+                    print_finalbill.setEnabled(false);
+                    printfinalBill();
+                }
 
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
+                private void printfinalBill() {
+                    final ArrayList<ViewCartModel> arrayList = new ArrayList<>();
+                    final String date = number.generateDateOnly();
+                    final String time = number.generateTimeOnly();
+
+                    parcelRef.document(DOC_ID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
-                        public void run() {
-                            progressDialog.dismiss();
-                            Toast.makeText(getContext(), "Final Bill Printed", Toast.LENGTH_SHORT).show();
-                        }
-                    }, 2000);
+                        public void onSuccess(DocumentSnapshot snapshot) {
+                            double conf_cost = snapshot.getDouble("confirmed_cost");
+                            final String subtotal = String.valueOf(Math.round(conf_cost * 100.0 / 100.0));
+                            final double disc = snapshot.getDouble("discount");
+                            final String discount = String.valueOf(Math.round(disc * 100.0) / 100.0);
+                            double total_cost = snapshot.getDouble("total_cost");
+                            final String total_cost_string = String.valueOf(Math.round(total_cost * 100.0) / 100.0);
+                            final String bill_no = snapshot.getString("bill_no");
+                            final String customer_name = snapshot.getString("customer_name");
+                            final String customer_address = snapshot.getString("customer_address");
+                            final String customer_contact = snapshot.getString("customer_contact");
 
+                            if (conf_cost == 0.0 || conf_cost == 0) {
+                                progressBar.setVisibility(View.GONE);
+                                Toast.makeText(getContext(), "There is nothing to print!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                progressBar.setVisibility(View.GONE);
+                                confirmedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                                double item_Cost = snapshot.getDouble("item_cost");
+                                                String item_Title = snapshot.getString("item_title");
+                                                int item_Qty = snapshot.getDouble("item_qty").intValue();
+                                                ViewCartModel getModel = new ViewCartModel(item_Title, item_Cost, item_Qty);
+                                                if (getModel != null) {
+                                                    arrayList.add(getModel);
+                                                }
+                                            }
+                                            if (!arrayList.isEmpty()) {
+                                                ParcelFinalBillPOJO parcelFinalBillPOJO = new
+                                                        ParcelFinalBillPOJO(bill_no, date, time, customer_name, customer_address, customer_contact
+                                                        , subtotal, discount, total_cost_string, arrayList);
+                                                SharedPreferences.Editor editor = sharedPreferences2.edit();
+                                                Gson gson = new Gson();
+                                                String json = gson.toJson(parcelFinalBillPOJO);
+                                                editor.putString(PrintingPOJOConstant, json);
+                                                editor.putString(SP_PRINT_TYPE, "parcel_bill");
+                                                editor.commit();
+                                                startActivity(new Intent(getContext(), PrintingMain.class));
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                 }
             });
             payment.setOnClickListener(new View.OnClickListener() {

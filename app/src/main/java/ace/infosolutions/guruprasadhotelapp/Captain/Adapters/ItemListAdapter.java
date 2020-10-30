@@ -70,15 +70,6 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
                     onItemClickListener2.onItemClick(item_name.getText().toString(), getAdapterPosition(), item_cost.getText().toString());
                 }
             });
-
-            food_item.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    return false;
-                }
-            });
-
-
         }
     }
 

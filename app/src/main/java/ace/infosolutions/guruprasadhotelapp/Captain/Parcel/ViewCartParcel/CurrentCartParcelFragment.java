@@ -2,6 +2,7 @@ package ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,18 +44,23 @@ import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelFragment;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartModel;
+import ace.infosolutions.guruprasadhotelapp.Printing.ParcelKOTPOJO;
+import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.SP_KEY;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PrintingPOJOConstant;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.SP_PRINT_TYPE;
 
 public class CurrentCartParcelFragment extends Fragment {
     private static final String PARCELS = "PARCELS";
     private static final String CURRENT_KOT = "CURRENT_KOT";
     private static final String CONFIRMED_KOT = "CONFIRMED_KOT";
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences, sharedPreferences2;
     private String DOC_ID = "";
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -78,6 +85,7 @@ public class CurrentCartParcelFragment extends Fragment {
         sharedPreferences = getContext().getSharedPreferences(SP_KEY, Context.MODE_PRIVATE);
         DOC_ID = sharedPreferences.getString(PARCEL_ID_KEY, "");
         recyclerView = view.findViewById(R.id.currentcart_recycler);
+        sharedPreferences2 = getContext().getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
         layoutManager = new LinearLayoutManager(getContext());
         kot_no = number.generateBillNo();
         db = FirebaseFirestore.getInstance();
@@ -109,23 +117,15 @@ public class CurrentCartParcelFragment extends Fragment {
             private void getDatabaseValues() {
 
                 final ArrayList<ViewCartModel> arrayList = new ArrayList<>();
-                final StringBuffer buffer = new StringBuffer();
 
                 parcelRef.document(DOC_ID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot snapshot) {
-                        //final String cust_name = snapshot.getString("customer_name");
-                        // final String cust_address = snapshot.getString("customer_address");
-                        Double conf_cost = snapshot.getDouble("confirmed_cost");
-                        // final String total_cost = String.valueOf(conf_cost);
-                        // final String cust_contact = snapshot.getString("customer_contact");
-                        boolean ishomedelivery = snapshot.getBoolean("ishomedelivery");
-                        final String order_type;
-                        if (ishomedelivery) {
-                            order_type = "Home Delivery";
-                        } else {
-                            order_type = "Parcel";
-                        }
+                        final String cust_name = snapshot.getString("customer_name");
+                        double conf_cost = snapshot.getDouble("current_cost");
+                        final String date_current = number.generateDateOnly();
+                        final String time_current = number.generateTimeOnly();
+
 
                         if (conf_cost == 0.0) {
                             Toast.makeText(getContext(), "Cart is empty!", Toast.LENGTH_SHORT).show();
@@ -138,17 +138,21 @@ public class CurrentCartParcelFragment extends Fragment {
                                             double item_Cost = snapshot1.getDouble("item_cost");
                                             String item_Title = snapshot1.getString("item_title");
                                             int item_Qty = snapshot1.getDouble("item_qty").intValue();
-
                                             ViewCartModel getModel = new ViewCartModel(item_Title, item_Cost, item_Qty);
                                             if (getModel != null) {
                                                 arrayList.add(getModel);
                                             }
                                         }
                                         if (!arrayList.isEmpty()) {
-                                            for (int i = 0; i < arrayList.size(); i++) {
-                                                buffer.append("\"[L]" + arrayList.get(i).getItem_title() + "[R]" + arrayList.get(i).getItem_qty() + "\\n\"" + "\n");
-                                            }
-                                            //bluetoothPrint(buffer, order_type);
+                                            ParcelKOTPOJO parcelKOTPOJO = new ParcelKOTPOJO(kot_no
+                                                    , date_current, time_current, arrayList, cust_name);
+                                            SharedPreferences.Editor editor = sharedPreferences2.edit();
+                                            Gson gson = new Gson();
+                                            String json = gson.toJson(parcelKOTPOJO);
+                                            editor.putString(PrintingPOJOConstant, json);
+                                            editor.putString(SP_PRINT_TYPE, "parcel_kot");
+                                            editor.commit();
+                                            startActivity(new Intent(getContext(), PrintingMain.class));
                                         }
                                     }
                                 }

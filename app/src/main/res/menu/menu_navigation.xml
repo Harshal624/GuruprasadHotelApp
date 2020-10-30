@@ -10,7 +10,12 @@
         <item
             android:id="@+id/update_fishprices"
             android:icon="@drawable/nav_fish"
-            android:title="Update Fish Prices"></item>
+            android:title="Update Fish Prices" />
+
+        <item
+            android:id="@+id/update_foodmenu"
+            android:icon="@drawable/nav_food_menu"
+            android:title="Update Food Menu" />
         <item
             android:id="@+id/tally"
             android:icon="@drawable/tally"

@@ -68,7 +68,7 @@ public class FishList extends AppCompatActivity implements ItemAlertDialog.ItemA
         adapter.setOnItemClickListener(new FishFirestoreAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
-                FishModel model = documentSnapshot.toObject(FishModel.class);
+                FoodMenuModel model = documentSnapshot.toObject(FoodMenuModel.class);
                 String item_title = model.getItem_title();
                 String item_cost = "Rs." + model.getItem_cost();
                 openDialog(item_title, item_cost);
@@ -90,8 +90,8 @@ public class FishList extends AppCompatActivity implements ItemAlertDialog.ItemA
 
     private void setUpRecyclerView() {
         Query query = fishRef;
-        FirestoreRecyclerOptions<FishModel> fishOptions = new FirestoreRecyclerOptions.Builder<FishModel>()
-                .setQuery(query, FishModel.class)
+        FirestoreRecyclerOptions<FoodMenuModel> fishOptions = new FirestoreRecyclerOptions.Builder<FoodMenuModel>()
+                .setQuery(query, FoodMenuModel.class)
                 .build();
         adapter = new FishFirestoreAdapter(fishOptions);
         recyclerView.setHasFixedSize(true);

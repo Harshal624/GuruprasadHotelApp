@@ -17,36 +17,33 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.Transaction;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
-import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.ItemListAdapter;
+import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishFirestoreAdapter;
+import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FoodMenuModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.ItemAlertDialog;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ViewCartParcel;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.SP_KEY;
+import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally.CalculateTallyParcel.PARCELS;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.CURRENT_KOT;
 
 public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog.ItemAlertDialogListener {
-    private static final String CURRENT_KOT = "CURRENT_KOT";
-    private static final String PARCELS = "PARCELS";
-    private final String CUSTOMERS = "CUSTOMERS";
     private LinearLayoutManager linearLayoutManager;
     private RecyclerView recyclerView;
-    private ItemListAdapter itemListAdapter;
-    private ArrayList<String> item_title;
-    private ArrayList<String> item_cost;
     private String type;
     private String food_menu_title;
     private TextView food_menu_t;
@@ -58,6 +55,9 @@ public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog
     private String PARCEL_ID = "";
     private CollectionReference currentRef, parcelRef;
 
+    private FishFirestoreAdapter adapter;
+    private Query query;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +65,12 @@ public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog
         setContentView(R.layout.activity_item_listparcel);
         db = FirebaseFirestore.getInstance();
         food_menu_icon = findViewById(R.id.food_menu_icon);
-        progressBar = (ProgressBar) findViewById(R.id.progressbar_itemlist);
-        food_menu_t = (TextView) findViewById(R.id.food_menu_title);
+        progressBar = findViewById(R.id.progressbar_itemlist);
+        food_menu_t = findViewById(R.id.food_menu_title);
         food_menu_title = getIntent().getStringExtra("TitleP");
         food_menu_t.setText(food_menu_title);
-        recyclerView = (RecyclerView) findViewById(R.id.item_list_recycler);
-        item_title = new ArrayList<>();
-        item_cost = new ArrayList<>();
-        check_cart = (ImageButton) findViewById(R.id.check_cart);
+        recyclerView = findViewById(R.id.item_list_recycler);
+        check_cart = findViewById(R.id.check_cart);
 
         //Getting document id from sharedpref
         sharedPreferences = getSharedPreferences(SP_KEY, Context.MODE_PRIVATE);
@@ -95,109 +93,74 @@ public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog
         switch (type) {
             case "starters_veg":
                 food_menu_icon.setImageResource(R.drawable.veg);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.starters_veg_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.starters_veg_cost));
                 break;
             case "papad":
                 food_menu_icon.setImageResource(R.drawable.papad);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.papad_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.papad_cost));
                 break;
 
             case "starters_nonveg":
                 food_menu_icon.setImageResource(R.drawable.nonveg);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.starters_nonveg_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.starters_nonveg_cost));
                 break;
 
             case "starters_colddrink":
                 food_menu_icon.setImageResource(R.drawable.colddrink);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.starters_colddrink_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.starters_colddrink_cost));
+                query = db.collection(Constants.FoodMenu).document(Constants.Starters).
+                        collection(Constants.colddrinkandstarters);
                 break;
             case "soup":
                 food_menu_icon.setImageResource(R.drawable.soup);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.veg_nonveg_soup_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.veg_nonveg_soup_cost));
                 break;
             case "raytasalad":
                 food_menu_icon.setImageResource(R.drawable.salad);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.Rayata_Salad_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.Rayata_Salad_cost));
                 break;
             case "veg_daal":
                 food_menu_icon.setImageResource(R.drawable.veg);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.daal_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.daal_cost));
                 break;
             case "veg_paneermaincourse":
                 food_menu_icon.setImageResource(R.drawable.veg);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.paneer_maincourse_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.paneer_maincourse_cost));
                 break;
             case "nonveg_egg":
                 food_menu_icon.setImageResource(R.drawable.eggs);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.egg_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.egg_cost));
                 break;
             case "nonveg_specialthali":
                 food_menu_icon.setImageResource(R.drawable.nonveg);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.nonveg_specialthali_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.nonveg_specialthali_cost));
                 break;
 
             case "roti":
                 food_menu_icon.setImageResource(R.drawable.roti);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.roti_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.roti_cost));
                 break;
 
             case "rice_biryani":
                 food_menu_icon.setImageResource(R.drawable.biryani);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.rice_biryani_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.rice_biryani_cost));
                 break;
 
             case "rice_ricenoodles":
                 food_menu_icon.setImageResource(R.drawable.ricenoodles);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.rice_ricenoodles_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.rice_ricenoodles_cost));
                 break;
 
             case "rice_main":
                 food_menu_icon.setImageResource(R.drawable.rice);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.rice_main_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.rice_main_cost));
                 break;
 
             case "veg_vegmaincourse":
                 food_menu_icon.setImageResource(R.drawable.veg);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.veg_maincourse_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.veg_maincourse_cost));
                 break;
 
             case "nonveg_matanmaincourse":
                 food_menu_icon.setImageResource(R.drawable.nonveg);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.nonveg_matanmaincourse_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.nonveg_matanmaincourse_cost));
+
                 break;
 
             case "springroll_chicken":
                 food_menu_icon.setImageResource(R.drawable.nonveg);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.chickenspringroll_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.chickenspringroll_cost));
                 break;
 
             case "springroll_veg":
                 food_menu_icon.setImageResource(R.drawable.veg);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.vegspringroll_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.vegspringroll_cost));
                 break;
 
             case "nonveg_chickenmaincourse":
                 food_menu_icon.setImageResource(R.drawable.nonveg);
-                Collections.addAll(item_title, getResources().getStringArray(R.array.chicken_maincourse_title));
-                Collections.addAll(item_cost, getResources().getStringArray(R.array.chicken_maincourse_cost));
                 break;
 
         }
@@ -206,13 +169,15 @@ public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog
         //Hiding the viewcart floatingbutton while scrolling down the item list
         hideViewCartButton();
 
-        itemListAdapter.setOnItemClickListener2(new ItemListAdapter.OnItemClickListener2() {
+        adapter.setOnItemClickListener(new FishFirestoreAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(String title, int position, String cost) {
-                opendialog(title, cost);
+            public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+                FoodMenuModel model = documentSnapshot.toObject(FoodMenuModel.class);
+                String item_title = model.getItem_title();
+                String item_cost = "Rs." + model.getItem_cost();
+                opendialog(item_title, item_cost);
             }
         });
-
     }
 
 
@@ -242,9 +207,12 @@ public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog
 
     private void setupRecyclerView() {
         linearLayoutManager = new LinearLayoutManager(this);
-        itemListAdapter = new ItemListAdapter(item_title, item_cost);
+        FirestoreRecyclerOptions<FoodMenuModel> foodOptions = new FirestoreRecyclerOptions.Builder<FoodMenuModel>()
+                .setQuery(query, FoodMenuModel.class)
+                .build();
+        adapter = new FishFirestoreAdapter(foodOptions);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(itemListAdapter);
+        recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
     }
 
@@ -283,6 +251,17 @@ public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
 }
 
 

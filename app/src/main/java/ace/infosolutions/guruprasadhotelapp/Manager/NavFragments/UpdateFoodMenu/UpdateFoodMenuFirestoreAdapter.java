@@ -1,4 +1,4 @@
-package ace.infosolutions.guruprasadhotelapp.Captain.Fish;
+package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.UpdateFoodMenu;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +12,15 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FoodMenuModel;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 
-public class FishFirestoreAdapter extends FirestoreRecyclerAdapter<FoodMenuModel, FishFirestoreAdapter.CustomerHolder> {
+public class UpdateFoodMenuFirestoreAdapter extends FirestoreRecyclerAdapter<FoodMenuModel, UpdateFoodMenuFirestoreAdapter.CustomerHolder> {
     private OnItemClickListener listener;
+    private OnItemLongClickListener listener2;
 
-    public FishFirestoreAdapter(@NonNull FirestoreRecyclerOptions<FoodMenuModel> options) {
+    public UpdateFoodMenuFirestoreAdapter(@NonNull FirestoreRecyclerOptions<FoodMenuModel> options) {
         super(options);
     }
 
@@ -26,7 +28,6 @@ public class FishFirestoreAdapter extends FirestoreRecyclerAdapter<FoodMenuModel
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull FoodMenuModel model) {
         holder.item_title.setText(model.getItem_title());
         holder.item_cost.setText("Rs." + model.getItem_cost());
-
     }
 
     @Override
@@ -45,8 +46,16 @@ public class FishFirestoreAdapter extends FirestoreRecyclerAdapter<FoodMenuModel
         this.listener = listener;
     }
 
+    public void setOnItemLongClickListener(OnItemLongClickListener listener2) {
+        this.listener2 = listener2;
+    }
+
     public interface OnItemClickListener {
-        void onItemClick(DocumentSnapshot documentSnapshot, int position);
+        void onItemClick(DocumentSnapshot documentSnapshot);
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemClick(DocumentSnapshot documentSnapshot);
     }
 
     public class CustomerHolder extends RecyclerView.ViewHolder {
@@ -64,13 +73,23 @@ public class FishFirestoreAdapter extends FirestoreRecyclerAdapter<FoodMenuModel
                     int pos = getAdapterPosition();
                     //if item is removed and it's in his remove animation
                     if (pos != RecyclerView.NO_POSITION && listener != null) {
-                        listener.onItemClick(getSnapshots().getSnapshot(pos), pos);
+                        listener.onItemClick(getSnapshots().getSnapshot(pos));
                     }
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int pos = getAdapterPosition();
+                    //if item is removed and it's in his remove animation
+                    if (pos != RecyclerView.NO_POSITION && listener2 != null) {
+                        listener2.onItemClick(getSnapshots().getSnapshot(pos));
+                    }
+                    return false;
                 }
             });
 
         }
     }
-
 }
 

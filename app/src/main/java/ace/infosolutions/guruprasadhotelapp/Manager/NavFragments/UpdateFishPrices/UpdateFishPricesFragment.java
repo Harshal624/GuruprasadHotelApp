@@ -24,7 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishFirestoreAdapter;
-import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishModel;
+import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FoodMenuModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
@@ -78,9 +78,9 @@ public class UpdateFishPricesFragment extends Fragment {
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
                 enter_cost.setHint("Rs.");
                 enter_cost.setText(null);
-                FishModel fishModel = documentSnapshot.toObject(FishModel.class);
+                FoodMenuModel foodMenuModel = documentSnapshot.toObject(FoodMenuModel.class);
                 fish_doc_id = documentSnapshot.getId();
-                String fish_title = fishModel.getItem_title();
+                String fish_title = foodMenuModel.getItem_title();
                 alertDialog.setTitle(fish_title);
                 if (conn.haveNetworkConnection())
                     alertDialog.show();
@@ -128,9 +128,9 @@ public class UpdateFishPricesFragment extends Fragment {
 
     private void setupRecyclerview() {
         Query query = fishRef;
-        FirestoreRecyclerOptions<FishModel> updateFishOptions = new
-                FirestoreRecyclerOptions.Builder<FishModel>()
-                .setQuery(query, FishModel.class)
+        FirestoreRecyclerOptions<FoodMenuModel> updateFishOptions = new
+                FirestoreRecyclerOptions.Builder<FoodMenuModel>()
+                .setQuery(query, FoodMenuModel.class)
                 .build();
         adapter = new FishFirestoreAdapter(updateFishOptions);
         recyclerView.setHasFixedSize(true);

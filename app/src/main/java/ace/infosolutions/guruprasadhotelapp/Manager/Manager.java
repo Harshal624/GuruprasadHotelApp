@@ -25,6 +25,7 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.History.History
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.ParcelHistory.ParcelHistoryFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally.TallyFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.UpdateFishPrices.UpdateFishPricesFragment;
+import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.UpdateFoodMenu.UpdateFoodMenuFragment;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class Manager extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -138,6 +139,11 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
             case R.id.manager_pin:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
                         , new ChangeManagerPin()).commit();
+                break;
+
+            case R.id.update_foodmenu:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                        , new UpdateFoodMenuFragment()).commit();
                 break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);

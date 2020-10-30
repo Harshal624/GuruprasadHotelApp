@@ -37,6 +37,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,8 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.HistoryModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.OnlineTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.TableTotalModel;
+import ace.infosolutions.guruprasadhotelapp.Printing.OrderFinalBillPOJO;
+import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
@@ -56,6 +59,8 @@ import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ConfirmedCartParcelFragment.ONLINETOTAL;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.DISCOUNT_TALLY;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PrintingPOJOConstant;
+import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.SP_PRINT_TYPE;
 
 public class ConfirmFinalBill extends AppCompatActivity {
     //Strings for Tally
@@ -263,7 +268,8 @@ public class ConfirmFinalBill extends AppCompatActivity {
             private void printFinalBill() {
                 //print final bill
                 final ArrayList<ViewCartModel> arrayList = new ArrayList<>();
-                final StringBuffer buffer = new StringBuffer();
+                final String date = number.generateDateOnly();
+                final String time = number.generateTimeOnly();
 
                 custRef.document(doc_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -271,6 +277,13 @@ public class ConfirmFinalBill extends AppCompatActivity {
                         final String table_no = String.valueOf(snapshot.getDouble("table_no").intValue());
                         final String table_type = snapshot.getString("table_type");
                         double conf_cost = snapshot.getDouble("confirmed_cost");
+                        final String subtotal = String.valueOf(Math.round(conf_cost * 100.0 / 100.0));
+                        final double disc = snapshot.getDouble("discount");
+                        final String discount = String.valueOf(Math.round(disc * 100.0) / 100.0);
+                        double total_cost = snapshot.getDouble("total_cost");
+                        final String total_cost_string = String.valueOf(Math.round(total_cost * 100.0) / 100.0);
+                        final String bill_no = snapshot.getString("bill_no");
+
                         if (conf_cost == 0.0) {
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(ConfirmFinalBill.this, "Cart is empty", Toast.LENGTH_SHORT).show();
@@ -290,14 +303,16 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                             }
                                         }
                                         if (!arrayList.isEmpty()) {
-                                           /* PrintingPOJO printingPOJO = new
-                                                    PrintingPOJO(false,true,);
+                                            OrderFinalBillPOJO orderFinalBillPOJO = new
+                                                    OrderFinalBillPOJO(bill_no, date
+                                                    , time, table_no, table_type, subtotal, discount, total_cost_string, arrayList);
                                             SharedPreferences.Editor editor = sharedPreferences.edit();
                                             Gson gson = new Gson();
-                                            String json = gson.toJson(printingPOJO);
+                                            String json = gson.toJson(orderFinalBillPOJO);
                                             editor.putString(PrintingPOJOConstant,json);
+                                            editor.putString(SP_PRINT_TYPE, "order_bill");
                                             editor.commit();
-                                            startActivity(new Intent(ConfirmFinalBill.this, PrintingMain.class));*/
+                                            startActivity(new Intent(ConfirmFinalBill.this, PrintingMain.class));
                                         }
                                     }
                                 }
