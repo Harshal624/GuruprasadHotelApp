@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -15,11 +16,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.WriteBatch;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FoodMenuModel;
 import ace.infosolutions.guruprasadhotelapp.R;
@@ -59,8 +63,8 @@ public class UpdateFoodItemList extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(UpdateFoodItemList.this);
                 final AlertDialog alertDialog = builder.create();
                 View view2 = LayoutInflater.from(UpdateFoodItemList.this).inflate(R.layout.addfoodmenuitem_alert, null);
-                EditText food_title = view2.findViewById(R.id.food_item_title);
-                EditText food_cost = view2.findViewById(R.id.food_item_cost);
+                final EditText food_title = view2.findViewById(R.id.food_item_title);
+                final EditText food_cost = view2.findViewById(R.id.food_item_cost);
                 alertDialog.setView(view2);
                 alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -71,7 +75,21 @@ public class UpdateFoodItemList extends AppCompatActivity {
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        final String foodTitle = food_title.getText().toString().trim();
+                        final String food_costString = food_cost.getText().toString().trim();
+                        double foodCost;
+                        if (foodTitle.equals("") || food_costString.equals("")) {
+                            Toast.makeText(UpdateFoodItemList.this, "All fields are compulsory", Toast.LENGTH_SHORT).show();
+                        } else {
+                            foodCost = Double.parseDouble(food_costString);
+                            FoodMenuModel model = new FoodMenuModel(foodTitle, foodCost);
+                            coll_reference.add(model).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                @Override
+                                public void onSuccess(DocumentReference documentReference) {
+                                    Toast.makeText(UpdateFoodItemList.this, foodTitle + " " + "added", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                     }
                 });
                 alertDialog.show();
@@ -82,7 +100,7 @@ public class UpdateFoodItemList extends AppCompatActivity {
             case "starters_veg":
                 food_menu_icon.setImageResource(R.drawable.veg);
                 break;
-            case Constants.Papad:
+            case "papad":
                 food_menu_icon.setImageResource(R.drawable.papad);
                 break;
 
@@ -94,10 +112,10 @@ public class UpdateFoodItemList extends AppCompatActivity {
                 food_menu_icon.setImageResource(R.drawable.colddrink);
                 break;
 
-            case Constants.Soup:
+            case "soup":
                 food_menu_icon.setImageResource(R.drawable.soup);
                 break;
-            case Constants.RaytaSalad:
+            case "raytasalad":
                 food_menu_icon.setImageResource(R.drawable.salad);
                 break;
             case "veg_daal":
@@ -113,7 +131,7 @@ public class UpdateFoodItemList extends AppCompatActivity {
                 food_menu_icon.setImageResource(R.drawable.nonveg);
                 break;
 
-            case Constants.Roti:
+            case "roti":
                 food_menu_icon.setImageResource(R.drawable.roti);
                 break;
 
@@ -172,7 +190,44 @@ public class UpdateFoodItemList extends AppCompatActivity {
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //come here
+                        String foodTitle = food_title.getText().toString().trim();
+                        String foodCost = food_cost.getText().toString().trim();
+                        if (foodTitle.equals("") && foodCost.equals("")) {
+                            alertDialog.dismiss();
+                            Toast.makeText(UpdateFoodItemList.this, "Nothing updated", Toast.LENGTH_SHORT).show();
+                        } else if (!foodTitle.equals("") && foodCost.equals("")) {
+                            //update only food_title
+                            coll_reference.document(snapshot.getId()).update("item_title", foodTitle).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(UpdateFoodItemList.this, "Title updated", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        } else if (foodTitle.equals("") && !foodCost.equals("")) {
+                            //update only food_cost
+                            double f_Cost = Double.parseDouble(foodCost);
+                            coll_reference.document(snapshot.getId()).update("item_cost", f_Cost).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(UpdateFoodItemList.this, "Cost updated", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        } else {
+                            //update both
+                            double f_Cost = Double.parseDouble(foodCost);
+                            WriteBatch batch = db.batch();
+                            batch.update(coll_reference.document(snapshot.getId()), "item_title", foodTitle);
+                            batch.update(coll_reference.document(snapshot.getId()), "item_cost", f_Cost);
+                            batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(UpdateFoodItemList.this, "Title and Cost updated", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
 
                     }
                 });
@@ -183,7 +238,29 @@ public class UpdateFoodItemList extends AppCompatActivity {
             @Override
             public void onItemClick(final DocumentSnapshot snapshot) {
                 //delete the item
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(UpdateFoodItemList.this);
+                final AlertDialog alertDialog = builder.create();
+                alertDialog.setTitle("Delete item");
+                alertDialog.setIcon(R.drawable.nav_food_menu);
+                alertDialog.setMessage("Delete " + snapshot.getString("item_title") + "?");
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        coll_reference.document(snapshot.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(UpdateFoodItemList.this, "Deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        alertDialog.dismiss();
+                    }
+                });
+                alertDialog.show();
             }
         });
     }

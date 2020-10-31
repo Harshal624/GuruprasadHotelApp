@@ -260,7 +260,6 @@ public class ConfirmFinalBill extends AppCompatActivity {
         printBill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                printBill.setEnabled(false);
                 progressBar.setVisibility(View.VISIBLE);
                 printFinalBill();
             }

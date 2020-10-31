@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -54,6 +55,8 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
     private FishFirestoreAdapter adapter;
     private Query query;
 
+    private CollectionReference coll_reference;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +71,10 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         //
         //getting the item type
         type = getIntent().getStringExtra("Type");
+        final String COLL_NAME = getIntent().getStringExtra("CollName");
         //
+        coll_reference = db.collection(Constants.FoodMenu).document(COLL_NAME).collection(type);
+        query = coll_reference;
 
         check_cart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,10 +96,8 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
                 food_menu_icon.setImageResource(R.drawable.nonveg);
                 break;
 
-            case "starters_colddrink":
+            case "colddrinkandstarters":
                 food_menu_icon.setImageResource(R.drawable.colddrink);
-                query = db.collection(Constants.FoodMenu).document(Constants.Starters).
-                        collection(Constants.colddrinkandstarters);
                 break;
 
             case "soup":
@@ -264,6 +268,7 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         super.onStop();
         adapter.stopListening();
     }
+
 }
 
 

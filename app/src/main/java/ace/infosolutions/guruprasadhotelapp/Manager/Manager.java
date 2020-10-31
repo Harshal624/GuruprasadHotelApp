@@ -23,7 +23,7 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.ChangeManagerPi
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.CustomerListFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.History.HistoryFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.ParcelHistory.ParcelHistoryFragment;
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally.TallyFragment;
+import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.TallyExcel.TallyExcel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.UpdateFishPrices.UpdateFishPricesFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.UpdateFoodMenu.UpdateFoodMenuFragment;
 import ace.infosolutions.guruprasadhotelapp.R;
@@ -128,7 +128,7 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
 
             case R.id.tally:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                        , new TallyFragment()).commit();
+                        , new TallyExcel()).commit();
                 break;
 
             case R.id.parcel_history:

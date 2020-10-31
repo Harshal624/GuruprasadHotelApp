@@ -36,6 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_3sdp"
+        android:id="@+id/food_item_cost"
         android:gravity="center"
         android:hint="Enter food item cost"
         android:inputType="numberDecimal" />

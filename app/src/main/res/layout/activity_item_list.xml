@@ -13,7 +13,7 @@
         android:layout_height="0dp"
         android:background="@color/colorPrimary"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintHeight_percent="0.1"
         app:layout_constraintTop_toTopOf="parent">
 
 
@@ -35,8 +35,8 @@
 
             <ImageView
                 android:id="@+id/food_menu_icon"
-                android:layout_width="@dimen/_45sdp"
-                android:layout_height="@dimen/_45sdp"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:layout_marginStart="@dimen/_15sdp"
                 android:background="@android:color/transparent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -49,12 +49,13 @@
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.85"
+        app:layout_constraintHeight_percent="0.9"
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -81,28 +82,6 @@
             app:layout_anchorGravity="bottom|right|end" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <EditText
-        android:id="@+id/searchBar"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/white"
-        android:drawableStart="@drawable/ic_search_grey"
-        android:drawablePadding="@dimen/_30sdp"
-        android:ems="10"
-        android:hint="Search Item"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.08"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/grey"
-        app:layout_constraintTop_toBottomOf="@id/searchBar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

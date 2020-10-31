@@ -1,29 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:layout_gravity="center"
     android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:src="@drawable/printer" />
 
     <Button
         android:id="@+id/Scan"
         android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:background="@drawable/circular_button_white"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:drawableStart="@drawable/ic_search_grey"
         android:text="Scan"></Button>
 
     <Button
         android:id="@+id/mPrint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:background="@drawable/circular_buton_grey"
+        android:drawableStart="@drawable/ic_print_white"
+        android:textColor="@color/white"
         android:text="Print"></Button>
 
     <Button
         android:id="@+id/dis"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_30sdp"
+        android:background="@drawable/circular_imgbutton_cancel"
+        android:drawableStart="@drawable/ic_close"
+        android:textColor="@color/white"
         android:text="Disconnect"></Button>
+
 
 </LinearLayout>

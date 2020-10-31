@@ -13,7 +13,7 @@
         android:layout_height="0dp"
         android:background="@color/colorPrimary"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHeight_percent="0.1"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -34,8 +34,8 @@
 
             <ImageView
                 android:id="@+id/food_menu_icon"
-                android:layout_width="@dimen/_45sdp"
-                android:layout_height="@dimen/_45sdp"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:layout_marginStart="@dimen/_15sdp"
                 android:background="@android:color/transparent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -46,15 +46,16 @@
 
     </LinearLayout>
 
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.85"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintHeight_percent="0.9"
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/item_list_recycler"
@@ -62,22 +63,22 @@
             android:layout_height="match_parent" />
 
         <ProgressBar
+            android:id="@+id/progressbar_itemlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/progressbar_itemlist"
             android:layout_gravity="center"
             android:visibility="gone" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
             android:id="@+id/check_cart"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_shopping_cart"
-            android:background="@color/colorPrimary"
             android:layout_gravity="bottom|right"
             android:layout_margin="@dimen/_15sdp"
-            app:layout_anchorGravity="bottom|right|end"
-            app:layout_anchor="@id/item_list_recycler" />
+            android:background="@color/colorPrimary"
+            android:src="@drawable/ic_shopping_cart"
+            app:layout_anchor="@id/item_list_recycler"
+            app:layout_anchorGravity="bottom|right|end" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

@@ -103,7 +103,6 @@ public class CurrentCartFragment extends Fragment {
         printOnly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                printOnly.setEnabled(false);
                 getDatabaseValues();
             }
 

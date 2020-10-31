@@ -6,6 +6,7 @@
     android:layout_marginTop="@dimen/_10sdp"
     android:layout_height="match_parent">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -286,6 +287,5 @@
         android:layout_height="@dimen/_2sdp"
         android:background="@color/grey"
         android:layout_marginTop="@dimen/_4sdp" />
-
 
 </LinearLayout>

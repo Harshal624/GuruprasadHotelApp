@@ -29,10 +29,6 @@ public class FishFirestoreAdapter extends FirestoreRecyclerAdapter<FoodMenuModel
 
     }
 
-    @Override
-    public int getItemCount() {
-        return super.getItemCount();
-    }
 
     @NonNull
     @Override
@@ -62,6 +58,8 @@ public class FishFirestoreAdapter extends FirestoreRecyclerAdapter<FoodMenuModel
                 @Override
                 public void onClick(View view) {
                     int pos = getAdapterPosition();
+
+
                     //if item is removed and it's in his remove animation
                     if (pos != RecyclerView.NO_POSITION && listener != null) {
                         listener.onItemClick(getSnapshots().getSnapshot(pos), pos);

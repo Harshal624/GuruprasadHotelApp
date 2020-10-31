@@ -15,7 +15,7 @@ public class FoodMenuModel {
         return item_cost;
     }
 
-    public FoodMenuModel(String item_title, int item_cost) {
+    public FoodMenuModel(String item_title, double item_cost) {
         this.item_title = item_title;
         this.item_cost = item_cost;
     }

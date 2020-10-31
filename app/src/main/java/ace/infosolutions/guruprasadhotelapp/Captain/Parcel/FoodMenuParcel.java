@@ -14,8 +14,10 @@ import androidx.cardview.widget.CardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.CaptainMainFragment;
+import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishList;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ViewCartParcel;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 
 public class FoodMenuParcel extends AppCompatActivity implements View.OnClickListener {
     private Button starters_veg, starters_colddrink, starters_nonveg;
@@ -96,78 +98,79 @@ public class FoodMenuParcel extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.starters_veg:
-                gotolistActivity("starters_veg", "Veg Starters");
+                gotolistActivity("starters_veg", "Veg Starters", Constants.Starters);
                 break;
             case R.id.starters_colddrink:
-                gotolistActivity("starters_colddrink", "Cold drink & Starters");
+                gotolistActivity("colddrinkandstarters", "Cold drink & Starters", Constants.Starters);
                 break;
             case R.id.starters_nonveg:
-                gotolistActivity("starters_nonveg", "Non-veg Starters");
+                gotolistActivity("starters_nonveg", "Non-veg Starters", Constants.Starters);
                 break;
             //
             case R.id.veg_daal:
-                gotolistActivity("veg_daal", "Daal");
+                gotolistActivity("veg_daal", "Daal", Constants.Veg);
                 break;
             case R.id.veg_paneermaincourse:
-                gotolistActivity("veg_paneermaincourse", "Paneer Maincourse");
+                gotolistActivity("veg_paneermaincourse", "Paneer Maincourse", Constants.Veg);
                 break;
             case R.id.veg_vegmaincourse:
-                gotolistActivity("veg_vegmaincourse", "Veg Maincourse");
+                gotolistActivity("veg_vegmaincourse", "Veg Maincourse", Constants.Veg);
                 break;
             //
             case R.id.nonveg_chickenmaincourse:
-                gotolistActivity("nonveg_chickenmaincourse", "Chicken Maicourse");
+                gotolistActivity("nonveg_chickenmaincourse", "Chicken Maicourse", Constants.NonVeg);
                 break;
             case R.id.nonveg_egg:
-                gotolistActivity("nonveg_egg", "Egg");
+                gotolistActivity("nonveg_egg", "Egg", Constants.NonVeg);
                 break;
             case R.id.nonveg_fishmaincourse:
-                startActivity(new Intent(getApplicationContext(), FishListParcel.class));
+                startActivity(new Intent(getApplicationContext(), FishList.class));
                 break;
             case R.id.nonveg_matanmaincourse:
-                gotolistActivity("nonveg_matanmaincourse", "Matan Maincourse");
+                gotolistActivity("nonveg_matanmaincourse", "Matan Maincourse", Constants.NonVeg);
                 break;
             case R.id.nonveg_specialthali:
-                gotolistActivity("nonveg_specialthali", "Non-veg special thali");
+                gotolistActivity("nonveg_specialthali", "Non-veg special thali", Constants.NonVeg);
                 break;
             //
             case R.id.rice_biryani:
-                gotolistActivity("rice_biryani", "Biryani Rice");
+                gotolistActivity("rice_biryani", "Biryani Rice", Constants.Rice);
                 break;
             case R.id.rice_main:
-                gotolistActivity("rice_main", "Rice");
+                gotolistActivity("rice_main", "Rice", Constants.Rice);
                 break;
             case R.id.rice_ricenoodles:
-                gotolistActivity("rice_ricenoodles", "Rice & Noodles");
+                gotolistActivity("rice_ricenoodles", "Rice & Noodles", Constants.Rice);
                 break;
             //
             case R.id.springroll_chicken:
-                gotolistActivity("springroll_chicken", "Chicken Springroll");
+                gotolistActivity("springroll_chicken", "Chicken Springroll", Constants.SpringRolls);
                 break;
             case R.id.springroll_veg:
-                gotolistActivity("springroll_veg", "Veg Springroll");
+                gotolistActivity("springroll_veg", "Veg Springroll", Constants.SpringRolls);
                 break;
             //
             case R.id.roti:
-                gotolistActivity("roti", "Roti");
+                gotolistActivity(Constants.Roti, "Roti", Constants.Roti);
                 break;
             case R.id.soup:
-                gotolistActivity("soup", "Soup");
+                gotolistActivity(Constants.Soup, "Soup", Constants.Soup);
                 break;
             case R.id.papad:
-                gotolistActivity("papad", "Papad");
+                gotolistActivity(Constants.Papad, "Papad", Constants.Papad);
                 break;
             case R.id.raytasalad:
-                gotolistActivity("raytasalad", "Rayta & Salad");
+                gotolistActivity(Constants.RaytaSalad, "Rayta & Salad", Constants.RaytaSalad);
                 break;
         }
 
     }
 
-    private void gotolistActivity(final String id, final String food_title) {
+    private void gotolistActivity(final String id, final String food_title, String COLL_NAME) {
         Intent i = new Intent(getApplicationContext(), ItemListParcel.class);
         i.putExtra("TypeP", id);
         i.putExtra("TitleP", food_title);
+        i.putExtra("CollName", COLL_NAME);
         startActivity(i);
     }
 

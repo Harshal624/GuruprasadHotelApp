@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Manager.NavFragments.UpdateFoodMenu.UpdateFoodItemList"></activity>
+        <activity android:name=".Manager.NavFragments.TallyExcel.CalculateTallyExcel"></activity>
+        <activity android:name=".Manager.NavFragments.UpdateFoodMenu.UpdateFoodItemList" />
         <activity android:name=".Manager.NavFragments.Tally.CalculateTallyTable" />
         <activity android:name=".Manager.NavFragments.Tally.TableTallyDateList" />
         <activity android:name=".Manager.NavFragments.Tally.CalculateTallyOnline" />
@@ -41,7 +42,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Captain.ItemList"
-            android:windowSoftInputMode="adjustNothing"></activity>
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".Captain.FoodMenu"
             android:label="@string/title_activity_food_menu"
@@ -56,7 +57,9 @@
             android:name=".Manager.Manager"
             android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".Captain.Parcel.FoodMenuParcel" />
-        <activity android:name=".Captain.Parcel.ItemListParcel" />
+        <activity
+            android:name=".Captain.Parcel.ItemListParcel"
+            android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".Captain.Parcel.FishListParcel" />
         <activity android:name=".MainActivity">
             <intent-filter>

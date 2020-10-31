@@ -285,7 +285,6 @@ public class ConfirmedCartParcelFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     progressBar.setVisibility(View.VISIBLE);
-                    print_finalbill.setEnabled(false);
                     printfinalBill();
                 }
 

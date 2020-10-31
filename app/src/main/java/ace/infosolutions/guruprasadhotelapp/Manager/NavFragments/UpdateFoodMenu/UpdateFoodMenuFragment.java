@@ -159,16 +159,16 @@ public class UpdateFoodMenuFragment extends Fragment implements View.OnClickList
                 break;
             //
             case R.id.roti:
-                gotolistActivity(Constants.Roti, "Roti", Constants.Roti);
+                gotolistActivity("roti", "Roti", Constants.Roti);
                 break;
             case R.id.soup:
-                gotolistActivity(Constants.Soup, "Soup", Constants.Soup);
+                gotolistActivity("soup", "Soup", Constants.Soup);
                 break;
             case R.id.papad:
-                gotolistActivity(Constants.Papad, "Papad", Constants.Papad);
+                gotolistActivity("papad", "Papad", Constants.Papad);
                 break;
             case R.id.raytasalad:
-                gotolistActivity(Constants.RaytaSalad, "Rayta & Salad", Constants.RaytaSalad);
+                gotolistActivity("raytasalad", "Rayta & Salad", Constants.RaytaSalad);
                 break;
         }
 
