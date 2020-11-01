@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -115,7 +116,7 @@ public class PrintingMain extends Activity implements Runnable {
                         try {
                             OutputStream os = mBluetoothSocket
                                     .getOutputStream();
-                            os.write(BILL.getBytes());
+                            os.write(BILL.getBytes(Charset.forName("UTF-8")));
                             //This is printer specific code you can comment ==== > Start
 
                             // Setting height
@@ -226,38 +227,42 @@ public class PrintingMain extends Activity implements Runnable {
         ArrayList<ViewCartModel> arrayList = new ArrayList<>();
         arrayList.addAll(orderFinalBillPOJO.getArrayList());
 
-        BILL = "";
-        BILL = "                   GURUPRASAD HOTEL    \n"
-                + "                   Mahadevnagar, Urun Islampur" + "\n " +
-                "                   Date&Time:" + orderFinalBillPOJO.getDate() + " " + orderFinalBillPOJO.getTime() + "\n " +
-                "                   Bill No:" + orderFinalBillPOJO.getBill_no() + "\n " +
-                "                   Table No:" + orderFinalBillPOJO.getTable_no() + " (" + orderFinalBillPOJO.getTable_type() + ")" + "\n ";
 
+        BILL = "";
+
+        BILL = "                   GURPRASAD HOTEL    \n"
+                + "                   XX.AA.BB.CC.     \n " +
+                "                 NO 25 ABC ABCDE    \n" +
+                "                  XXXXX YYYYYY      \n" +
+                "                   MMM 590019091      \n";
         BILL = BILL
                 + "-----------------------------------------------\n";
-        String format = "%1$4s %2$10s %3$10s%n";
-        BILL = BILL + String.format(format, "Item", "Qty", "Amount");
+
+
+        BILL = BILL + String.format("%1$-10s %2$10s %3$10s", "Item", "Qty", "Totel");
         BILL = BILL + "\n";
         BILL = BILL
                 + "-----------------------------------------------";
+
         for (int i = 0; i < arrayList.size(); i++) {
-            BILL = BILL + "\n " + String.format(format, arrayList.get(i).getItem_title(),
-                    arrayList.get(i).getItem_qty(), arrayList.get(i).getItem_cost());
+            BILL = BILL + "\n " + String.format("%1$-10s %2$10s %3$11s", arrayList.get(i).getItem_title().substring(0, 7), arrayList.get(i).getItem_qty(),
+                    arrayList.get(i).getItem_cost());
         }
+
+
         BILL = BILL
-                + "\n-----------------------------------------------\n";
-        BILL = BILL +
-                "                          SUBTOTAL:" + orderFinalBillPOJO.getSubtotal() + "\n";
-        BILL = BILL +
-                "                          DISCOUNT:" + orderFinalBillPOJO.getDiscount() + "\n";
-        BILL = BILL +
-                "                           TOTAL:" + orderFinalBillPOJO.getTotal_cost() + "\n";
-        BILL = BILL + "\n ";
+                + "\n-----------------------------------------------";
+        BILL = BILL + "\n\n ";
+
+        BILL = BILL + "                   Subtotal:" + "      " + orderFinalBillPOJO.getSubtotal() + "\n";
+        BILL = BILL + "                   Discount:" + "      " + orderFinalBillPOJO.getDiscount() + "\n";
+        BILL = BILL + "                   Total Value:" + "     " + orderFinalBillPOJO.getTotal_cost() + "\n";
+
         BILL = BILL
                 + "-----------------------------------------------\n";
-        BILL = BILL
-                + "------Thanks for the visit-----";
-        BILL = BILL + "\n\n";
+        BILL = BILL + "\n\n\n ";
+        Log.e("BILLPRINT", BILL);
+        // BILL = BILL + "\n\n";
     }
 
     private void createParcelKOT(ParcelKOTPOJO print) {
@@ -411,6 +416,5 @@ public class PrintingMain extends Activity implements Runnable {
         buffer.flip();
         return buffer.array();
     }
-
 }
 

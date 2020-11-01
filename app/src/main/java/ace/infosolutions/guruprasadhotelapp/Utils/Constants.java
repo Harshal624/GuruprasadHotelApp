@@ -34,4 +34,6 @@ public interface Constants {
     String Soup = "Soup";
     String RaytaSalad = "RaytaSalad";
     String SpringRolls = "String SpringRolls";
+
+    String PARCELS = "PARCELS";
 }

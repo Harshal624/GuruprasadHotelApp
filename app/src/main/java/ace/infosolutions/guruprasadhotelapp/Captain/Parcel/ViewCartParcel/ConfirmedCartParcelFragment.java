@@ -776,6 +776,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                     customer_contact = task.getResult().getString("customer_contact");
                     total_cost_final = task.getResult().getDouble("total_cost");
                     discount_final = task.getResult().getDouble("discount");
+
                     String BILL_NO = task.getResult().getString("bill_no");
                     time_arrived = task.getResult().getString("time_arrived");
                     if (final_confirmed_cost == 0.0 || final_confirmed_cost == 0) {

@@ -6,7 +6,7 @@ public class ParcelHistoryModel {
     private String customer_contact;
     private boolean ishomedelivery;
     private String customer_address;
-    private double confirmed_cost;
+    private double subtotal;
     private double discount;
     private double total_cost;
     private String date_arrived;
@@ -39,17 +39,13 @@ public class ParcelHistoryModel {
         return customer_address;
     }
 
-    public double getConfirmed_cost() {
-        return confirmed_cost;
-    }
-
-    public ParcelHistoryModel(String bill_no, String customer_name, String customer_contact, boolean ishomedelivery, String customer_address, double confirmed_cost, double discount, double total_cost, String date_arrived, String date_completed, String time_arrived, String time_completed, String payment_mode) {
+    public ParcelHistoryModel(String bill_no, String customer_name, String customer_contact, boolean ishomedelivery, String customer_address, double subtotal, double discount, double total_cost, String date_arrived, String date_completed, String time_arrived, String time_completed, String payment_mode) {
         this.bill_no = bill_no;
         this.customer_name = customer_name;
         this.customer_contact = customer_contact;
         this.ishomedelivery = ishomedelivery;
         this.customer_address = customer_address;
-        this.confirmed_cost = confirmed_cost;
+        this.subtotal = subtotal;
         this.discount = discount;
         this.total_cost = total_cost;
         this.date_arrived = date_arrived;
@@ -85,5 +81,9 @@ public class ParcelHistoryModel {
 
     public String getPayment_mode() {
         return payment_mode;
+    }
+
+    public double getSubtotal() {
+        return subtotal;
     }
 }

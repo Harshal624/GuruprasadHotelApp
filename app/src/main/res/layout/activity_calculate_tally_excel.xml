@@ -11,16 +11,34 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tally_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:gravity="center"
-            android:text="26-10-20    Summary"
-            android:textColor="@color/colorPrimary"
-            android:textSize="25sp" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tally_title"
+                android:layout_width="wrap_content"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:gravity="center"
+                android:paddingStart="@dimen/_10sdp"
+                android:text="Loading..."
+                android:textColor="@color/colorPrimary"
+                android:textSize="25sp" />
+
+            <ImageButton
+                android:id="@+id/downloadExcel"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_gravity="center|bottom"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_weight="1"
+                android:background="@color/fui_transparent"
+                android:src="@drawable/ic_file_download_black_" />
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -32,6 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
+            android:id="@+id/orderdetails"
             android:paddingStart="@dimen/_10sdp"
             android:text="Order Details"
             android:textColor="@color/tomatored"
@@ -39,6 +58,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:id="@+id/tableheader"
             android:layout_height="wrap_content">
 
             <TextView
@@ -80,7 +100,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="Table type"
+                android:text="Type"
                 android:textSize="10sp"
                 app:layout_constraintStart_toEndOf="@+id/view2"
                 app:layout_constraintWidth_percent="0.126" />
@@ -212,7 +232,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:paddingEnd="@dimen/_5sdp"
-                android:text="15242" />
+                android:text="Unavailable" />
         </LinearLayout>
 
         <LinearLayout
@@ -237,7 +257,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:paddingEnd="@dimen/_5sdp"
-                android:text="12312" />
+                android:text="Unavailable" />
         </LinearLayout>
 
         <LinearLayout
@@ -262,7 +282,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:paddingEnd="@dimen/_5sdp"
-                android:text="4322" />
+                android:text="Unavailable" />
         </LinearLayout>
 
         <LinearLayout
@@ -287,7 +307,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:paddingEnd="@dimen/_5sdp"
-                android:text="4322" />
+                android:text="Unavailable" />
         </LinearLayout>
 
         <View
@@ -301,9 +321,148 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:paddingStart="@dimen/_10sdp"
+            android:id="@+id/parceldetails"
             android:text="Parcel Details"
             android:textColor="@color/tomatored"
             android:textSize="20sp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/tableheader2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/Textview1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Time"
+                android:textSize="10sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_percent="0.126" />
+
+            <View
+                android:id="@+id/View1"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/grey"
+                app:layout_constraintStart_toEndOf="@+id/Textview1" />
+
+            <TextView
+                android:id="@+id/Textview2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Cust. Name"
+                android:textSize="10sp"
+                app:layout_constraintStart_toEndOf="@+id/View1"
+                app:layout_constraintWidth_percent="0.123" />
+
+            <View
+                android:id="@+id/View2"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/grey"
+                app:layout_constraintStart_toEndOf="@+id/Textview2" />
+
+            <TextView
+                android:id="@+id/Textview3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Cust. Address"
+                android:textSize="10sp"
+                app:layout_constraintStart_toEndOf="@+id/View2"
+                app:layout_constraintWidth_percent="0.126" />
+
+            <View
+                android:id="@+id/View3"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/grey"
+                app:layout_constraintStart_toEndOf="@+id/Textview3" />
+
+            <TextView
+                android:id="@+id/Textview4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Payment"
+                android:textSize="10sp"
+                app:layout_constraintStart_toEndOf="@+id/View3"
+                app:layout_constraintWidth_percent="0.124" />
+
+            <View
+                android:id="@+id/View4"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/grey"
+                app:layout_constraintStart_toEndOf="@+id/Textview4" />
+
+            <TextView
+                android:id="@+id/Textview5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Bill No."
+                android:textSize="10sp"
+                app:layout_constraintStart_toEndOf="@+id/View4"
+                app:layout_constraintWidth_percent="0.124" />
+
+            <View
+                android:id="@+id/View5"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/grey"
+                app:layout_constraintStart_toEndOf="@+id/Textview5" />
+
+            <TextView
+                android:id="@+id/Textview6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Subtotal"
+                android:textSize="10sp"
+                app:layout_constraintStart_toEndOf="@+id/View5"
+                app:layout_constraintWidth_percent="0.124" />
+
+            <View
+                android:id="@+id/View6"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/grey"
+                app:layout_constraintStart_toEndOf="@+id/Textview6" />
+
+            <TextView
+                android:id="@+id/Textview7"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Discount"
+                android:textSize="10sp"
+                app:layout_constraintStart_toEndOf="@+id/View6"
+                app:layout_constraintWidth_percent="0.124" />
+
+            <View
+                android:id="@+id/View7"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/grey"
+                app:layout_constraintStart_toEndOf="@+id/Textview7" />
+
+            <TextView
+                android:id="@+id/Textview8"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Total"
+                android:textSize="10sp"
+                app:layout_constraintStart_toEndOf="@+id/View7"
+                app:layout_constraintWidth_percent="0.124" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview2"
@@ -340,7 +499,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:paddingEnd="@dimen/_5sdp"
-                android:text="15242" />
+                android:text="Unavailable" />
         </LinearLayout>
 
         <View
@@ -371,7 +530,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:paddingEnd="@dimen/_5sdp"
-                android:text="15242" />
+                android:text="Unavailable" />
         </LinearLayout>
 
         <LinearLayout
@@ -396,7 +555,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:paddingEnd="@dimen/_5sdp"
-                android:text="15242" />
+                android:text="Unavailable" />
         </LinearLayout>
 
         <View
@@ -427,7 +586,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
                 android:paddingEnd="@dimen/_5sdp"
-                android:text="15242" />
+                android:text="Unavailable" />
         </LinearLayout>
 
         <View

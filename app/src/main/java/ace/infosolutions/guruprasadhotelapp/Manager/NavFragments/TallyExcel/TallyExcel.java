@@ -1,7 +1,9 @@
 package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.TallyExcel;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class TallyExcel extends Fragment {
@@ -21,7 +26,6 @@ public class TallyExcel extends Fragment {
     private int day, month, year;
     private Button calculate;
     private String type = "Daily";
-    private String type2 = "Order";
     private RadioButton radioButton;
     private RadioGroup radioGroup;
 
@@ -52,18 +56,41 @@ public class TallyExcel extends Fragment {
         });
 
         calculate.setOnClickListener(new View.OnClickListener() {
+            @SuppressWarnings("deprecation")
             @Override
             public void onClick(View view) {
-                day = datePicker.getDayOfMonth();
-                month = datePicker.getMonth() + 1;
-                year = datePicker.getYear();
-                String year_string = String.valueOf(year);
-                String new_year = year_string.substring(2, 4);
-                String formed_date = String.valueOf(day) + "-" + String.valueOf(month) + "-" + new_year;
-                Intent intent = new Intent(getContext(), CalculateTallyExcel.class);
-                intent.putExtra("DATE", formed_date);
-                intent.putExtra("TYPE", type);
-                startActivity(intent);
+                final ProgressDialog dialog = new ProgressDialog(getContext());
+                dialog.setTitle("Calculating...");
+                dialog.setMessage("Please wait for sometime");
+                dialog.setIcon(R.drawable.tally);
+                dialog.show();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        day = datePicker.getDayOfMonth();
+                        month = datePicker.getMonth();
+                        year = datePicker.getYear();
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(year, month, day);
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy");
+                        String formatedDate = sdf.format(calendar.getTime());
+                        Intent intent = new Intent(getContext(), CalculateTallyExcel.class);
+                        if (type.equals("Daily")) {
+                            //day format - 02-04-20
+                            intent.putExtra("DATE", formatedDate);
+                        } else {
+                            //month format - 02-20
+                            intent.putExtra("DATE", formatedDate.substring(3));
+                        }
+
+                        intent.putExtra("TYPE", type);
+                        startActivity(intent);
+                        dialog.dismiss();
+                    }
+                }, 1000);
+
             }
         });
 

@@ -38,7 +38,6 @@ import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.SP_KEY;
-import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.Tally.CalculateTallyParcel.PARCELS;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.CURRENT_KOT;
 
 public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog.ItemAlertDialogListener {
@@ -76,8 +75,8 @@ public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog
         //Getting document id from sharedpref
         sharedPreferences = getSharedPreferences(SP_KEY, Context.MODE_PRIVATE);
         PARCEL_ID = sharedPreferences.getString(PARCEL_ID_KEY, "");
-        currentRef = db.collection(PARCELS).document(PARCEL_ID).collection(CURRENT_KOT);
-        parcelRef = db.collection(PARCELS);
+        currentRef = db.collection(Constants.PARCELS).document(PARCEL_ID).collection(CURRENT_KOT);
+        parcelRef = db.collection(Constants.PARCELS);
         //
         //getting the item type
         type = getIntent().getStringExtra("TypeP");

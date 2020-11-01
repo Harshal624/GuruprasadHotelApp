@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ace.infosolutions.guruprasadhotelapp">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -18,14 +20,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".Manager.NavFragments.TallyExcel.CalculateTallyExcel"></activity>
         <activity android:name=".Manager.NavFragments.UpdateFoodMenu.UpdateFoodItemList" />
-        <activity android:name=".Manager.NavFragments.Tally.CalculateTallyTable" />
-        <activity android:name=".Manager.NavFragments.Tally.TableTallyDateList" />
-        <activity android:name=".Manager.NavFragments.Tally.CalculateTallyOnline" />
-        <activity android:name=".Manager.NavFragments.Tally.CalculateTallyParcel" />
-        <activity android:name=".Manager.NavFragments.Tally.TableTally" />
         <activity android:name=".Manager.NavFragments.ParcelHistory.ParcelHistoryItemList" />
-        <activity android:name=".Manager.NavFragments.Tally.CalculateTallyGrand" />
-        <activity android:name=".Manager.NavFragments.Tally.TableTallyMonthList" />
         <activity android:name=".Manager.NavFragments.History.HistoryItems" />
         <activity android:name=".Printing.PrintingMain" />
         <activity android:name=".Printing.DeviceListActivity" />
