@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
-import ace.infosolutions.guruprasadhotelapp.Printing.OrderKOTPOJO;
+import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.OrderKOTPOJO;
 import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
@@ -106,7 +106,6 @@ public class CurrentCartFragment extends Fragment {
                 getDatabaseValues();
             }
 
-
             private void getDatabaseValues() {
                 final ArrayList<ViewCartModel> arrayList = new ArrayList<>();
 
@@ -131,7 +130,7 @@ public class CurrentCartFragment extends Fragment {
 
                                         for (QueryDocumentSnapshot snapshot : task.getResult()) {
                                             double item_Cost = snapshot.getDouble("item_cost");
-                                            String item_Title = snapshot.getString("item_title");
+                                            String item_Title = snapshot.getString("item_title_english");
                                             int item_Qty = snapshot.getDouble("item_qty").intValue();
                                             ViewCartModel getModel = new ViewCartModel(item_Title, item_Cost, item_Qty);
                                             if (getModel != null) {

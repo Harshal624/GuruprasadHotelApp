@@ -1,4 +1,4 @@
-package ace.infosolutions.guruprasadhotelapp.Printing;
+package ace.infosolutions.guruprasadhotelapp.Printing.POJOs;
 
 import java.util.ArrayList;
 

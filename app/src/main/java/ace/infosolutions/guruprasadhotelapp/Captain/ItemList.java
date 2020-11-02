@@ -167,7 +167,8 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
                 FoodMenuModel model = documentSnapshot.toObject(FoodMenuModel.class);
                 String item_title = model.getItem_title();
                 String item_cost = "Rs." + model.getItem_cost();
-                opendialog(item_title, item_cost);
+                String item_title_english = model.getItem_title_english();
+                opendialog(item_title, item_cost, item_title_english);
             }
         });
 
@@ -204,8 +205,8 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         });
     }
 
-    private void opendialog(String title, String cost) {
-        ItemAlertDialog dialog = new ItemAlertDialog(title, cost);
+    private void opendialog(String title, String cost, String title_english) {
+        ItemAlertDialog dialog = new ItemAlertDialog(title, cost, title_english);
         dialog.show(getSupportFragmentManager(), "dialog");
     }
 
@@ -221,12 +222,12 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
     }
 
     @Override
-    public void applyText(final String item_title, final double item_cost, final int item_qty) {
+    public void applyText(final String item_title, final double item_cost, final int item_qty, final String item_title_english) {
         InternetConn conn = new InternetConn(ItemList.this);
         if (conn.haveNetworkConnection()) {
             progressBar.setVisibility(View.VISIBLE);
             check_cart.setEnabled(false);
-            final FoodItemModel model = new FoodItemModel(item_title, item_cost, item_qty);
+            final FoodItemModel model = new FoodItemModel(item_title, item_cost, item_qty, item_title_english);
             addItemToDB(model, item_cost);
         } else {
             Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();

@@ -51,7 +51,7 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.GrandTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.OnlineTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.ParcelTotalModel;
-import ace.infosolutions.guruprasadhotelapp.Printing.ParcelFinalBillPOJO;
+import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.ParcelFinalBillPOJO;
 import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
@@ -318,7 +318,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                                         if (task.isSuccessful()) {
                                             for (QueryDocumentSnapshot snapshot : task.getResult()) {
                                                 double item_Cost = snapshot.getDouble("item_cost");
-                                                String item_Title = snapshot.getString("item_title");
+                                                String item_Title = snapshot.getString("item_title_english");
                                                 int item_Qty = snapshot.getDouble("item_qty").intValue();
                                                 ViewCartModel getModel = new ViewCartModel(item_Title, item_Cost, item_Qty);
                                                 if (getModel != null) {

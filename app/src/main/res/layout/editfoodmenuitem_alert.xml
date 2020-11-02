@@ -41,5 +41,14 @@
         android:hint="Enter food item cost"
         android:inputType="numberDecimal" />
 
+    <EditText
+        android:id="@+id/food_item_title_english"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:gravity="center"
+        android:hint="Enter food item name(English)"
+        android:inputType="textPersonName" />
+
 
 </LinearLayout>

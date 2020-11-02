@@ -20,14 +20,16 @@ public class ItemAlertDialog extends DialogFragment {
 
     private String item_title;
     private String item_cost;
+    private String item_title_english;
     private double final_price;
     private int final_qty;
     private ItemAlertDialogListener listener;
 
 
-    public ItemAlertDialog(String item_title, String item_cost) {
+    public ItemAlertDialog(String item_title, String item_cost, String item_title_english) {
         this.item_title = item_title;
         this.item_cost = item_cost;
+        this.item_title_english = item_title_english;
     }
 
     @NonNull
@@ -42,10 +44,10 @@ public class ItemAlertDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.itemdetails_alertdialog, null);
         //casting views
-        item_costTV = (TextView) view.findViewById(R.id.item_cost);
-        decr_counter = (ImageButton) view.findViewById(R.id.decrement_counter);
-        incr_couter = (ImageButton) view.findViewById(R.id.increment_counter);
-        counter = (TextView) view.findViewById(R.id.counter);
+        item_costTV = view.findViewById(R.id.item_cost);
+        decr_counter = view.findViewById(R.id.decrement_counter);
+        incr_couter = view.findViewById(R.id.increment_counter);
+        counter = view.findViewById(R.id.counter);
 
         //if nothing is seletected, intialize quantity and cost
         final_price = Double.parseDouble(item_cost.substring(3, item_cost.length()));
@@ -101,7 +103,7 @@ public class ItemAlertDialog extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         int qty = final_qty;
                         double cost = final_price;
-                        listener.applyText(item_title, cost, qty);
+                        listener.applyText(item_title, cost, qty, item_title_english);
                     }
                 }).setCancelable(false);
         return builder.create();
@@ -118,6 +120,6 @@ public class ItemAlertDialog extends DialogFragment {
     }
 
     public interface ItemAlertDialogListener {
-        void applyText(String item_title, double item_cost, int qty);
+        void applyText(String item_title, double item_cost, int qty, String item_title_english);
     }
 }

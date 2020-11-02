@@ -17,6 +17,7 @@ import ace.infosolutions.guruprasadhotelapp.R;
 
 public class FishFirestoreAdapter extends FirestoreRecyclerAdapter<FoodMenuModel, FishFirestoreAdapter.CustomerHolder> {
     private OnItemClickListener listener;
+    private OnItemLongClickListener listener1;
 
     public FishFirestoreAdapter(@NonNull FirestoreRecyclerOptions<FoodMenuModel> options) {
         super(options);
@@ -45,6 +46,14 @@ public class FishFirestoreAdapter extends FirestoreRecyclerAdapter<FoodMenuModel
         void onItemClick(DocumentSnapshot documentSnapshot, int position);
     }
 
+    public void setOnItemLongClickListener(OnItemLongClickListener listener1) {
+        this.listener1 = listener1;
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(DocumentSnapshot documentSnapshot);
+    }
+
     public class CustomerHolder extends RecyclerView.ViewHolder {
         private TextView item_title;
         private TextView item_cost;
@@ -64,6 +73,18 @@ public class FishFirestoreAdapter extends FirestoreRecyclerAdapter<FoodMenuModel
                     if (pos != RecyclerView.NO_POSITION && listener != null) {
                         listener.onItemClick(getSnapshots().getSnapshot(pos), pos);
                     }
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int pos = getAdapterPosition();
+                    //if item is removed and it's in his remove animation
+                    if (pos != RecyclerView.NO_POSITION && listener != null) {
+                        listener1.onItemLongClick(getSnapshots().getSnapshot(pos));
+                    }
+
+                    return false;
                 }
             });
 

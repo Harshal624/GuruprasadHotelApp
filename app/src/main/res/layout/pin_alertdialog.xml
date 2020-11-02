@@ -65,16 +65,16 @@
 
         <ImageButton
             android:id="@+id/confirmpin"
-            android:layout_height="@dimen/_40sdp"
             android:layout_width="wrap_content"
-            android:src="@drawable/ic_confirm"
+            android:layout_height="48dp"
             android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:layout_weight="1"
             android:background="@drawable/pin_confirm"
             android:drawableStart="@drawable/ic_confirm"
             android:paddingTop="@dimen/_5sdp"
-            android:paddingBottom="@dimen/_5sdp" />
+            android:paddingBottom="@dimen/_5sdp"
+            android:src="@drawable/ic_confirm" />
 
     </LinearLayout>
 

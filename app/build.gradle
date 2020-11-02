@@ -45,5 +45,6 @@ dependencies {
     implementation 'com.leo.simplearcloader:simplearcloader:1.0.+'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation files('libs\\poi-3.7.jar')
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
 }

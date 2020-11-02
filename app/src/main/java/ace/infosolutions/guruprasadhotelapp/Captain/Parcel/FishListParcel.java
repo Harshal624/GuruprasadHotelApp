@@ -77,7 +77,8 @@ public class FishListParcel extends AppCompatActivity implements ItemAlertDialog
                 FoodMenuModel model = documentSnapshot.toObject(FoodMenuModel.class);
                 String item_title = model.getItem_title();
                 String item_cost = "Rs." + model.getItem_cost();
-                openDialog(item_title, item_cost);
+                String item_title_english = model.getItem_title_english();
+                openDialog(item_title, item_cost, item_title_english);
             }
         });
         check_cart.setOnClickListener(new View.OnClickListener() {
@@ -89,8 +90,8 @@ public class FishListParcel extends AppCompatActivity implements ItemAlertDialog
 
     }
 
-    private void openDialog(String item_title, String item_cost) {
-        ItemAlertDialog itemAlertDialog = new ItemAlertDialog(item_title, item_cost);
+    private void openDialog(String item_title, String item_cost, String item_title_english) {
+        ItemAlertDialog itemAlertDialog = new ItemAlertDialog(item_title, item_cost, item_title_english);
         itemAlertDialog.show(getSupportFragmentManager(), "dialog");
     }
 
@@ -118,12 +119,12 @@ public class FishListParcel extends AppCompatActivity implements ItemAlertDialog
     }
 
     @Override
-    public void applyText(final String item_title, final double item_cost, final int qty) {
+    public void applyText(final String item_title, final double item_cost, final int qty, final String item_title_english) {
         check_cart.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
 
         InternetConn conn = new InternetConn(this);
-        final FoodItemModel model = new FoodItemModel(item_title, item_cost, qty);
+        final FoodItemModel model = new FoodItemModel(item_title, item_cost, qty, item_title_english);
         final DocumentReference currRef = currentRef.document();
         final DocumentReference parcRef = parcelRef.document(doc_id);
         if (conn.haveNetworkConnection()) {

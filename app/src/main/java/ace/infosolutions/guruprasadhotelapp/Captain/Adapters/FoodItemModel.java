@@ -4,6 +4,7 @@ public class FoodItemModel {
     private String item_title;
     private double item_cost;
     private int item_qty;
+    private String item_title_english;
 
     FoodItemModel() {
     }
@@ -20,9 +21,14 @@ public class FoodItemModel {
         return item_qty;
     }
 
-    public FoodItemModel(String item_title, double item_cost, int item_qty) {
+    public FoodItemModel(String item_title, double item_cost, int item_qty, String item_title_english) {
         this.item_title = item_title;
         this.item_cost = item_cost;
         this.item_qty = item_qty;
+        this.item_title_english = item_title_english;
+    }
+
+    public String getItem_title_english() {
+        return item_title_english;
     }
 }

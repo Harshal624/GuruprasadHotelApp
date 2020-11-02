@@ -33,7 +33,7 @@ public interface Constants {
     String Roti = "Roti";
     String Soup = "Soup";
     String RaytaSalad = "RaytaSalad";
-    String SpringRolls = "String SpringRolls";
+    String SpringRolls = "SpringRolls";
 
     String PARCELS = "PARCELS";
 }

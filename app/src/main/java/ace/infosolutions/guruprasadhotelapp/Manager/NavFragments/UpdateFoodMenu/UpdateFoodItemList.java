@@ -65,6 +65,7 @@ public class UpdateFoodItemList extends AppCompatActivity {
                 View view2 = LayoutInflater.from(UpdateFoodItemList.this).inflate(R.layout.addfoodmenuitem_alert, null);
                 final EditText food_title = view2.findViewById(R.id.food_item_title);
                 final EditText food_cost = view2.findViewById(R.id.food_item_cost);
+                final EditText food_title_english = view2.findViewById(R.id.food_item_title_english);
                 alertDialog.setView(view2);
                 alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -75,14 +76,19 @@ public class UpdateFoodItemList extends AppCompatActivity {
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        final String foodTitle = food_title.getText().toString().trim();
-                        final String food_costString = food_cost.getText().toString().trim();
+                        final String foodTitle;
+                        final String food_costString;
+                        final String foodTitleEnglish;
+
+                        foodTitle = food_title.getText().toString().trim();
+                        food_costString = food_cost.getText().toString().trim();
+                        foodTitleEnglish = food_title_english.getText().toString().trim();
                         double foodCost;
-                        if (foodTitle.equals("") || food_costString.equals("")) {
+                        if (foodTitle.equals("") || food_costString.equals("") || foodTitleEnglish.equals("")) {
                             Toast.makeText(UpdateFoodItemList.this, "All fields are compulsory", Toast.LENGTH_SHORT).show();
                         } else {
                             foodCost = Double.parseDouble(food_costString);
-                            FoodMenuModel model = new FoodMenuModel(foodTitle, foodCost);
+                            FoodMenuModel model = new FoodMenuModel(foodTitle, foodCost, foodTitleEnglish);
                             coll_reference.add(model).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
                                 public void onSuccess(DocumentReference documentReference) {
@@ -90,6 +96,8 @@ public class UpdateFoodItemList extends AppCompatActivity {
                                 }
                             });
                         }
+
+
                     }
                 });
                 alertDialog.show();
@@ -178,6 +186,7 @@ public class UpdateFoodItemList extends AppCompatActivity {
                 View view = LayoutInflater.from(UpdateFoodItemList.this).inflate(R.layout.editfoodmenuitem_alert, null);
                 final EditText food_title = view.findViewById(R.id.food_item_title);
                 final EditText food_cost = view.findViewById(R.id.food_item_cost);
+                final EditText food_title_english = view.findViewById(R.id.food_item_title_english);
                 food_title.setHint(snapshot.getString("item_title"));
                 food_cost.setHint(String.valueOf(snapshot.getDouble("item_cost")));
                 alertDialog.setView(view);
@@ -192,28 +201,57 @@ public class UpdateFoodItemList extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String foodTitle = food_title.getText().toString().trim();
                         String foodCost = food_cost.getText().toString().trim();
-                        if (foodTitle.equals("") && foodCost.equals("")) {
+                        String foodTitleEnglish = food_title_english.getText().toString().trim();
+                        if (foodTitle.equals("") && foodCost.equals("") && foodTitleEnglish.equals("")) {
                             alertDialog.dismiss();
                             Toast.makeText(UpdateFoodItemList.this, "Nothing updated", Toast.LENGTH_SHORT).show();
                         } else if (!foodTitle.equals("") && foodCost.equals("")) {
                             //update only food_title
-                            coll_reference.document(snapshot.getId()).update("item_title", foodTitle).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            if (foodTitleEnglish.equals("")) {
+                                coll_reference.document(snapshot.getId()).update("item_title", foodTitle).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(UpdateFoodItemList.this, "Title updated", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } else {
+                                coll_reference.document(snapshot.getId()).update("item_title_english", foodTitleEnglish).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(UpdateFoodItemList.this, "Title updated", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+
+                        } else if (foodTitle.equals("") && !foodCost.equals("")) {
+                            //update only food_cost
+
+                            if (foodTitleEnglish.equals("")) {
+                                double f_Cost = Double.parseDouble(foodCost);
+                                coll_reference.document(snapshot.getId()).update("item_cost", f_Cost).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(UpdateFoodItemList.this, "Cost updated", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } else {
+                                double f_Cost = Double.parseDouble(foodCost);
+                                WriteBatch batch = db.batch();
+                                DocumentReference reference = coll_reference.document(snapshot.getId());
+                                batch.update(reference, "item_title_english", foodTitleEnglish);
+                                batch.update(reference, "item_cost", f_Cost);
+                                batch.commit();
+                            }
+
+                        } else if (foodTitle.equals("") && foodCost.equals("") && !food_title_english.equals("")) {
+
+                            coll_reference.document(snapshot.getId()).update("item_title_english", foodTitleEnglish).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Toast.makeText(UpdateFoodItemList.this, "Title updated", Toast.LENGTH_SHORT).show();
                                 }
                             });
-
-                        } else if (foodTitle.equals("") && !foodCost.equals("")) {
-                            //update only food_cost
-                            double f_Cost = Double.parseDouble(foodCost);
-                            coll_reference.document(snapshot.getId()).update("item_cost", f_Cost).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(UpdateFoodItemList.this, "Cost updated", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
                         } else {
                             //update both
                             double f_Cost = Double.parseDouble(foodCost);

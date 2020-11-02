@@ -50,7 +50,7 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.HistoryModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.OnlineTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.TableTotalModel;
-import ace.infosolutions.guruprasadhotelapp.Printing.OrderFinalBillPOJO;
+import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.OrderFinalBillPOJO;
 import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
@@ -294,7 +294,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot snapshot : task.getResult()) {
                                             double item_Cost = snapshot.getDouble("item_cost");
-                                            String item_Title = snapshot.getString("item_title");
+                                            String item_Title = snapshot.getString("item_title_english");
                                             int item_Qty = snapshot.getDouble("item_qty").intValue();
                                             ViewCartModel getModel = new ViewCartModel(item_Title, item_Cost, item_Qty);
                                             if (getModel != null) {

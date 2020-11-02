@@ -26,6 +26,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartModel;
+import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.OrderFinalBillPOJO;
+import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.OrderKOTPOJO;
+import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.ParcelFinalBillPOJO;
+import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.ParcelKOTPOJO;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
@@ -157,95 +161,100 @@ public class PrintingMain extends Activity implements Runnable {
         ArrayList<ViewCartModel> arrayList = new ArrayList<>();
         arrayList.addAll(print.getArrayList());
         if (print.getCustomer_address().isEmpty()) {
-            BILL = "";
-            BILL = "                   GURUPRASAD HOTEL    \n"
-                    + "                   Mahadevnagar, Urun Islampur" + "\n " +
+            BILL = "          GURPRASAD HOTEL             \n"
+                    + "          Mahadevnager,Islampur      \n" +
                     "                   Date&Time:" + print.getDate() + " " + print.getTime() + "\n " +
-                    "                   Bill No:" + print.getBill_no() + "\n " +
+                    "                   BILL NO:" + print.getBill_no() + "\n " +
                     "                   Parcel to - " + print.getCustomer_name() + "\n ";
             BILL = BILL
                     + "-----------------------------------------------\n";
-            String format = "%1$4s %2$10s %3$10s%n";
-            BILL = BILL + String.format(format, "Item", "Qty", "Amount");
+
+
+            BILL = BILL + String.format("%1$-10s %2$10s %3$10s", "Item", "Qty", "Total");
             BILL = BILL + "\n";
             BILL = BILL
                     + "-----------------------------------------------";
+
             for (int i = 0; i < arrayList.size(); i++) {
-                BILL = BILL + "\n " + String.format(format, arrayList.get(i).getItem_title(),
-                        arrayList.get(i).getItem_qty(), arrayList.get(i).getItem_cost());
+                String title = arrayList.get(i).getItem_title();
+                Log.e("TITLE", title);
+                BILL = BILL + "\n " + String.format("%1$-10s %2$10s %3$11s", title, arrayList.get(i).getItem_qty(),
+                        arrayList.get(i).getItem_cost());
             }
+
+
             BILL = BILL
-                    + "\n-----------------------------------------------\n";
-            BILL = BILL +
-                    "                          SUBTOTAL:" + print.getSubtotal() + "\n";
-            BILL = BILL +
-                    "                          DISCOUNT:" + print.getDiscount() + "\n";
-            BILL = BILL +
-                    "                           TOTAL:" + print.getTotal_cost() + "\n";
-            BILL = BILL + "\n ";
-            BILL = BILL
-                    + "-----------------------------------------------\n";
+                    + "\n-----------------------------------------------";
             BILL = BILL + "\n\n ";
-        } else {
-            BILL = "";
-            BILL = "                   GURUPRASAD HOTEL    \n"
-                    + "                   Mahadevnagar, Urun Islampur" + "\n " +
-                    "                   Date&Time:" + print.getDate() + " " + print.getTime() + "\n " +
-                    "                   Bill No:" + print.getBill_no() + "\n " +
-                    "                   Parcel to - " + print.getCustomer_name() + "\n " +
-                    "                   Address: " + print.getCustomer_address() + "\n ";
+
+            BILL = BILL + "                  Subtotal:" + "      " + print.getSubtotal() + "\n";
+            BILL = BILL + "                   Discount:" + "      " + print.getDiscount() + "\n";
+            BILL = BILL + "                   Total Value:" + "     " + print.getTotal_cost() + "\n";
 
             BILL = BILL
                     + "-----------------------------------------------\n";
-            String format = "%1$4s %2$10s %3$10s%n";
-            BILL = BILL + String.format(format, "Item", "Qty", "Amount");
+            BILL = BILL + "\n\n ";
+
+        } else {
+            BILL = "          GURPRASAD HOTEL             \n"
+                    + "          Mahadevnager,Islampur      \n" +
+                    "                   Date&Time:" + print.getDate() + " " + print.getTime() + "\n " +
+                    "                   BILL NO:" + print.getBill_no() + "\n " +
+                    "                   Parcel to - " + print.getCustomer_name() + "\n " +
+                    "                   Address: " + print.getCustomer_address() + "\n ";
+            BILL = BILL
+                    + "-----------------------------------------------\n";
+
+
+            BILL = BILL + String.format("%1$-10s %2$10s %3$10s", "Item", "Qty", "Total");
             BILL = BILL + "\n";
             BILL = BILL
                     + "-----------------------------------------------";
+
             for (int i = 0; i < arrayList.size(); i++) {
-                BILL = BILL + "\n " + String.format(format, arrayList.get(i).getItem_title(),
-                        arrayList.get(i).getItem_qty(), arrayList.get(i).getItem_cost());
+                String title = arrayList.get(i).getItem_title();
+                Log.e("TITLE", title);
+                BILL = BILL + "\n " + String.format("%1$-10s %2$10s %3$11s", title, arrayList.get(i).getItem_qty(),
+                        arrayList.get(i).getItem_cost());
             }
+
+
             BILL = BILL
-                    + "\n-----------------------------------------------\n";
-            BILL = BILL +
-                    "                          SUBTOTAL:" + print.getSubtotal() + "\n";
-            BILL = BILL +
-                    "                          DISCOUNT:" + print.getDiscount() + "\n";
-            BILL = BILL +
-                    "                           TOTAL:" + print.getTotal_cost() + "\n";
-            BILL = BILL + "\n";
+                    + "\n-----------------------------------------------";
+            BILL = BILL + "\n\n ";
+
+            BILL = BILL + "                  Subtotal:" + "      " + print.getSubtotal() + "\n";
+            BILL = BILL + "                   Discount:" + "      " + print.getDiscount() + "\n";
+            BILL = BILL + "                   Total Value:" + "     " + print.getTotal_cost() + "\n";
+
             BILL = BILL
                     + "-----------------------------------------------\n";
             BILL = BILL + "\n\n ";
         }
-
-
     }
 
     private void createOrderFinalBill(OrderFinalBillPOJO orderFinalBillPOJO) {
         ArrayList<ViewCartModel> arrayList = new ArrayList<>();
         arrayList.addAll(orderFinalBillPOJO.getArrayList());
 
-
-        BILL = "";
-
-        BILL = "                   GURPRASAD HOTEL    \n"
-                + "                   XX.AA.BB.CC.     \n " +
-                "                 NO 25 ABC ABCDE    \n" +
-                "                  XXXXX YYYYYY      \n" +
-                "                   MMM 590019091      \n";
+        BILL = "          GURPRASAD HOTEL             \n"
+                + "          Mahadevnager,Islampur      \n" +
+                "                   Date&Time:" + orderFinalBillPOJO.getDate() + " " + orderFinalBillPOJO.getTime() + "\n " +
+                "                   BILL NO:" + orderFinalBillPOJO.getBill_no() + "\n ";
         BILL = BILL
                 + "-----------------------------------------------\n";
 
 
-        BILL = BILL + String.format("%1$-10s %2$10s %3$10s", "Item", "Qty", "Totel");
+        BILL = BILL + String.format("%1$-10s %2$10s %3$10s", "Item", "Qty", "Total");
         BILL = BILL + "\n";
         BILL = BILL
                 + "-----------------------------------------------";
 
         for (int i = 0; i < arrayList.size(); i++) {
-            BILL = BILL + "\n " + String.format("%1$-10s %2$10s %3$11s", arrayList.get(i).getItem_title().substring(0, 7), arrayList.get(i).getItem_qty(),
+            String title = arrayList.get(i).getItem_title();
+            Log.e("TITLE", title);
+
+            BILL = BILL + "\n " + String.format("%1$-10s %2$10s %3$11s", title, arrayList.get(i).getItem_qty(),
                     arrayList.get(i).getItem_cost());
         }
 
@@ -254,67 +263,65 @@ public class PrintingMain extends Activity implements Runnable {
                 + "\n-----------------------------------------------";
         BILL = BILL + "\n\n ";
 
-        BILL = BILL + "                   Subtotal:" + "      " + orderFinalBillPOJO.getSubtotal() + "\n";
+        BILL = BILL + "                  Subtotal:" + "      " + orderFinalBillPOJO.getSubtotal() + "\n";
         BILL = BILL + "                   Discount:" + "      " + orderFinalBillPOJO.getDiscount() + "\n";
         BILL = BILL + "                   Total Value:" + "     " + orderFinalBillPOJO.getTotal_cost() + "\n";
 
         BILL = BILL
                 + "-----------------------------------------------\n";
-        BILL = BILL + "\n\n\n ";
-        Log.e("BILLPRINT", BILL);
-        // BILL = BILL + "\n\n";
+        BILL = BILL + "\n\n";
     }
 
     private void createParcelKOT(ParcelKOTPOJO print) {
         ArrayList<ViewCartModel> arrayList = new ArrayList<>();
         arrayList.addAll(print.getArrayList());
-        BILL = "";
-        BILL = "                   GURUPRASAD HOTEL    \n"
-                + "                   KOT NO:" + print.getKot_no() + "\n " +
+
+        BILL = "          GURPRASAD HOTEL             \n" +
                 "                   Date&Time:" + print.getDate() + " " + print.getTime() + "\n " +
+                "                   KOT NO:" + print.getKot_no() + "\n " +
                 "                   Parcel - " + print.getCustomer_name() + "\n ";
         BILL = BILL
                 + "-----------------------------------------------\n";
 
 
-        String format = "%1$4s %2$10s";
-        BILL = BILL + String.format(format, "Item", "Qty");
+        BILL = BILL + String.format("%1$-10s %2$10s", "Item", "Qty");
         BILL = BILL + "\n";
         BILL = BILL
                 + "-----------------------------------------------";
+
         for (int i = 0; i < arrayList.size(); i++) {
-            BILL = BILL + "\n " + String.format(format, arrayList.get(i).getItem_title(),
-                    arrayList.get(i).getItem_qty());
+            String title = arrayList.get(i).getItem_title();
+            Log.e("TITLE", title);
+            BILL = BILL + "\n " + String.format("%1$-10s %2$11s", title, arrayList.get(i).getItem_qty());
         }
 
-        BILL = BILL
-                + "\n-----------------------------------------------";
-        BILL = BILL + "\n\n ";
+        BILL = BILL + "\n\n";
+
     }
 
     private void createOrderKot(OrderKOTPOJO print) {
         ArrayList<ViewCartModel> arrayList = new ArrayList<>();
         arrayList.addAll(print.getArrayList());
-        BILL = "";
-        BILL = "                   GURUPRASAD HOTEL    \n"
-                + "                   KOT NO:" + print.getKot_no() + "\n " +
-                "                   Date&Time:" + print.getDate() + " " + print.getTime() + "\n " +
-                "                   Table No:" + print.getTable_no() + " (" + print.getTable_type() + ")" + "\n ";
 
+        BILL = "          GURPRASAD HOTEL             \n" +
+                "                   Date&Time:" + print.getDate() + " " + print.getTime() + "\n " +
+                "                   KOT NO:" + print.getKot_no() + "\n " +
+                "                   Table No:" + print.getTable_no() + " (" + print.getTable_type() + ")" + "\n ";
         BILL = BILL
                 + "-----------------------------------------------\n";
-        String format = "%1$4s %2$10s";
-        BILL = BILL + String.format(format, "Item", "Qty");
+
+
+        BILL = BILL + String.format("%1$-10s %2$10s", "Item", "Qty");
         BILL = BILL + "\n";
         BILL = BILL
                 + "-----------------------------------------------";
+
         for (int i = 0; i < arrayList.size(); i++) {
-            BILL = BILL + "\n " + String.format(format, arrayList.get(i).getItem_title(),
-                    arrayList.get(i).getItem_qty());
+            String title = arrayList.get(i).getItem_title();
+            Log.e("TITLE", title);
+            BILL = BILL + "\n " + String.format("%1$-10s %2$11s", title, arrayList.get(i).getItem_qty());
         }
-        BILL = BILL
-                + "\n-----------------------------------------------";
-        BILL = BILL + "\n\n ";
+        BILL = BILL + "\n\n";
     }
 
     @Override

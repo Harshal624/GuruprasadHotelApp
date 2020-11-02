@@ -44,7 +44,7 @@ import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelFragment;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartModel;
-import ace.infosolutions.guruprasadhotelapp.Printing.ParcelKOTPOJO;
+import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.ParcelKOTPOJO;
 import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
@@ -136,7 +136,7 @@ public class CurrentCartParcelFragment extends Fragment {
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot snapshot1 : task.getResult()) {
                                             double item_Cost = snapshot1.getDouble("item_cost");
-                                            String item_Title = snapshot1.getString("item_title");
+                                            String item_Title = snapshot1.getString("item_title_english");
                                             int item_Qty = snapshot1.getDouble("item_qty").intValue();
                                             ViewCartModel getModel = new ViewCartModel(item_Title, item_Cost, item_Qty);
                                             if (getModel != null) {

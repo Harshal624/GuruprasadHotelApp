@@ -6,12 +6,31 @@
     android:layout_height="wrap_content">
 
     <EditText
-        android:id="@+id/fish_cost"
-        android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_50sdp"
+        android:id="@+id/fish_item_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
         android:gravity="center"
-        android:layout_gravity="center"
+        android:hint="Enter food item name"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:id="@+id/fish_cost"
+        android:hint="Enter fish cost"
+        android:gravity="center"
         android:inputType="numberDecimal"
         android:maxLength="4" />
+
+    <EditText
+        android:id="@+id/fish_item_title_english"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:gravity="center"
+        android:hint="Enter fish name(English)"
+        android:inputType="textPersonName" />
 
 </LinearLayout>
