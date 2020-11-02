@@ -1,7 +1,10 @@
 package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.TallyExcel;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.Environment;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -68,7 +71,6 @@ public class CalculateTallyExcel extends AppCompatActivity {
         parcelTallyarray = new ArrayList<>();
 
         downloadExcel = findViewById(R.id.downloadExcel);
-        downloadExcel.setEnabled(false);
 
         date = getIntent().getStringExtra("DATE");
         type = getIntent().getStringExtra("TYPE");
@@ -93,14 +95,18 @@ public class CalculateTallyExcel extends AppCompatActivity {
 
         }
         setUpChildTextViews();
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        downloadExcel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                generateExcel();
+            public void onClick(View view) {
+                if (type.equals("Daily")) {
+                    generateExcel();
+                } else {
+                    generateMonthlyExcel();
+                }
             }
-        }, 5000);
+        });
     }
+
 
     private void setUpOrderRecyclerView() {
         dailyOrder = db.collection("HISTORY");
@@ -125,12 +131,12 @@ public class CalculateTallyExcel extends AppCompatActivity {
                 }
                 if (!dailyOrderarray.isEmpty()) {
 
-                    downloadExcel.setEnabled(true);
                     DailyOrderAdapter adapter = new DailyOrderAdapter(dailyOrderarray);
                     orderRecyclerview.setLayoutManager(layoutManager);
                     orderRecyclerview.setHasFixedSize(true);
                     orderRecyclerview.setAdapter(adapter);
                 }
+
             }
         });
     }
@@ -166,6 +172,7 @@ public class CalculateTallyExcel extends AppCompatActivity {
                     parcelRecyclerView.setHasFixedSize(true);
                     parcelRecyclerView.setAdapter(adapter);
                 }
+
             }
         });
     }
@@ -321,14 +328,13 @@ public class CalculateTallyExcel extends AppCompatActivity {
 
     private void generateExcel() {
 
-
         Workbook wb = new HSSFWorkbook();
 
         int row_tracker = 0;
 
         //Now we are creating sheet
         Sheet sheet = null;
-        sheet = wb.createSheet("Name of sheet");
+        sheet = wb.createSheet(date);
         //Now column and row
         Row row;
         //1st row
@@ -407,6 +413,133 @@ public class CalculateTallyExcel extends AppCompatActivity {
         row.createCell(2).setCellValue(vipdining_sum);
         row.createCell(3).setCellValue(bardining_sum);
 
+        row_tracker = row_tracker + 2;
+        row = sheet.createRow(row_tracker);
+        row.createCell(0).setCellValue("Parcel Total");
+
+        row_tracker = row_tracker + 1;
+        row = sheet.createRow(row_tracker);
+        row.createCell(0).setCellValue(parceltotal_sum);
+
+        row_tracker = row_tracker + 2;
+        row = sheet.createRow(row_tracker);
+        row.createCell(0).setCellValue("Onlinetotal");
+        row.createCell(1).setCellValue("Discounttotal");
+        row.createCell(2).setCellValue("Grandtotal");
+
+        row_tracker = row_tracker + 1;
+        row = sheet.createRow(row_tracker);
+        row.createCell(0).setCellValue(onlinetotal_sum);
+        row.createCell(1).setCellValue(discounttotal_sum);
+        row.createCell(2).setCellValue(grandtotal_sum);
+
+
+
+        sheet.setColumnWidth(0, (10 * 400));
+        sheet.setColumnWidth(1, (10 * 500));
+        sheet.setColumnWidth(2, (10 * 400));
+        sheet.setColumnWidth(3, (10 * 350));
+        sheet.setColumnWidth(4, (10 * 400));
+        sheet.setColumnWidth(5, (10 * 400));
+        sheet.setColumnWidth(6, (10 * 400));
+        sheet.setColumnWidth(7, (10 * 400));
+        sheet.setColumnWidth(8, (10 * 400));
+
+        // File file = new File(getExternalFilesDir(null), date + ".xls");
+
+        File file = getAbsoluteFile(date + ".xls", getApplicationContext());
+
+        FileOutputStream outputStream = null;
+
+        try {
+            outputStream = new FileOutputStream(file);
+            wb.write(outputStream);
+            //
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            emailIntent.setType("text/plain");
+            // emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"Enter the email"});
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Hotel daily summary");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "Date:" + date);
+            if (!file.exists() || !file.canRead()) {
+                Toast.makeText(this, "Cannot send email", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Uri uri = Uri.fromFile(file);
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(Intent.createChooser(emailIntent, "Select option"));
+            //
+            Toast.makeText(getApplicationContext(), "Excel downloaded and saved to " + file.getPath(), Toast.LENGTH_LONG).show();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+
+            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+            try {
+                outputStream.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+        } catch (Exception e2) {
+            Toast.makeText(this, "Failed to save excel file", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private File getAbsoluteFile(String relativePath, Context context) {
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            return new File(context.getExternalFilesDir(null), relativePath);
+        } else {
+            return new File(context.getFilesDir(), relativePath);
+        }
+    }
+
+    private void generateMonthlyExcel() {
+        Workbook wb = new HSSFWorkbook();
+
+        int row_tracker = 0;
+
+        //Now we are creating sheet
+        Sheet sheet = null;
+        sheet = wb.createSheet(date);
+        //Now column and row
+        Row row;
+        //1st row
+        row = sheet.createRow(row_tracker);
+        row.createCell(0).setCellValue("Tablewise");
+        //3rd row
+        row_tracker = row_tracker + 2;
+        row = sheet.createRow(row_tracker);
+        row.createCell(0).setCellValue("Family");
+        row.createCell(1).setCellValue("AC Family");
+        row.createCell(2).setCellValue("VIP Total");
+        row.createCell(3).setCellValue("Bar Dining");
+
+        row_tracker = row_tracker + 1;
+        row = sheet.createRow(row_tracker);
+        row.createCell(0).setCellValue(family_sum);
+        row.createCell(1).setCellValue(acfamily_sum);
+        row.createCell(2).setCellValue(vipdining_sum);
+        row.createCell(3).setCellValue(bardining_sum);
+
+        row_tracker = row_tracker + 2;
+        row = sheet.createRow(row_tracker);
+        row.createCell(0).setCellValue("Parcel Total");
+
+        row_tracker = row_tracker + 1;
+        row = sheet.createRow(row_tracker);
+        row.createCell(0).setCellValue(parceltotal_sum);
+
+        row_tracker = row_tracker + 2;
+        row = sheet.createRow(row_tracker);
+        row.createCell(0).setCellValue("Onlinetotal");
+        row.createCell(1).setCellValue("Discounttotal");
+        row.createCell(2).setCellValue("Grandtotal");
+
+        row_tracker = row_tracker + 1;
+        row = sheet.createRow(row_tracker);
+        row.createCell(0).setCellValue(onlinetotal_sum);
+        row.createCell(1).setCellValue(discounttotal_sum);
+        row.createCell(2).setCellValue(grandtotal_sum);
 
         sheet.setColumnWidth(0, (10 * 400));
         sheet.setColumnWidth(1, (10 * 500));
@@ -419,13 +552,30 @@ public class CalculateTallyExcel extends AppCompatActivity {
         sheet.setColumnWidth(8, (10 * 400));
 
 
-        File file = new File(getExternalFilesDir(null), date + ".xls");
+        // File file = new File(getExternalFilesDir(null), date + ".xls");
+
+        File file = getAbsoluteFile(date + ".xls", getApplicationContext());
+
         FileOutputStream outputStream = null;
 
         try {
             outputStream = new FileOutputStream(file);
             wb.write(outputStream);
-            Toast.makeText(getApplicationContext(), "Excel downloaded", Toast.LENGTH_LONG).show();
+            //
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            emailIntent.setType("text/plain");
+            //emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"Enter the email"});
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Hotel monthly summary");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "Month:" + date);
+            if (!file.exists() || !file.canRead()) {
+                Toast.makeText(this, "Cannot send email", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Uri uri = Uri.fromFile(file);
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(Intent.createChooser(emailIntent, "Select option"));
+            //
+            Toast.makeText(getApplicationContext(), "Excel downloaded and saved to " + file.getPath(), Toast.LENGTH_LONG).show();
         } catch (java.io.IOException e) {
             e.printStackTrace();
 
@@ -435,7 +585,12 @@ public class CalculateTallyExcel extends AppCompatActivity {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+
+        } catch (Exception e2) {
+            Toast.makeText(this, "Failed to save excel file", Toast.LENGTH_SHORT).show();
         }
 
+
     }
+
 }
