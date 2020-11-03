@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,9 +30,6 @@ public class ParcelHistoryFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference phistoryRef;
-    private Query query;
-    private ImageButton searchButton;
-    private EditText searchBar;
 
     @Nullable
     @Override
@@ -45,11 +39,6 @@ public class ParcelHistoryFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getContext());
         phistoryRef = db.collection(PARCEL_HISTORY);
         ((Manager) getActivity()).toolbar.setTitle("Parcel History");
-        searchBar = view.findViewById(R.id.searchBar);
-        searchButton = view.findViewById(R.id.searchButton);
-        query = phistoryRef.orderBy("date_completed", Query.Direction.DESCENDING).orderBy(
-                "time_completed", Query.Direction.DESCENDING
-        );
         return view;
     }
 
@@ -66,32 +55,13 @@ public class ParcelHistoryFragment extends Fragment {
             }
         });
 
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String date = searchBar.getText().toString().trim();
-                if (date.equals("") || date.equals(null)) {
-                    Toast.makeText(getContext(), "Enter a date first!", Toast.LENGTH_SHORT).show();
-                } else if (date.length() != 8) {
-                    Toast.makeText(getContext(), "Wrong format, Please check the format and try again", Toast.LENGTH_SHORT).show();
-                } else {
-                    String d1 = date.substring(2, 3);
-                    String d2 = date.substring(5, 6);
-                    if (d1.equals("-") && d2.equals("-")) {
-                        query = phistoryRef.whereEqualTo("date_completed", date).orderBy("date_completed", Query.Direction.DESCENDING).orderBy(
-                                "time_completed", Query.Direction.DESCENDING
-                        );
-                        setupRecyclerView();
-                        adapter.startListening();
-                    } else {
-                        Toast.makeText(getContext(), "Wrong format, Please check the format and try again", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
+
     }
 
     private void setupRecyclerView() {
+        Query query = phistoryRef.orderBy("date_completed", Query.Direction.DESCENDING).orderBy(
+                "time_completed", Query.Direction.DESCENDING
+        );
         FirestoreRecyclerOptions<ParcelHistoryModel> phistory = new FirestoreRecyclerOptions.Builder<ParcelHistoryModel>()
                 .setQuery(query, ParcelHistoryModel.class)
                 .build();

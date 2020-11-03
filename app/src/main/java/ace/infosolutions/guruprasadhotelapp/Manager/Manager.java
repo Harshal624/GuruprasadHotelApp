@@ -3,7 +3,6 @@ package ace.infosolutions.guruprasadhotelapp.Manager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,7 +29,6 @@ import ace.infosolutions.guruprasadhotelapp.R;
 
 public class Manager extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public Toolbar toolbar;
-    private ImageButton signout;
     private FirebaseAuth firebaseAuth;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -46,6 +44,11 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
         setSupportActionBar(toolbar);
         firebaseAuth = FirebaseAuth.getInstance();
         drawerLayout = findViewById(R.id.drawer_layout);
+      /*  FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .build();
+        db.setFirestoreSettings(settings);*/
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);

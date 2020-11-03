@@ -406,6 +406,8 @@ public class ConfirmedCartParcelFragment extends Fragment {
         addFoodCost.setText("");
         addFoodTitle.setText("");
         addFoodQty.setText("");
+        final EditText food_item_title_english = addYourself.findViewById(R.id.food_item_title_english);
+        food_item_title_english.setText("");
 
         alertDialogAddyourself.setButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -420,7 +422,9 @@ public class ConfirmedCartParcelFragment extends Fragment {
                 String getFoodQty = addFoodQty.getText().toString().trim();
                 String getFoodTitle = addFoodTitle.getText().toString().trim();
                 String getFoodCost = addFoodCost.getText().toString().trim();
-                if (getFoodCost.equals("") || getFoodQty.equals("") || getFoodTitle.equals("")) {
+                String getFoodTitleEnglish = food_item_title_english.getText().toString().trim();
+                if (getFoodCost.equals("") || getFoodQty.equals("") || getFoodTitle.equals("")
+                        || getFoodTitleEnglish.isEmpty()) {
                     alertDialogAddyourself.dismiss();
                     Toast.makeText(getContext(), "All fields are compulsory", Toast.LENGTH_SHORT).show();
                 } else {
@@ -430,7 +434,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                         alertDialogAddyourself.dismiss();
                         Toast.makeText(getContext(), "Cost/Qty cannot be zero!", Toast.LENGTH_SHORT).show();
                     } else {
-                        FinalBillModel model = new FinalBillModel(getFoodTitle, food_cost, food_qty);
+                        FinalBillModel model = new FinalBillModel(getFoodTitle, food_cost, food_qty, getFoodTitleEnglish);
                         addToFinalBill(model);
                     }
                 }

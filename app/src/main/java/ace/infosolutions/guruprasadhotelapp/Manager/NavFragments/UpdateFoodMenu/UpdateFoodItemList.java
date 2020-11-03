@@ -84,7 +84,8 @@ public class UpdateFoodItemList extends AppCompatActivity {
                         food_costString = food_cost.getText().toString().trim();
                         foodTitleEnglish = food_title_english.getText().toString().trim();
                         double foodCost;
-                        if (foodTitle.equals("") || food_costString.equals("") || foodTitleEnglish.equals("")) {
+                        if (foodTitle.equals("") || food_costString.equals("") //|| foodTitleEnglish.equals("")) {
+                        ) {
                             Toast.makeText(UpdateFoodItemList.this, "All fields are compulsory", Toast.LENGTH_SHORT).show();
                         } else {
                             foodCost = Double.parseDouble(food_costString);

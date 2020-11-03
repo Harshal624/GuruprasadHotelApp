@@ -307,14 +307,14 @@
         <item>आलु मेथी</item>
         <item>मेथीं मटर मसाला</item>
         <item>मशरूम काजु मसाला</item>
-        <item>पिटल</item>
+        <item>पिटल</item>-
         <item>व्हेज जालफ्रायजी</item>
         <item>व्हेज जयपुरी</item>
-        <item>मलई कोप्ता</item>
-        <item>व्हेज नवरत्न कूर्मा</item>
-        <item>व्हेज हैद्राबादी</item>
-        <item>मशरूम मसाला</item>
-        <item>व्हेज भुना</item>
+        <item>मलई कोप्ता</item>-
+        <item>व्हेज नवरत्न कूर्मा</item>-
+        <item>व्हेज हैद्राबादी</item>-
+        <item>मशरूम मसाला</item>-
+        <item>व्हेज भुना</item>-
     </string-array>
     <string-array name="veg_maincourse_cost">
         <item>140</item>
@@ -451,7 +451,7 @@
         <item>मटण हंडी फुल</item>
         <item>मटण मालवणी हंडी हाफ</item>
         <item>मटण मालवणी हंडी फुल</item>
-        <item>मटण सुखा </item>
+        <item>मटण सुखा</item>
         <item>मटण मराठा हंडी हाफ</item>
         <item>मटण मराठा हंडी फुल</item>
         <item>मटण महाराणी</item>

@@ -27,6 +27,16 @@
             android:inputType="text" />
     </LinearLayout>
 
+    <EditText
+        android:id="@+id/food_item_title_english"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:gravity="center"
+        android:hint="Enter food name(English)"
+        android:maxLength="12" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

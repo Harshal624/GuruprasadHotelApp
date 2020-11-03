@@ -22,10 +22,9 @@
             app:contentScrim="@color/colorPrimary">
 
             <ImageView
+                android:id="@+id/foodmenuimage"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_250sdp"
-                android:background="@drawable/foodmenuback"
-                android:scaleType="fitXY" />
+                android:layout_height="@dimen/_200sdp" />
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"

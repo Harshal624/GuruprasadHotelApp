@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
 
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
@@ -34,8 +36,37 @@ public class UpdateFoodMenuFragment extends Fragment implements View.OnClickList
         ((Manager) getActivity()).toolbar.setTitle("Update Food Menu");
         FloatingActionButton view_cart = view.findViewById(R.id.view_cart);
         view_cart.setVisibility(View.GONE);
+        loadImages(view);
         castViews(view);
         return view;
+    }
+
+    private void loadImages(View view) {
+        ImageView foodback = view.findViewById(R.id.foodmenuimage);
+        Picasso.get().load(R.drawable.foodmenuback).fit().into(foodback);
+        ImageView starters = view.findViewById(R.id.starters);
+        Picasso.get().load(R.drawable.starters).fit().into(starters);
+
+        ImageView veg = view.findViewById(R.id.veg);
+        Picasso.get().load(R.drawable.veg).fit().into(veg);
+        ImageView nonveg = view.findViewById(R.id.nonveg);
+        Picasso.get().load(R.drawable.nonveg).fit().into(nonveg);
+
+        ImageView rice = view.findViewById(R.id.rice);
+        Picasso.get().load(R.drawable.rice).fit().into(rice);
+        ImageView papad = view.findViewById(R.id.papad2);
+        Picasso.get().load(R.drawable.papad).fit().into(papad);
+
+        ImageView roti = view.findViewById(R.id.roti2);
+        Picasso.get().load(R.drawable.roti).fit().into(roti);
+        ImageView soup = view.findViewById(R.id.soup2);
+        Picasso.get().load(R.drawable.soup).fit().into(soup);
+
+        ImageView salad2 = view.findViewById(R.id.salad2);
+        Picasso.get().load(R.drawable.salad).fit().into(salad2);
+
+        ImageView springroll2 = view.findViewById(R.id.springroll2);
+        Picasso.get().load(R.drawable.springroll).fit().into(springroll2);
     }
 
     @Override
