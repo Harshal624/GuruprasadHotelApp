@@ -166,6 +166,9 @@ public class UpdateFishPricesFragment extends Fragment {
                 enter_title_english.setText(null);
                 FoodMenuModel foodMenuModel = documentSnapshot.toObject(FoodMenuModel.class);
                 fish_doc_id = documentSnapshot.getId();
+                enter_cost.setHint(String.valueOf(foodMenuModel.getItem_cost()));
+                enter_title.setHint(foodMenuModel.getItem_title());
+                enter_title_english.setHint(foodMenuModel.getItem_title_english());
                 String fish_title = foodMenuModel.getItem_title();
                 alertDialog.setTitle(fish_title);
                 if (conn.haveNetworkConnection())

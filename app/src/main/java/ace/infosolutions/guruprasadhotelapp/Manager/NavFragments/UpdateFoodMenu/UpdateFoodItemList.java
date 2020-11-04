@@ -66,6 +66,7 @@ public class UpdateFoodItemList extends AppCompatActivity {
                 final EditText food_title = view2.findViewById(R.id.food_item_title);
                 final EditText food_cost = view2.findViewById(R.id.food_item_cost);
                 final EditText food_title_english = view2.findViewById(R.id.food_item_title_english);
+
                 alertDialog.setView(view2);
                 alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -190,6 +191,7 @@ public class UpdateFoodItemList extends AppCompatActivity {
                 final EditText food_title_english = view.findViewById(R.id.food_item_title_english);
                 food_title.setHint(snapshot.getString("item_title"));
                 food_cost.setHint(String.valueOf(snapshot.getDouble("item_cost")));
+                food_title_english.setHint(snapshot.getString("item_title_english"));
                 alertDialog.setView(view);
                 alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
                     @Override
