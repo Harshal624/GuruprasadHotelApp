@@ -619,7 +619,6 @@ public class ConfirmFinalBill extends AppCompatActivity {
     }
 
     private void updateItemQty(DocumentSnapshot snapshot, final int qty) {
-        //TODO UPDATE IN FINAL_BILL COST REMAINING
         progressBar.setVisibility(View.VISIBLE);
         final String id = snapshot.getId();
         double current_cost = snapshot.getDouble("item_cost");

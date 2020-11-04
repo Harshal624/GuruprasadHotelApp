@@ -51,8 +51,6 @@ public class FishListParcel extends AppCompatActivity implements ItemAlertDialog
     private FloatingActionButton check_cart;
     private ProgressBar progressBar;
 
-    //TODO FISH PARCEL REMAINING
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

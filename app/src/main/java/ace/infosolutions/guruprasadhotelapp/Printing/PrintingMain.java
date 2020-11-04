@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -58,7 +57,7 @@ public class PrintingMain extends Activity implements Runnable {
         }
     };
 
-    public static byte intToByteArray(int value) {
+   /* public static byte intToByteArray(int value) {
         byte[] b = ByteBuffer.allocate(4).putInt(value).array();
 
         for (int k = 0; k < b.length; k++) {
@@ -67,7 +66,7 @@ public class PrintingMain extends Activity implements Runnable {
         }
 
         return b[3];
-    }
+    }*/
 
     @Override
     public void onCreate(Bundle mSavedInstanceState) {
@@ -151,8 +150,13 @@ public class PrintingMain extends Activity implements Runnable {
         mDisc = (Button) findViewById(R.id.dis);
         mDisc.setOnClickListener(new View.OnClickListener() {
             public void onClick(View mView) {
-                if (mBluetoothAdapter != null)
+                if (mBluetoothAdapter != null) {
                     mBluetoothAdapter.disable();
+                    Toast.makeText(PrintingMain.this, "Disconnected", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PrintingMain.this, "Device is not connected", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -368,7 +372,6 @@ public class PrintingMain extends Activity implements Runnable {
 
     @Override
     protected void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
         try {
             if (mBluetoothSocket != null)
@@ -459,11 +462,11 @@ public class PrintingMain extends Activity implements Runnable {
         }
     }
 
-    public byte[] sel(int val) {
+  /*  public byte[] sel(int val) {
         ByteBuffer buffer = ByteBuffer.allocate(2);
         buffer.putInt(val);
         buffer.flip();
         return buffer.array();
-    }
+    }*/
 }
 
