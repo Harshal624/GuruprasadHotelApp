@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -28,7 +27,7 @@ public class DeviceListActivity extends Activity {
                 mBluetoothAdapter.cancelDiscovery();
                 String mDeviceInfo = ((TextView) mView).getText().toString();
                 String mDeviceAddress = mDeviceInfo.substring(mDeviceInfo.length() - 17);
-                Log.v(TAG, "Device_Address " + mDeviceAddress);
+                //Log.v(TAG, "Device_Address " + mDeviceAddress);
 
                 Bundle mBundle = new Bundle();
                 mBundle.putString("DeviceAddress", mDeviceAddress);

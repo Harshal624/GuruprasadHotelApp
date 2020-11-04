@@ -94,7 +94,7 @@ public class PrintingMain extends Activity implements Runnable {
             public void onClick(View mView) {
                 mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                 if (mBluetoothAdapter == null) {
-                    Toast.makeText(PrintingMain.this, "Message1", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PrintingMain.this, "Unavailable", Toast.LENGTH_SHORT).show();
                 } else {
                     if (!mBluetoothAdapter.isEnabled()) {
                         Intent enableBtIntent = new Intent(
