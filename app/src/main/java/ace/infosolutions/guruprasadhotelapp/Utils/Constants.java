@@ -36,4 +36,8 @@ public interface Constants {
     String SpringRolls = "SpringRolls";
 
     String PARCELS = "PARCELS";
+
+
+    String SP_PRINTER_NAME = "SP_PRINTER_NAME";
+    String SP_PRINTER = "SP_PRINTER";
 }

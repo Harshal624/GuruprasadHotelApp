@@ -52,8 +52,8 @@
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/manager_pin"
-                    android:icon="@drawable/ic_password"
-                    android:title="Change Manager PIN" />
+                    android:icon="@drawable/ic_settings"
+                    android:title="Manager settings" />
             </group>
         </menu>
     </item>

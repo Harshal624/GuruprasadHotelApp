@@ -1,12 +1,18 @@
 package ace.infosolutions.guruprasadhotelapp.Captain;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
@@ -18,20 +24,24 @@ import ace.infosolutions.guruprasadhotelapp.Captain.ui.main.SectionsPagerAdapter
 import ace.infosolutions.guruprasadhotelapp.MainActivity;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 
 public class CaptainMainFragment extends AppCompatActivity {
-    private Toolbar toolbar;
     FirebaseAuth firebaseAuth;
+    private Toolbar toolbar;
     private String MANAGER_UID;
     private String currentUID;
     private long backPressedTime;
     private Toast backToast;
+    private SharedPreferences printerSharedPref;
+    private String printerString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_captain_main_fragment);
         firebaseAuth = FirebaseAuth.getInstance();
+        printerSharedPref = getSharedPreferences(Constants.SP_PRINTER, MODE_PRIVATE);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         currentUID = firebaseAuth.getUid();
         MANAGER_UID = this.getResources().getString(R.string.MANAGER_UID);
@@ -49,7 +59,7 @@ public class CaptainMainFragment extends AppCompatActivity {
     public void onBackPressed() {
         if (currentUID.equals(MANAGER_UID)) {
             finishAffinity();
-            startActivity(new Intent(getApplicationContext(), Manager.class));
+            startActivity(new Intent(CaptainMainFragment.this, Manager.class));
             overridePendingTransition(0, 0);
         } else {
             if (backPressedTime + 2000 > System.currentTimeMillis()) {
@@ -79,8 +89,43 @@ public class CaptainMainFragment extends AppCompatActivity {
         if (item.getItemId() == R.id.signout) {
             firebaseAuth.signOut();
             finishAffinity();
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(CaptainMainFragment.this, MainActivity.class));
             overridePendingTransition(0, 0);
+        } else if (item.getItemId() == R.id.printerName) {
+            printerString = printerSharedPref.getString(Constants.SP_PRINTER_NAME, "");
+            AlertDialog.Builder builder = new AlertDialog.Builder(CaptainMainFragment.this);
+            final AlertDialog alertDialog = builder.create();
+            View view = LayoutInflater.from(CaptainMainFragment.this).inflate(R.layout.printer_name_alertdialog, null);
+            final EditText printerName = view.findViewById(R.id.printername);
+            try {
+                printerName.setHint(printerString);
+            } catch (NullPointerException e) {
+                printerName.setHint("Enter printer name");
+            }
+            alertDialog.setView(view);
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    String inputString = printerName.getText().toString().trim();
+                    if (inputString.isEmpty()) {
+                        printerName.setError("Empty");
+                    } else {
+                        SharedPreferences.Editor editor = printerSharedPref.edit();
+                        editor.putString(Constants.SP_PRINTER_NAME, inputString);
+                        editor.commit();
+                        Toast.makeText(CaptainMainFragment.this, "" +
+                                "Confirmed", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
+                    }
+                }
+            });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    alertDialog.dismiss();
+                }
+            });
+            alertDialog.show();
         }
         return super.onOptionsItemSelected(item);
     }

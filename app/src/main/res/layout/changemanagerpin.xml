@@ -8,16 +8,16 @@
         android:id="@+id/oldpin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
         android:ems="10"
+        android:drawableStart="@drawable/ic_password"
+        android:gravity="center"
         android:hint="Enter old PIN"
         android:inputType="numberPassword"
         android:maxLength="4"
-        android:drawableStart="@drawable/ic_password"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
         app:layout_constraintVertical_bias="0.2"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.5" />
@@ -62,13 +62,13 @@
 
     <Button
         android:id="@+id/confirmpin"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/_100sdp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
         android:background="@drawable/circular_imgbutton_confirm"
         android:elevation="@dimen/_3sdp"
         android:text="Confirm"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newpinconfirm"
@@ -87,6 +87,65 @@
         app:layout_constraintBottom_toTopOf="@+id/confirmpin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:drawableStart="@drawable/ic_password"
+        android:drawablePadding="@dimen/_20sdp"
+        android:text="PIN Settings"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:drawableStart="@drawable/ic_print_grey"
+        android:drawablePadding="@dimen/_20sdp"
+        android:text="Printer Settings"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/confirmpin" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:background="@color/grey"
+        app:layout_constraintTop_toBottomOf="@+id/confirmpin" />
+
+    <EditText
+        android:id="@+id/printerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:ems="10"
+        android:hint="Enter printer name"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <Button
+        android:id="@+id/printerButton"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:background="@drawable/circular_imgbutton_confirm"
+        android:text="Confirm"
+        android:textColor="@color/white"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/printerName" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

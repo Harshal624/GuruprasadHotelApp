@@ -18,9 +18,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import ace.infosolutions.guruprasadhotelapp.Captain.CaptainMainFragment;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelFragment;
 import ace.infosolutions.guruprasadhotelapp.MainActivity;
-import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.ChangeManagerPin;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.CustomerListFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.History.HistoryFragment;
+import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.ManagerSettings;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.ParcelHistory.ParcelHistoryFragment;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.TallyExcel.TallyExcel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.UpdateFishPrices.UpdateFishPricesFragment;
@@ -141,7 +141,7 @@ public class Manager extends AppCompatActivity implements NavigationView.OnNavig
 
             case R.id.manager_pin:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                        , new ChangeManagerPin()).commit();
+                        , new ManagerSettings()).commit();
                 break;
 
             case R.id.update_foodmenu:
