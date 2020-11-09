@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 public class CalculateTallyExcel extends AppCompatActivity {
     private String type, date;
@@ -105,6 +107,21 @@ public class CalculateTallyExcel extends AppCompatActivity {
                 }
             }
         });
+        InternetConn conn = new InternetConn(this);
+        final TextView cashtotal = findViewById(R.id.cash_total);
+        if (conn.haveNetworkConnection()) {
+            downloadExcel.setEnabled(false);
+            cashtotal.setText("Calculating...");
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    double ctotal = grandtotal_sum - discounttotal_sum;
+                    cashtotal.setText("" + ctotal);
+                    downloadExcel.setEnabled(true);
+                }
+            }, 3000);
+        }
     }
 
 
@@ -424,14 +441,17 @@ public class CalculateTallyExcel extends AppCompatActivity {
         row_tracker = row_tracker + 2;
         row = sheet.createRow(row_tracker);
         row.createCell(0).setCellValue("Onlinetotal");
-        row.createCell(1).setCellValue("Discounttotal");
-        row.createCell(2).setCellValue("Grandtotal");
+        row.createCell(1).setCellValue("Cashtotal");
+        row.createCell(2).setCellValue("Discounttotal");
+        row.createCell(3).setCellValue("Grandtotal");
 
         row_tracker = row_tracker + 1;
         row = sheet.createRow(row_tracker);
+        double cashtotal = grandtotal_sum - onlinetotal_sum;
         row.createCell(0).setCellValue(onlinetotal_sum);
-        row.createCell(1).setCellValue(discounttotal_sum);
-        row.createCell(2).setCellValue(grandtotal_sum);
+        row.createCell(1).setCellValue(cashtotal);
+        row.createCell(2).setCellValue(discounttotal_sum);
+        row.createCell(3).setCellValue(grandtotal_sum);
 
 
 
@@ -532,14 +552,17 @@ public class CalculateTallyExcel extends AppCompatActivity {
         row_tracker = row_tracker + 2;
         row = sheet.createRow(row_tracker);
         row.createCell(0).setCellValue("Onlinetotal");
-        row.createCell(1).setCellValue("Discounttotal");
-        row.createCell(2).setCellValue("Grandtotal");
+        row.createCell(1).setCellValue("Cashtotal");
+        row.createCell(2).setCellValue("Discounttotal");
+        row.createCell(3).setCellValue("Grandtotal");
 
         row_tracker = row_tracker + 1;
         row = sheet.createRow(row_tracker);
+        double cashtotal = grandtotal_sum - onlinetotal_sum;
         row.createCell(0).setCellValue(onlinetotal_sum);
-        row.createCell(1).setCellValue(discounttotal_sum);
-        row.createCell(2).setCellValue(grandtotal_sum);
+        row.createCell(1).setCellValue(cashtotal);
+        row.createCell(2).setCellValue(discounttotal_sum);
+        row.createCell(3).setCellValue(grandtotal_sum);
 
         sheet.setColumnWidth(0, (10 * 400));
         sheet.setColumnWidth(1, (10 * 500));

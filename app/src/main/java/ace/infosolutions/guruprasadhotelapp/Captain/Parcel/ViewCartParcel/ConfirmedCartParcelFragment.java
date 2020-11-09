@@ -54,9 +54,9 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.ParcelFinalBillPOJO;
 import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 
-import static ace.infosolutions.guruprasadhotelapp.Captain.ItemList.CURRENT_KOT;
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.SP_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill.DAILY;
@@ -819,12 +819,12 @@ public class ConfirmedCartParcelFragment extends Fragment {
                                                 }
                                             }
                                         });
-                                        db.collection(PARCELS).document(DOC_ID).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        db.collection(PARCELS).document(DOC_ID).collection(Constants.CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                                                        db.collection(PARCELS).document(DOC_ID).collection(CURRENT_KOT)
+                                                        db.collection(PARCELS).document(DOC_ID).collection(Constants.CURRENT_KOT)
                                                                 .document(snapshot.getId()).delete();
                                                     }
                                                 }

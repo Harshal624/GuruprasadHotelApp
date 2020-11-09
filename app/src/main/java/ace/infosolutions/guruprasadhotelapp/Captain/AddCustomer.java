@@ -194,7 +194,7 @@ public class AddCustomer extends AppCompatActivity {
         String date_arrived = number.generateDateOnly();
         String arrived_time = number.generateTimeOnly();
         int no_cust = noofcustNP.getValue();
-        CustomerInfo customerInfo = new CustomerInfo(table_noInt, no_cust, date_arrived, arrived_time, table_typeString, final_cost, current_cost, BILL_NO, 0.0, 0.0);
+        CustomerInfo customerInfo = new CustomerInfo(table_noInt, no_cust, date_arrived, arrived_time, table_typeString, final_cost, current_cost, BILL_NO, 0.0, 0.0, false);
 
         final DocumentReference reference = db.collection(CUSTOMERS).document();
         WriteBatch batch = db.batch();

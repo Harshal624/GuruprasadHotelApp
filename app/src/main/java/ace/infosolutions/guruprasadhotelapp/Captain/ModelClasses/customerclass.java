@@ -4,6 +4,18 @@ public class customerclass {
     private int table_no;
     private double confirmed_cost;
     private String table_type;
+    private boolean isconfirmed;
+
+    public customerclass(int table_no, double confirmed_cost, String table_type, boolean isonfirmed) {
+        this.table_no = table_no;
+        this.confirmed_cost = confirmed_cost;
+        this.table_type = table_type;
+        this.isconfirmed = isonfirmed;
+    }
+
+    public boolean isIsconfirmed() {
+        return isconfirmed;
+    }
 
     public customerclass() {
 

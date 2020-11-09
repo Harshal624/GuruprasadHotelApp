@@ -44,6 +44,7 @@ import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.OrderKOTPOJO;
 import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
@@ -55,9 +56,6 @@ import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.SP_PRINT_TYPE
 
 public class CurrentCartFragment extends Fragment {
 
-    public static final String CONFIRMED_KOT = "CONFIRMED_KOT";
-    private static final String CUSTOMERS = "CUSTOMERS";
-    private static final String CURRENT_KOT = "CURRENT_KOT";
     private SharedPreferences sharedPreferences;
     private String DOC_ID = "";
     private RecyclerView recyclerView;
@@ -86,8 +84,8 @@ public class CurrentCartFragment extends Fragment {
         printKOT = view.findViewById(R.id.printkot);
         progressBar = view.findViewById(R.id.progressbar);
         printOnly = view.findViewById(R.id.pribtonly);
-        customerRef = db.collection(CUSTOMERS);
-        currentRef = customerRef.document(DOC_ID).collection(CURRENT_KOT);
+        customerRef = db.collection(Constants.CUSTOMERS);
+        currentRef = customerRef.document(DOC_ID).collection(Constants.CURRENT_KOT);
         builder = new AlertDialog.Builder(getContext());
         alertDialog = builder.create();
         editQtyView = inflater.inflate(R.layout.editqtycurrentcart_alertdialog, null);
@@ -181,7 +179,7 @@ public class CurrentCartFragment extends Fragment {
                                                 FoodItemModel model = snapshot1.toObject(FoodItemModel.class);
                                                 DocumentReference reference = currentRef.document(snapshot1.getId());
                                                 DocumentReference reference1 = customerRef.document(DOC_ID)
-                                                        .collection(CONFIRMED_KOT).document();
+                                                        .collection(Constants.CONFIRMED_KOT).document();
                                                 batch.set(reference1, model);
                                                 batch.delete(reference);
                                             }
@@ -352,7 +350,7 @@ public class CurrentCartFragment extends Fragment {
 
 
     private void setUpRecyclerView() {
-        Query query = customerRef.document(DOC_ID).collection(CURRENT_KOT);
+        Query query = customerRef.document(DOC_ID).collection(Constants.CURRENT_KOT);
         FirestoreRecyclerOptions<ViewCartModel> viewcart = new FirestoreRecyclerOptions.Builder<ViewCartModel>()
                 .setQuery(query, ViewCartModel.class)
                 .build();

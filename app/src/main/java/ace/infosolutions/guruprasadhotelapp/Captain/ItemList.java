@@ -36,10 +36,10 @@ import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemAlertDialogListener {
-    public static final String CURRENT_KOT = "CURRENT_KOT";
-    public static final String PREF_DOCID = "PREF_DOCID";
-    public static final String DOC_ID_KEY = "DOC_ID_KEY";
-    private final String CUSTOMERS = "CUSTOMERS";
+    /*    public static final String CURRENT_KOT = "CURRENT_KOT";
+        public static final String PREF_DOCID = "PREF_DOCID";
+        public static final String DOC_ID_KEY = "DOC_ID_KEY";
+        private final String CUSTOMERS = "CUSTOMERS";*/
     private LinearLayoutManager linearLayoutManager;
     private RecyclerView recyclerView;
     private String type;
@@ -66,8 +66,8 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
         castViews();
 
         //Getting document id from sharedpref
-        sharedPreferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
-        DOC_ID = sharedPreferences.getString(DOC_ID_KEY, "");
+        sharedPreferences = getSharedPreferences(Constants.PREF_DOCID, Context.MODE_PRIVATE);
+        DOC_ID = sharedPreferences.getString(Constants.DOC_ID_KEY, "");
         //
         //getting the item type
         type = getIntent().getStringExtra("Type");
@@ -235,8 +235,8 @@ public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemA
     }
 
     private void addItemToDB(final FoodItemModel model, final double item_cost) {
-        final DocumentReference costRef = db.collection(CUSTOMERS).document(DOC_ID);
-        final DocumentReference addItemRef = db.collection(CUSTOMERS).document(DOC_ID).collection(CURRENT_KOT).document();
+        final DocumentReference costRef = db.collection(Constants.CUSTOMERS).document(DOC_ID);
+        final DocumentReference addItemRef = db.collection(Constants.CUSTOMERS).document(DOC_ID).collection(Constants.CURRENT_KOT).document();
         db.runTransaction(new Transaction.Function<Void>() {
             @Nullable
             @Override

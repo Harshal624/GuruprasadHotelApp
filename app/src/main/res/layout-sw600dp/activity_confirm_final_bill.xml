@@ -21,7 +21,7 @@
     <LinearLayout
         android:id="@+id/linearLayout15"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.23"
@@ -92,8 +92,9 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/_5sdp"
+            android:id="@+id/constraintLayout"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
 
@@ -166,8 +167,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.40"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout15" />
+        app:layout_constraintHeight_percent="0.5"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout15"
+        tools:layout_editor_absoluteX="0dp" />
 
     <View
         android:id="@+id/divider2"

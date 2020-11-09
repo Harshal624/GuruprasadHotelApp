@@ -2,13 +2,10 @@ package ace.infosolutions.guruprasadhotelapp.Captain;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -191,16 +188,16 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
                 break;
             //
             case R.id.roti:
-                gotolistActivity(Constants.Roti, "Roti", Constants.Roti);
+                gotolistActivity("roti", "Roti", Constants.Roti);
                 break;
             case R.id.soup:
-                gotolistActivity(Constants.Soup, "Soup", Constants.Soup);
+                gotolistActivity("soup", "Soup", Constants.Soup);
                 break;
             case R.id.papad:
-                gotolistActivity(Constants.Papad, "Papad", Constants.Papad);
+                gotolistActivity("papad", "Papad", Constants.Papad);
                 break;
             case R.id.raytasalad:
-                gotolistActivity(Constants.RaytaSalad, "Rayta & Salad", Constants.RaytaSalad);
+                gotolistActivity("raytasalad", "Rayta & Salad", Constants.RaytaSalad);
                 break;
         }
 
@@ -214,19 +211,5 @@ public class FoodMenu extends AppCompatActivity implements View.OnClickListener 
         startActivity(i);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu2, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.cancel_order) {
-            finishAffinity();
-            startActivity(new Intent(getApplicationContext(), CaptainMainFragment.class));
-            overridePendingTransition(0, 0);
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

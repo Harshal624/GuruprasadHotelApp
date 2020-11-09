@@ -35,16 +35,14 @@ import com.google.firebase.firestore.WriteBatch;
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.CustomerFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer.CUSTOMERS;
 import static ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer.TABLES;
-import static ace.infosolutions.guruprasadhotelapp.Captain.ItemList.CURRENT_KOT;
+
 
 public class OrderFragment extends Fragment {
-    public static final String PREF_DOCID = "PREF_DOCID";
-    public static final String DOC_ID_KEY = "DOC_ID_KEY";
-    private static final String TABLE_COLLECTION = "Tables";
     private FloatingActionButton add_customer;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection(CUSTOMERS);
@@ -68,7 +66,7 @@ public class OrderFragment extends Fragment {
         builder = new AlertDialog.Builder(getContext());
         internetConn = new InternetConn(getContext());
         progressBar = view.findViewById(R.id.orderfrag_progressbar);
-        sharedPreferences = getContext().getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
+        sharedPreferences = getContext().getSharedPreferences(Constants.PREF_DOCID, Context.MODE_PRIVATE);
         return view;
 
     }
@@ -94,7 +92,7 @@ public class OrderFragment extends Fragment {
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
                 String docid = documentSnapshot.getId();
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(DOC_ID_KEY, docid);
+                editor.putString(Constants.DOC_ID_KEY, docid);
                 editor.commit();
                 Intent i = new Intent(getContext(), FoodMenu.class);
                 startActivity(i);
@@ -105,15 +103,15 @@ public class OrderFragment extends Fragment {
             @Override
             public void onItemLongClick(final DocumentSnapshot documentSnapshot, final int pos) {
                 final InternetConn conn = new InternetConn(getContext());
-                builder.setTitle("Delete order!")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setTitle("Delete/Confirm order!")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 if (conn.haveNetworkConnection()) {
                                     final customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass.class);
                                     final String doc_id = documentSnapshot.getId();
                                     final String tableNo = String.valueOf(customerclass.getTable_no());
-                                    // progressBar.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(View.VISIBLE);
                                     // add_customer.setEnabled(false);
                                     final DocumentReference custRef = db.collection(CUSTOMERS).document(doc_id);
                                     final DocumentReference tableRef = db.collection(TABLES).document(customerclass.getTable_type());
@@ -125,6 +123,7 @@ public class OrderFragment extends Fragment {
                                             confirmed_cost = snapshot.getDouble("confirmed_cost");
                                             if (current_cost != 0.0 && confirmed_cost != 0.0) {
                                                 //delete current,confirmed_kot and parent
+                                                progressBar.setVisibility(View.GONE);
                                                 Toast.makeText(getContext(), "Cannot delete the order", Toast.LENGTH_SHORT).show();
                                             } else if (current_cost == 0.0 && confirmed_cost == 0.0) {
                                                 //delete parent only
@@ -135,6 +134,7 @@ public class OrderFragment extends Fragment {
 
                                             } else if (current_cost == 0.0 && confirmed_cost != 0.0) {
                                                 //delete confirmed_kot and parent
+                                                progressBar.setVisibility(View.GONE);
                                                 Toast.makeText(getContext(), "Cannot delete the order", Toast.LENGTH_SHORT).show();
                                             }
 
@@ -142,13 +142,13 @@ public class OrderFragment extends Fragment {
 
                                         private void deleteCurrentandParent() {
                                             final WriteBatch batch = db.batch();
-                                            custRef.collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            custRef.collection(Constants.CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                     if (task.isSuccessful()) {
                                                         for (QueryDocumentSnapshot snapshot : task.getResult()) {
                                                             //deleting current_kot collection contents
-                                                            batch.delete(custRef.collection(CURRENT_KOT).document(snapshot.getId()));
+                                                            batch.delete(custRef.collection(Constants.CURRENT_KOT).document(snapshot.getId()));
                                                         }
                                                         //deleting parent doc
                                                         batch.delete(custRef);
@@ -157,6 +157,7 @@ public class OrderFragment extends Fragment {
                                                         batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
+                                                                progressBar.setVisibility(View.GONE);
                                                                 Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
                                                             }
                                                         });
@@ -173,6 +174,7 @@ public class OrderFragment extends Fragment {
                                             batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
+                                                    progressBar.setVisibility(View.GONE);
                                                     Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
                                                 }
                                             });
@@ -189,8 +191,21 @@ public class OrderFragment extends Fragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
-                }).setMessage("Are you sure want to delete the order?")
-                        .setIcon(R.drawable.ic_delete);
+                }).setMessage("Choose the option");
+                builder.setNeutralButton("Confirm order", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String doc_id = documentSnapshot.getId();
+                        customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass.class);
+                        final String tablestring = customerclass.getTable_no() + " (" + customerclass.getTable_type() + ")";
+                        db.collection(CUSTOMERS).document(doc_id).update("isconfirmed", true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(getContext(), tablestring + " " + "confirmed", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
                 alertDialog = builder.create();
                 alertDialog.show();
             }

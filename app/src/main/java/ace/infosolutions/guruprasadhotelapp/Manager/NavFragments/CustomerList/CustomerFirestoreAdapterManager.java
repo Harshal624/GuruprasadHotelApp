@@ -1,5 +1,6 @@
-package ace.infosolutions.guruprasadhotelapp.Captain.Adapters;
+package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -17,7 +19,7 @@ import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 
-public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerclass, CustomerFirestoreAdapter.CustomerHolder> {
+public class CustomerFirestoreAdapterManager extends FirestoreRecyclerAdapter<customerclass, CustomerFirestoreAdapterManager.CustomerHolder> {
     private OnItemClickListener listener;
     private OnItemLongClickListener listener1;
     private View view;
@@ -25,7 +27,7 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
     private TextView nocustTV;
 
 
-    public CustomerFirestoreAdapter(@NonNull FirestoreRecyclerOptions<customerclass> options, View view) {
+    public CustomerFirestoreAdapterManager(@NonNull FirestoreRecyclerOptions<customerclass> options, View view) {
         super(options);
         this.view = view;
         nocustIV = view.findViewById(R.id.nocustIV);
@@ -36,6 +38,12 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
     protected void onBindViewHolder(@NonNull CustomerHolder holder, int position, @NonNull customerclass model) {
         holder.table_type.setText(model.getTable_type());
         double roundedDouble = Math.round(model.getConfirmed_cost() * 100.0) / 100.0;
+        Context context = holder.itemView.getContext();
+        if (model.isIsconfirmed()) {
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.tomatored));
+        } else {
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+        }
         holder.cost.setText("" + roundedDouble);
         holder.table_no.setText("" + model.getTable_no());
 
@@ -90,12 +98,14 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
         private TextView table_no;
         private TextView table_type;
         private TextView cost;
+        private CardView cardView;
 
         public CustomerHolder(@NonNull View itemView) {
             super(itemView);
             table_no = itemView.findViewById(R.id.tableno);
             cost = itemView.findViewById(R.id.cost);
             table_type = itemView.findViewById(R.id.tabletype);
+            cardView = itemView.findViewById(R.id.cardview);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

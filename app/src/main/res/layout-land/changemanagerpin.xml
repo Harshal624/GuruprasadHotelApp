@@ -8,17 +8,16 @@
         android:id="@+id/oldpin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_4sdp"
         android:layout_marginTop="@dimen/_20sdp"
-        android:ems="10"
         android:drawableStart="@drawable/ic_password"
+        android:ems="10"
         android:gravity="center"
         android:hint="Enter old PIN"
         android:inputType="numberPassword"
         android:maxLength="4"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4"
-        app:layout_constraintVertical_bias="0.2"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.5" />
 
@@ -26,15 +25,15 @@
         android:id="@+id/newpin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_4sdp"
         android:layout_marginTop="@dimen/_10sdp"
-        android:ems="10"
         android:drawableStart="@drawable/ic_password"
+        android:ems="10"
+        android:gravity="center"
         android:hint="Enter new PIN"
         android:inputType="numberPassword"
         android:maxLength="4"
-        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/oldpin"
         app:layout_constraintVertical_bias="0.0"
@@ -45,15 +44,15 @@
         android:id="@+id/newpinconfirm"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_4sdp"
         android:layout_marginTop="@dimen/_10sdp"
-        android:ems="10"
         android:drawableStart="@drawable/ic_confirm2"
+        android:ems="10"
         android:gravity="center"
         android:hint="Confirm new PIN"
         android:inputType="numberPassword"
         android:maxLength="4"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newpin"
         app:layout_constraintVertical_bias="0.0"
@@ -64,14 +63,14 @@
         android:id="@+id/confirmpin"
         android:layout_width="@dimen/_100sdp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_10sdp"
         android:background="@drawable/circular_imgbutton_confirm"
         android:elevation="@dimen/_3sdp"
         android:text="Confirm"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newpinconfirm"
+        app:layout_constraintStart_toEndOf="@+id/newpin"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.6" />
 
@@ -92,20 +91,15 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
         android:drawableStart="@drawable/ic_password"
         android:drawablePadding="@dimen/_20sdp"
         android:text="PIN Settings"
         android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.3"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-
-
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

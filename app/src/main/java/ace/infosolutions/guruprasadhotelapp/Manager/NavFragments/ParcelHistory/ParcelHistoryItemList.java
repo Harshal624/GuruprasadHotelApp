@@ -13,9 +13,9 @@ import com.google.firebase.firestore.Query;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBillFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.FinalBillModel;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 
 import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ConfirmedCartParcelFragment.PARCEL_HISTORY;
-import static ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.CurrentCartFragment.CONFIRMED_KOT;
 
 public class ParcelHistoryItemList extends AppCompatActivity {
     private String DOC_ID;
@@ -38,7 +38,7 @@ public class ParcelHistoryItemList extends AppCompatActivity {
 
     private void setUpRecyclerView() {
 
-        Query query = db.collection(PARCEL_HISTORY).document(DOC_ID).collection(CONFIRMED_KOT);
+        Query query = db.collection(PARCEL_HISTORY).document(DOC_ID).collection(Constants.CONFIRMED_KOT);
         FirestoreRecyclerOptions<FinalBillModel> viewcart = new FirestoreRecyclerOptions.Builder<FinalBillModel>()
                 .setQuery(query, FinalBillModel.class)
                 .build();

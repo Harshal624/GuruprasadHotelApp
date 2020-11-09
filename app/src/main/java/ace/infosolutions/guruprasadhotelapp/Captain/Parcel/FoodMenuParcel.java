@@ -2,20 +2,16 @@ package ace.infosolutions.guruprasadhotelapp.Captain.Parcel;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
-import ace.infosolutions.guruprasadhotelapp.Captain.CaptainMainFragment;
 import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FishList;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ViewCartParcel;
 import ace.infosolutions.guruprasadhotelapp.R;
@@ -187,19 +183,18 @@ public class FoodMenuParcel extends AppCompatActivity implements View.OnClickLis
                 break;
             //
             case R.id.roti:
-                gotolistActivity(Constants.Roti, "Roti", Constants.Roti);
+                gotolistActivity("roti", "Roti", Constants.Roti);
                 break;
             case R.id.soup:
-                gotolistActivity(Constants.Soup, "Soup", Constants.Soup);
+                gotolistActivity("soup", "Soup", Constants.Soup);
                 break;
             case R.id.papad:
-                gotolistActivity(Constants.Papad, "Papad", Constants.Papad);
+                gotolistActivity("papad", "Papad", Constants.Papad);
                 break;
             case R.id.raytasalad:
-                gotolistActivity(Constants.RaytaSalad, "Rayta & Salad", Constants.RaytaSalad);
+                gotolistActivity("raytasalad", "Rayta & Salad", Constants.RaytaSalad);
                 break;
         }
-
     }
 
     private void gotolistActivity(final String id, final String food_title, String COLL_NAME) {
@@ -208,21 +203,5 @@ public class FoodMenuParcel extends AppCompatActivity implements View.OnClickLis
         i.putExtra("TitleP", food_title);
         i.putExtra("CollName", COLL_NAME);
         startActivity(i);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu2, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.cancel_order) {
-            finishAffinity();
-            startActivity(new Intent(getApplicationContext(), CaptainMainFragment.class));
-            overridePendingTransition(0, 0);
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

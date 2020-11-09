@@ -10,12 +10,13 @@
         android:title="User"
         android:icon="@drawable/ic_signout"
         app:showAsAction="always"></item>
-
-    <item
-        android:id="@+id/printerName"
-        android:icon="@drawable/ic_print_white"
-        android:orderInCategory="200"
-        android:title="Printer"
-        app:showAsAction="always"></item>
+    <!--
+        <item
+            android:id="@+id/printerName"
+            android:icon="@drawable/ic_print_white"
+            android:orderInCategory="200"
+            android:title="Printer"
+            app:showAsAction="always"></item>
+            -->
 
 </menu>

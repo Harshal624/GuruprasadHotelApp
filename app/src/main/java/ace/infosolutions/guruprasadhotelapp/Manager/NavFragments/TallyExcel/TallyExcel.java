@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class TallyExcel extends Fragment {
@@ -45,6 +46,7 @@ public class TallyExcel extends Fragment {
         View view = inflater.inflate(R.layout.tally_excel, container, false);
         datePicker = view.findViewById(R.id.datePicker);
         calculate = view.findViewById(R.id.calculate);
+        ((Manager) getActivity()).toolbar.setTitle("Tally");
         radioGroup = view.findViewById(R.id.radiogroup);
         return view;
 

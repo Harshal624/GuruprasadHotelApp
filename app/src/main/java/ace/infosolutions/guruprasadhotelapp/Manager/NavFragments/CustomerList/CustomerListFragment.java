@@ -1,15 +1,11 @@
 package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,7 +28,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
-import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.CustomerFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.CustomerInfo;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
@@ -47,15 +42,12 @@ public class CustomerListFragment extends Fragment {
     private static final String CONFIRMED_KOT = "CONFIRMED_KOT";
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private CustomerFirestoreAdapter adapter;
+    private CustomerFirestoreAdapterManager adapter;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection(CUSTOMERS);
-    private AlertDialog alertDialog, pinAlert;
-    private View pinView;
+    private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
 
-    private ImageButton confirmpin, cancelpin;
-    private EditText enter_pin;
 
     @Nullable
     @Override
@@ -65,12 +57,6 @@ public class CustomerListFragment extends Fragment {
         recyclerView = view.findViewById(R.id.customerlist_recycler);
         layoutManager = new LinearLayoutManager(getContext());
         builder = new AlertDialog.Builder(getContext());
-        pinView = inflater.inflate(R.layout.pin_alertdialog, null);
-        pinAlert = builder.create();
-        confirmpin = pinView.findViewById(R.id.confirmpin);
-        cancelpin = pinView.findViewById(R.id.cancelpin);
-        enter_pin = pinView.findViewById(R.id.enter_pin);
-
         return view;
     }
 
@@ -79,18 +65,17 @@ public class CustomerListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         setupRecyclerview();
-        adapter.setOnItemClickListener(new CustomerFirestoreAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new CustomerFirestoreAdapterManager.OnItemClickListener() {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
-                setUpPinAlert(documentSnapshot);
-                pinAlert.setView(pinView);
-                pinAlert.setCancelable(true);
-                pinAlert.show();
-
+                String document_id = documentSnapshot.getId();
+                Intent intent = new Intent(getContext(), ConfirmFinalBill.class);
+                intent.putExtra("FinalDOCID", document_id);
+                startActivity(intent);
             }
         });
 
-        adapter.setOnItemLongClickListener(new CustomerFirestoreAdapter.OnItemLongClickListener() {
+        adapter.setOnItemLongClickListener(new CustomerFirestoreAdapterManager.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(DocumentSnapshot documentSnapshot, int pos) {
                 CustomerInfo customerInfo = documentSnapshot.toObject(CustomerInfo.class);
@@ -101,58 +86,6 @@ public class CustomerListFragment extends Fragment {
 
     }
 
-    private void setUpPinAlert(final DocumentSnapshot documentSnapshot) {
-        enter_pin.setText("");
-        enter_pin.requestFocus();
-        enter_pin.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                InputMethodManager keyboard =
-                        (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                keyboard.showSoftInput(enter_pin, 0);
-            }
-        }, 100);
-        confirmpin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (enter_pin.getText().toString().trim().equals("") || enter_pin.getText().toString().trim().equals(null)) {
-                    enter_pin.setError("Enter manager pin");
-                } else {
-                    int input_pin = Integer.parseInt(enter_pin.getText().toString().trim());
-                    verifyPin(input_pin);
-                }
-            }
-
-            private void verifyPin(final int input_pin) {
-                db.collection("MANAGERPIN").document("PIN").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            int manager_pin = task.getResult().getDouble("pin").intValue();
-                            if (input_pin == manager_pin) {
-                                pinAlert.dismiss();
-                                String document_id = documentSnapshot.getId();
-                                Intent intent = new Intent(getContext(), ConfirmFinalBill.class);
-                                intent.putExtra("FinalDOCID", document_id);
-                                startActivity(intent);
-
-                            } else {
-                                enter_pin.setError("Wrong Pin");
-                            }
-                        } else {
-                            Toast.makeText(getContext(), "Failed to verify pin", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
-        cancelpin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pinAlert.dismiss();
-            }
-        });
-    }
 
     private void setupAlertdialog(final DocumentSnapshot snapshot, final CustomerInfo customerInfo) {
         builder.setTitle("Delete order!")
@@ -308,7 +241,7 @@ public class CustomerListFragment extends Fragment {
         FirestoreRecyclerOptions<customerclass> cust = new FirestoreRecyclerOptions.Builder<customerclass>()
                 .setQuery(query, customerclass.class)
                 .build();
-        adapter = new CustomerFirestoreAdapter(cust, getView());
+        adapter = new CustomerFirestoreAdapterManager(cust, getView());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);

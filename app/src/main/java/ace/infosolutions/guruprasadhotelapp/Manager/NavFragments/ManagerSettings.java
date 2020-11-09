@@ -1,8 +1,6 @@
 package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -24,7 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
-import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.MANAGER_PIN;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PIN;
@@ -36,31 +33,31 @@ public class ManagerSettings extends Fragment {
     private DocumentReference managerPinRef =
             db.collection(MANAGER_PIN).document(PIN);
     private TextView wrongpin;
-    private SharedPreferences printerSharedPref;
-    private EditText printerName;
-    private Button printerButton;
+    //  private SharedPreferences printerSharedPref;
+    //   private EditText printerName;
+    //  private Button printerButton;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.changemanagerpin, container, false);
         ((Manager) getActivity()).toolbar.setTitle("Change PIN");
-        printerName = view.findViewById(R.id.printerName);
-        printerButton = view.findViewById(R.id.printerButton);
-        printerSharedPref = getContext().getSharedPreferences(Constants.SP_PRINTER, Context.MODE_PRIVATE);
+        // printerName = view.findViewById(R.id.printerName);
+        // printerButton = view.findViewById(R.id.printerButton);
+        //   printerSharedPref = getContext().getSharedPreferences(Constants.SP_PRINTER, Context.MODE_PRIVATE);
         old_pin = view.findViewById(R.id.oldpin);
         new_pin = view.findViewById(R.id.newpin);
         confirm = view.findViewById(R.id.confirmpin);
         new_pin_confirm = view.findViewById(R.id.newpinconfirm);
         wrongpin = view.findViewById(R.id.retry);
-        String printername = printerSharedPref.getString(Constants.SP_PRINTER_NAME, "");
-        try {
+        //   String printername = printerSharedPref.getString(Constants.SP_PRINTER_NAME, "");
+     /*   try {
             if (!printername.isEmpty()) {
                 printerName.setHint(printername);
             }
         } catch (NullPointerException e) {
             printerName.setHint("Enter printer name");
-        }
+        }*/
         return view;
     }
 
@@ -91,7 +88,7 @@ public class ManagerSettings extends Fragment {
             }
         });
 
-        printerButton.setOnClickListener(new View.OnClickListener() {
+       /* printerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String printerN = printerName.getText().toString().trim();
@@ -106,7 +103,7 @@ public class ManagerSettings extends Fragment {
                     Toast.makeText(getContext(), "Confirmed", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
     }
 
     private void changePin(String oldpinString, String newpinString) {

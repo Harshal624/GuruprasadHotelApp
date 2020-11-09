@@ -165,6 +165,7 @@
         android:id="@+id/final_bill_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.40"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout15" />
@@ -177,6 +178,7 @@
         app:layout_constraintTop_toBottomOf="@+id/final_bill_recycler" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

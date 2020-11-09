@@ -19,12 +19,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 
 public class ConfirmedCartFragment extends Fragment {
-    public static final String PREF_DOCID = "PREF_DOCID";
-    public static final String DOC_ID_KEY = "DOC_ID_KEY";
-    private static final String CUSTOMERS = "CUSTOMERS";
-    public static final String CONFIRMED_KOT = "CONFIRMED_KOT";
     private SharedPreferences sharedPreferences;
     private String DOC_ID = "";
     private ConfirmedCartCaptainAdapter adapter;
@@ -40,9 +37,9 @@ public class ConfirmedCartFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_confirmed);
         layoutManager = new LinearLayoutManager(getContext());
         db = FirebaseFirestore.getInstance();
-        sharedPreferences = getContext().getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
-        DOC_ID = sharedPreferences.getString(DOC_ID_KEY, "");
-        confirmedRef = db.collection(CUSTOMERS).document(DOC_ID).collection(CONFIRMED_KOT);
+        sharedPreferences = getContext().getSharedPreferences(Constants.PREF_DOCID, Context.MODE_PRIVATE);
+        DOC_ID = sharedPreferences.getString(Constants.DOC_ID_KEY, "");
+        confirmedRef = db.collection(Constants.CUSTOMERS).document(DOC_ID).collection(Constants.CONFIRMED_KOT);
         return view;
     }
 

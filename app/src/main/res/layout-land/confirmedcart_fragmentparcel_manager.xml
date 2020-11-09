@@ -1,193 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".Manager.NavFragments.CustomerList.ConfirmFinalBill">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/colorPrimary"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.08"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="Final Bill"
-        app:titleTextColor="@color/white" />
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/linearLayout15"
+        android:id="@+id/linearLayout6"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.24"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar2">
+        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/linearLayout4"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_4sdp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar2">
+            android:layout_weight="2"
+            android:paddingStart="@dimen/_3sdp"
+            android:paddingTop="@dimen/_3sdp"
+            android:text="Item"
+            android:textColor="@color/black"
+            android:textSize="10sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Table No:"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/final_billtableno"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Loading..."
-                android:textColor="@color/tomatored"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linearLayout5"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_4sdp"
-            android:layout_marginTop="@dimen/_3sdp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
+            android:layout_gravity="end"
+            android:layout_weight="0.8"
+            android:gravity="center"
+            android:paddingTop="@dimen/_3sdp"
+            android:paddingEnd="@dimen/_3sdp"
+            android:text="Qty"
+            android:textColor="@color/black"
+            android:textSize="10sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Table type:"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/final_billtabletype"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Loading..."
-                android:textColor="@color/tomatored"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/divider">
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Name"
-                android:layout_marginStart="@dimen/_5sdp"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.70" />
-
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Qty"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.65"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.1" />
-
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_5sdp"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="Cost"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.15" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey" />
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_weight="0.8"
+            android:gravity="end"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:text="Cost"
+            android:textColor="@color/black"
+            android:textSize="10sp" />
     </LinearLayout>
 
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@color/grey"
+        android:elevation="@dimen/_4sdp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout6" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_parcel_manager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.5"
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:background="@color/grey"
+        app:layout_constraintBottom_toBottomOf="@+id/recycler_parcel_manager" />
+
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progressbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/recycler_parcel_manager"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout15" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout6" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/final_bill_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout4"
+    <ImageView
+        android:id="@+id/empty_cartIV"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:src="@drawable/empty_cart"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/empty_cart"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.4"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout15" />
+        app:layout_constraintHorizontal_bias="0.465"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <View
-        android:id="@+id/divider2"
+    <TextView
+        android:id="@+id/empty_cart"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintTop_toBottomOf="@+id/final_bill_recycler" />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="There are no confirmed items!"
+        android:textColor="@color/grey"
+        android:textSize="25sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recycler_parcel_manager" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout4"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.28">
+        app:layout_constraintHeight_percent="0.4">
 
         <Button
             android:id="@+id/add_item"
@@ -198,7 +122,8 @@
             android:drawableStart="@drawable/ic_add"
             android:text="Add Item"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/final_billPrint"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/print"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_default="percent"
             app:layout_constraintHeight_percent="0.20"
@@ -207,7 +132,7 @@
             app:layout_constraintWidth_percent="0.45" />
 
         <Button
-            android:id="@+id/final_billPrint"
+            android:id="@+id/print"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/_4sdp"
@@ -216,6 +141,7 @@
             android:drawableStart="@drawable/ic_print_white"
             android:text="Print"
             android:textColor="@color/white"
+            android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/apply_discount"
             app:layout_constraintHeight_default="percent"
             app:layout_constraintHeight_percent="0.20"
@@ -232,6 +158,7 @@
             android:background="@drawable/custom_food_button"
             android:text="Apply Discount"
             android:textColor="@color/white"
+            android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/payment"
             app:layout_constraintHeight_default="percent"
             app:layout_constraintHeight_percent="0.20"
@@ -249,6 +176,7 @@
             android:drawableStart="@drawable/ic_payment"
             android:text="Payment"
             android:textColor="@color/white"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHeight_default="percent"
             app:layout_constraintHeight_percent="0.20"
@@ -264,7 +192,7 @@
             android:layout_marginBottom="@dimen/_4sdp"
             android:text="Discount:"
             android:textColor="@color/black"
-            android:textSize="15sp"
+            android:textSize="12sp"
             android:textStyle="italic"
             app:layout_constraintBottom_toTopOf="@+id/textView3"
             app:layout_constraintHeight_default="percent"
@@ -281,7 +209,7 @@
             android:layout_marginBottom="@dimen/_4sdp"
             android:text="Total:"
             android:textColor="@color/tomatored"
-            android:textSize="17sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHeight_default="percent"
@@ -298,11 +226,11 @@
             android:layout_marginBottom="@dimen/_4sdp"
             android:text="Subtotal:"
             android:textColor="@color/black"
-            android:textSize="15sp"
+            android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/textView"
             app:layout_constraintHeight_default="percent"
             app:layout_constraintHeight_percent="0.20"
-            app:layout_constraintStart_toEndOf="@+id/final_billPrint"
+            app:layout_constraintStart_toEndOf="@+id/print"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.22" />
 
@@ -311,7 +239,6 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="@dimen/_4sdp"
-            android:text="4141"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -326,8 +253,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="@dimen/_4sdp"
-            android:text="4141"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/total"
             app:layout_constraintEnd_toEndOf="parent"
@@ -346,12 +272,11 @@
             app:layout_constraintWidth_percent="0.55" />
 
         <TextView
-            android:id="@+id/final_billTotalCost"
+            android:id="@+id/total_cost"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="@dimen/_4sdp"
-            android:text="4141"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/discount"
             app:layout_constraintEnd_toEndOf="parent"

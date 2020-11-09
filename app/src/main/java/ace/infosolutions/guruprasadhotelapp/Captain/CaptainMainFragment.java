@@ -1,18 +1,12 @@
 package ace.infosolutions.guruprasadhotelapp.Captain;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
@@ -24,7 +18,6 @@ import ace.infosolutions.guruprasadhotelapp.Captain.ui.main.SectionsPagerAdapter
 import ace.infosolutions.guruprasadhotelapp.MainActivity;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
-import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 
 public class CaptainMainFragment extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
@@ -33,15 +26,15 @@ public class CaptainMainFragment extends AppCompatActivity {
     private String currentUID;
     private long backPressedTime;
     private Toast backToast;
-    private SharedPreferences printerSharedPref;
-    private String printerString;
+    //  private SharedPreferences printerSharedPref;
+    //  private String printerString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_captain_main_fragment);
         firebaseAuth = FirebaseAuth.getInstance();
-        printerSharedPref = getSharedPreferences(Constants.SP_PRINTER, MODE_PRIVATE);
+        //  printerSharedPref = getSharedPreferences(Constants.SP_PRINTER, MODE_PRIVATE);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         currentUID = firebaseAuth.getUid();
         MANAGER_UID = this.getResources().getString(R.string.MANAGER_UID);
@@ -91,7 +84,7 @@ public class CaptainMainFragment extends AppCompatActivity {
             finishAffinity();
             startActivity(new Intent(CaptainMainFragment.this, MainActivity.class));
             overridePendingTransition(0, 0);
-        } else if (item.getItemId() == R.id.printerName) {
+        } /*else if (item.getItemId() == R.id.printerName) {
             printerString = printerSharedPref.getString(Constants.SP_PRINTER_NAME, "");
             AlertDialog.Builder builder = new AlertDialog.Builder(CaptainMainFragment.this);
             final AlertDialog alertDialog = builder.create();
@@ -126,7 +119,7 @@ public class CaptainMainFragment extends AppCompatActivity {
                 }
             });
             alertDialog.show();
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 }

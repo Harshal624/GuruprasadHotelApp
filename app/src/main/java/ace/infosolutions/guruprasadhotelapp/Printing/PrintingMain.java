@@ -121,23 +121,6 @@ public class PrintingMain extends Activity implements Runnable {
                             OutputStream os = mBluetoothSocket
                                     .getOutputStream();
                             os.write(BILL.getBytes());
-                            //This is printer specific code you can comment ==== > Start
-
-                           /* // Setting height
-                            int gs = 29;
-                            os.write(intToByteArray(gs));
-                            int h = 180;//104
-                            os.write(intToByteArray(h));
-                            int n = 162;
-                            os.write(intToByteArray(n));
-
-                            // Setting Width
-                            int gs_width = 29;
-                            os.write(intToByteArray(gs_width));
-                            int w = 119;
-                            os.write(intToByteArray(w));
-                            int n_width = 2;
-                            os.write(intToByteArray(n_width));*/
                         } catch (Exception e) {
                             Log.e("MainActivity", "Exe ", e);
                         }
@@ -182,12 +165,12 @@ public class PrintingMain extends Activity implements Runnable {
 
             for (int i = 0; i < arrayList.size(); i++) {
                 String title = arrayList.get(i).getItem_title();
-                if (title.length() > MAX_NO_OF_CHAR) {
-                    title = title.substring(0, MAX_NO_OF_CHAR - 1);
+                if (title.length() > 11) {
+                    title = title.substring(0, 11);
                 } else {
                     int length = title.length();
-                    int flength = MAX_NO_OF_CHAR - length;
-                    for (int j = 0; j < flength - 1; j++) {
+                    int flength = 11 - length;
+                    for (int j = 0; j < flength; j++) {
                         title = title + " ";
                     }
                 }
@@ -208,6 +191,7 @@ public class PrintingMain extends Activity implements Runnable {
             BILL = BILL +
                     "------------------------------------------------\n";
             BILL = BILL + "\n\n";
+            // Log.e("BILLDESIGN",BILL);
         } else {
 
             BILL = "              GURPRASAD HOTEL\n" +
@@ -225,12 +209,12 @@ public class PrintingMain extends Activity implements Runnable {
 
             for (int i = 0; i < arrayList.size(); i++) {
                 String title = arrayList.get(i).getItem_title();
-                if (title.length() > MAX_NO_OF_CHAR) {
-                    title = title.substring(0, MAX_NO_OF_CHAR - 1);
+                if (title.length() > 11) {
+                    title = title.substring(0, 11);
                 } else {
                     int length = title.length();
-                    int flength = MAX_NO_OF_CHAR - length;
-                    for (int j = 0; j < flength - 1; j++) {
+                    int flength = 11 - length;
+                    for (int j = 0; j < flength; j++) {
                         title = title + " ";
                     }
                 }
@@ -251,6 +235,7 @@ public class PrintingMain extends Activity implements Runnable {
             BILL = BILL +
                     "------------------------------------------------\n";
             BILL = BILL + "\n\n";
+            //  Log.e("BILLDESIGN",BILL);
         }
     }
 
@@ -272,12 +257,12 @@ public class PrintingMain extends Activity implements Runnable {
 
         for (int i = 0; i < arrayList.size(); i++) {
             String title = arrayList.get(i).getItem_title();
-            if (title.length() > MAX_NO_OF_CHAR) {
-                title = title.substring(0, MAX_NO_OF_CHAR - 1);
+            if (title.length() > 11) {
+                title = title.substring(0, 11);
             } else {
                 int length = title.length();
                 int flength = MAX_NO_OF_CHAR - length;
-                for (int j = 0; j < flength - 1; j++) {
+                for (int j = 0; j < flength; j++) {
                     title = title + " ";
                 }
             }
@@ -298,6 +283,7 @@ public class PrintingMain extends Activity implements Runnable {
         BILL = BILL +
                 "------------------------------------------------\n";
         BILL = BILL + "\n\n";
+        // Log.e("BILLDESIGN",BILL);
     }
 
     private void createParcelKOT(ParcelKOTPOJO print) {
@@ -317,12 +303,12 @@ public class PrintingMain extends Activity implements Runnable {
 
         for (int i = 0; i < arrayList.size(); i++) {
             String title = arrayList.get(i).getItem_title();
-            if (title.length() > MAX_NO_OF_CHAR2) {
-                title = title.substring(0, MAX_NO_OF_CHAR2 - 1);
+            if (title.length() > 11) {
+                title = title.substring(0, 11);
             } else {
                 int length = title.length();
-                int flength = MAX_NO_OF_CHAR2 - length;
-                for (int j = 0; j < flength - 1; j++) {
+                int flength = 11 - length;
+                for (int j = 0; j < flength; j++) {
                     title = title + " ";
                 }
             }
@@ -333,6 +319,7 @@ public class PrintingMain extends Activity implements Runnable {
         BILL = BILL +
                 "---------------------------------------------\n";
         BILL = BILL + "\n\n";
+        // Log.e("BILLDESIGN",BILL);
     }
 
     private void createOrderKot(OrderKOTPOJO print) {
@@ -352,12 +339,12 @@ public class PrintingMain extends Activity implements Runnable {
 
         for (int i = 0; i < arrayList.size(); i++) {
             String title = arrayList.get(i).getItem_title();
-            if (title.length() > MAX_NO_OF_CHAR2) {
-                title = title.substring(0, MAX_NO_OF_CHAR2 - 1);
+            if (title.length() > 11) {
+                title = title.substring(0, 11);
             } else {
                 int length = title.length();
-                int flength = MAX_NO_OF_CHAR2 - length;
-                for (int j = 0; j < flength - 1; j++) {
+                int flength = 11 - length;
+                for (int j = 0; j < flength; j++) {
                     title = title + " ";
                 }
             }
@@ -368,6 +355,7 @@ public class PrintingMain extends Activity implements Runnable {
         BILL = BILL +
                 "---------------------------------------------\n";
         BILL = BILL + "\n\n";
+        // Log.e("BILLDESIGN",BILL);
     }
 
     @Override
