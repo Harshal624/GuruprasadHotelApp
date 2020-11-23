@@ -1,5 +1,6 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.Parcel;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -45,6 +47,13 @@ public class ParcelFirestoreAdapter extends FirestoreRecyclerAdapter<ParcelModel
         double roundedDouble = Math.round(model.getConfirmed_cost() * 100.0) / 100.0;
         holder.total_cost.setText("" + roundedDouble);
         holder.cust_name.setText("" + model.getCustomer_name());
+
+        Context context = holder.itemView.getContext();
+        if (model.isIsconfirmed()) {
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.tomatored));
+        } else {
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+        }
 
     }
 
@@ -97,12 +106,14 @@ public class ParcelFirestoreAdapter extends FirestoreRecyclerAdapter<ParcelModel
         private TextView cust_name;
         private TextView total_cost;
         private TextView parcel_type;
+        private CardView cardView;
 
         public CustomerHolder(@NonNull View itemView) {
             super(itemView);
             cust_name = itemView.findViewById(R.id.cust_name);
             total_cost = itemView.findViewById(R.id.parcel_cost);
             parcel_type = itemView.findViewById(R.id.parcel_type);
+            cardView = itemView.findViewById(R.id.cardview);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

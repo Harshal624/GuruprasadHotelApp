@@ -62,13 +62,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.63"
+        app:layout_constraintHeight_percent="0.6"
         app:layout_constraintTop_toBottomOf="@+id/view2" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="@dimen/_3sdp"
         android:background="@color/grey"
         app:layout_constraintBottom_toBottomOf="@+id/recycler_parcel_manager" />
 
@@ -107,6 +106,7 @@
         app:layout_constraintTop_toTopOf="@+id/recycler_parcel_manager" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout5"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

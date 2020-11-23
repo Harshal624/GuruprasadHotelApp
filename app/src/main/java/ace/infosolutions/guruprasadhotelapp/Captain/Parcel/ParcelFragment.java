@@ -38,13 +38,8 @@ import com.google.firebase.firestore.WriteBatch;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.SP_KEY;
 
 public class ParcelFragment extends Fragment {
-    private static final String PARCELS = "PARCELS";
-    private static final String CONFIRMED_KOT = "CONFIRMED_KOT";
-    private static final String CURRENT_KOT = "CURRENT_KOT";
     private FloatingActionButton addParcel;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -73,7 +68,7 @@ public class ParcelFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         addParcel = view.findViewById(R.id.parcelAdd);
         recyclerView = view.findViewById(R.id.recyclerViewParcel);
-        preferences = getContext().getSharedPreferences(SP_KEY, Context.MODE_PRIVATE);
+        preferences = getContext().getSharedPreferences(Constants.SP_KEY, Context.MODE_PRIVATE);
         layoutManager = new LinearLayoutManager(getContext());
         builder = new AlertDialog.Builder(getContext());
         alertDialog = builder.create();
@@ -142,7 +137,7 @@ public class ParcelFragment extends Fragment {
                                             pinAlert.dismiss();
                                             String parcel_id = documentSnapshot.getId();
                                             SharedPreferences.Editor editor = preferences.edit();
-                                            editor.putString(PARCEL_ID_KEY, parcel_id);
+                                            editor.putString(Constants.PARCEL_ID_KEY, parcel_id);
                                             editor.commit();
                                             startActivity(new Intent(getContext(), FoodMenuParcel.class));
                                         } else {
@@ -164,7 +159,7 @@ public class ParcelFragment extends Fragment {
                 } else {
                     String parcel_id = documentSnapshot.getId();
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(PARCEL_ID_KEY, parcel_id);
+                    editor.putString(Constants.PARCEL_ID_KEY, parcel_id);
                     editor.commit();
                     startActivity(new Intent(getContext(), FoodMenuParcel.class));
                 }
@@ -178,23 +173,34 @@ public class ParcelFragment extends Fragment {
                 //delete subcollections
                 //delete parent document
                 ParcelModel model = documentSnapshot.toObject(ParcelModel.class);
-                String cust_name = model.getCustomer_name();
-                alertDialog.setTitle("Delete Parcel");
+                final String cust_name = model.getCustomer_name();
+                alertDialog.setTitle("Delete/Confirm Parcel");
                 alertDialog.setIcon(R.drawable.parcel);
-                alertDialog.setMessage("Are you sure want to delete the parcel of " + cust_name + "?");
+                alertDialog.setMessage("Choose the option");
                 alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         alertDialog.dismiss();
                     }
                 });
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        db.collection(Constants.PARCELS).document(documentSnapshot.getId()).update("isconfirmed", true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(getContext(), "Parcel of " + cust_name + " is successfully confirmed", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String doc_id = documentSnapshot.getId();
-                        confRef = db.collection(PARCELS).document(doc_id).collection(CONFIRMED_KOT);
-                        currRef = db.collection(PARCELS).document(doc_id).collection(CURRENT_KOT);
-                        parcelRef = db.collection(PARCELS);
+                        confRef = db.collection(Constants.PARCELS).document(doc_id).collection(Constants.CONFIRMED_KOT);
+                        currRef = db.collection(Constants.PARCELS).document(doc_id).collection(Constants.CURRENT_KOT);
+                        parcelRef = db.collection(Constants.PARCELS);
                         checkCostandDelete(doc_id, pos);
                     }
                 });
@@ -324,7 +330,7 @@ public class ParcelFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        Query query = db.collection(PARCELS);
+        Query query = db.collection(Constants.PARCELS);
         FirestoreRecyclerOptions<ParcelModel> parcel = new FirestoreRecyclerOptions.Builder<ParcelModel>()
                 .setQuery(query, ParcelModel.class)
                 .build();

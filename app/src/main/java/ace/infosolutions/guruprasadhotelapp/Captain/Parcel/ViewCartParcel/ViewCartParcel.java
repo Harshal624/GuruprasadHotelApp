@@ -11,8 +11,6 @@ import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ui.mai
 import ace.infosolutions.guruprasadhotelapp.R;
 
 public class ViewCartParcel extends AppCompatActivity {
-    public static boolean isconfirmed = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

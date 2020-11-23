@@ -32,9 +32,9 @@ import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.CustomerInfo;
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
-import static ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer.TABLES;
 
 public class CustomerListFragment extends Fragment {
     private static final String CUSTOMERS = "CUSTOMERS";
@@ -104,7 +104,7 @@ public class CustomerListFragment extends Fragment {
 
     private void deleteCustomer(final DocumentSnapshot snapshot, final CustomerInfo customerInfo) {
         final String doc_id = snapshot.getId();
-        final DocumentReference TableRef = db.collection(TABLES).document(customerInfo.getTable_type());
+        final DocumentReference TableRef = db.collection(Constants.TABLES).document(customerInfo.getTable_type());
         final String table_no = String.valueOf(customerInfo.getTable_no());
         final DocumentReference parentRef = collectionReference.document(doc_id);
         collectionReference.document(doc_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

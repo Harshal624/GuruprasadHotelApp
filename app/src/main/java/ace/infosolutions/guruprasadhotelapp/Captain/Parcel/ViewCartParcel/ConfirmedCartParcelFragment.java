@@ -1,11 +1,16 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,9 +42,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.Transaction;
-import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelFragment;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelHistoryModel;
@@ -52,28 +59,20 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.OnlineTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.ParcelTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.ParcelFinalBillPOJO;
-import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.SP_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill.DAILY;
 import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill.GRANDTOTAL;
 import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill.MONTHLY;
 import static ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ConfirmFinalBill.TALLY;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.DISCOUNT_TALLY;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PrintingPOJOConstant;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.SP_PRINT_TYPE;
 
-public class ConfirmedCartParcelFragment extends Fragment {
-    public static final String PARCEL_HISTORY = "PARCEL_HISTORY";
-    public static final String ONLINETOTAL = "ONLINETOTAL";
-    private static final String PARCELS = "PARCELS";
-    private static final String CONFIRMED_KOT = "CONFIRMED_KOT";
+public class ConfirmedCartParcelFragment extends Fragment implements Runnable {
     GenerateNumber number = new GenerateNumber();
+    OutputStream mmOutputStream;
     private SharedPreferences sharedPreferences, sharedPreferences2;
     private String DOC_ID = "";
     private ConfirmedCartCaptainAdapter adapter;
@@ -89,31 +88,33 @@ public class ConfirmedCartParcelFragment extends Fragment {
     private AlertDialog paymentAlert;
     private AlertDialog.Builder builder;
     private String date_completed;
-
     //
     private double final_confirmed_cost, total_cost_final, discount_final;
     //
     private String date_arrived, time_arrived, time_completed, payment_mode;
     private boolean ishomedelivery;
     private String cust_address, customer_contact, customer_name;
-
     private View editqtyView, editTitleView, editCostView;
     private EditText editqtyET, editCostET, editTitleET;
     private AlertDialog alertDialogTitle, alertDialogCost, alertDialogQty, alertDialogDelete;
-
     private View addYourself;
     private EditText addFoodTitle, addFoodCost, addFoodQty;
     private AlertDialog alertDialogAddyourself;
-
     private Button add_item;
     private ProgressBar progressBar;
-
     //newly added subtotal,discount and total_cost
     private TextView discount_textview, total_cost_textview;
     private Button discount_button;
     private RadioButton type;
     private String discount_type = "Amount";
-
+    //
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothDevice bluetoothDevice;
+    private BluetoothSocket socket;
+    private UUID applicationUUID = UUID
+            .fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private String BILL;
+    //
 
     @Nullable
     @Override
@@ -122,6 +123,10 @@ public class ConfirmedCartParcelFragment extends Fragment {
         View view2 = inflater.inflate(R.layout.confirmedcart_fragmentparcel_manager, container, false);
         recyclerView = view.findViewById(R.id.recycler_confirmed);
         recyclerView2 = view2.findViewById(R.id.recycler_parcel_manager);
+
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothDevice = bluetoothAdapter.getRemoteDevice(Constants.DEVICE_ADDRESS);
 
         date_completed = number.generateDateOnly();
         time_completed = number.generateTimeOnly();
@@ -135,10 +140,10 @@ public class ConfirmedCartParcelFragment extends Fragment {
         paymentAlert = builder.create();
         db = FirebaseFirestore.getInstance();
         tallyRef = db.collection(TALLY);
-        sharedPreferences = getContext().getSharedPreferences(SP_KEY, Context.MODE_PRIVATE);
-        DOC_ID = sharedPreferences.getString(PARCEL_ID_KEY, "");
-        confirmedRef = db.collection(PARCELS).document(DOC_ID).collection(CONFIRMED_KOT);
-        parcelRef = db.collection(PARCELS);
+        sharedPreferences = getContext().getSharedPreferences(Constants.SP_KEY, Context.MODE_PRIVATE);
+        DOC_ID = sharedPreferences.getString(Constants.PARCEL_ID_KEY, "");
+        confirmedRef = db.collection(Constants.PARCELS).document(DOC_ID).collection(Constants.CONFIRMED_KOT);
+        parcelRef = db.collection(Constants.PARCELS);
 
 
         //payment alertdialog
@@ -176,6 +181,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
             addFoodQty.setHint("Enter quantity");
             addFoodTitle.setHint("Enter item name");
             alertDialogAddyourself = builder.create();
+
 
             return view2;
         } else {
@@ -329,13 +335,29 @@ public class ConfirmedCartParcelFragment extends Fragment {
                                                 ParcelFinalBillPOJO parcelFinalBillPOJO = new
                                                         ParcelFinalBillPOJO(bill_no, date, time, customer_name, customer_address, customer_contact
                                                         , subtotal, discount, total_cost_string, arrayList);
-                                                SharedPreferences.Editor editor = sharedPreferences2.edit();
+                                                setupBillString(arrayList, parcelFinalBillPOJO);
+
+                                                if (bluetoothAdapter == null) {
+                                                    Toast.makeText(getContext(), "Unavailable", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    if (!bluetoothAdapter.isEnabled()) {
+                                                        Intent enableBtIntent = new Intent(
+                                                                BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                                        startActivityForResult(enableBtIntent,
+                                                                2);
+                                                    } else {
+                                                        // Toast.makeText(getContext(), "Already accepted", Toast.LENGTH_SHORT).show();
+                                                        Thread thread = new Thread(ConfirmedCartParcelFragment.this);
+                                                        thread.start();
+                                                    }
+                                                }
+                                                /*SharedPreferences.Editor editor = sharedPreferences2.edit();
                                                 Gson gson = new Gson();
                                                 String json = gson.toJson(parcelFinalBillPOJO);
                                                 editor.putString(PrintingPOJOConstant, json);
                                                 editor.putString(SP_PRINT_TYPE, "parcel_bill");
                                                 editor.commit();
-                                                startActivity(new Intent(getContext(), PrintingMain.class));
+                                                startActivity(new Intent(getContext(), PrintingMain.class));*/
                                             }
                                         }
                                     }
@@ -397,6 +419,60 @@ public class ConfirmedCartParcelFragment extends Fragment {
         } else {
             setupRecyclerView();
         }
+    }
+
+    private void setupBillString(ArrayList<ViewCartModel> arrayList, ParcelFinalBillPOJO print) {
+        String time = print.getTime().substring(0, 5);
+        double sbtotal = Math.round(Double.parseDouble(print.getSubtotal()) * 100.0) / 100.0;
+        double dscount = Math.round(Double.parseDouble(print.getDiscount()) * 100.0) / 100.0;
+        double ttlcost = Math.round(Double.parseDouble(print.getTotal_cost()) * 100.0) / 100.0;
+        BILL = "              GURPRASAD HOTEL\n" +
+                "             Mahadevnagar,Islampur\n" +
+                "             Contact: 9890845408\n\n" +
+                "                    Date&Time:" + print.getDate() + " " + time + "\n " +
+                "                   BILL NO:" + print.getBill_no() + "\n " +
+                "                   Parcel to - " + print.getCustomer_name() + "\n ";
+        if (!print.getCustomer_address().isEmpty()) {
+            BILL = BILL + " Address: " + print.getCustomer_address() + "\n ";
+        }
+        BILL = BILL +
+                "-------------------------------------------\n";
+
+        BILL = BILL + String.format("%1$-10s %2$10s %3$10s %4$10s", " Item", "Qty", "Rate", "Total\n");
+        BILL = BILL +
+                "---------------------------------------------\n";
+
+        for (int i = 0; i < arrayList.size(); i++) {
+            String title = arrayList.get(i).getItem_title();
+            double rate = arrayList.get(i).getItem_cost() / arrayList.get(i).getItem_qty();
+            double roundedRate = Math.round(rate * 100.0) / 100.0;
+            double itemcst = Math.round(arrayList.get(i).getItem_cost() * 100.0) / 100.0;
+            if (title.length() > 11) {
+                title = title.substring(0, 11);
+            } else {
+                int length = title.length();
+                int flength = 11 - length;
+                for (int j = 0; j < flength; j++) {
+                    title = title + " ";
+                }
+            }
+            BILL = BILL + String.format("%1$-10s %2$10s %3$10s %4$10s", title, arrayList.get(i).getItem_qty(), roundedRate,
+                    itemcst + "\n");
+        }
+
+
+        BILL = BILL +
+                "---------------------------------------------\n";
+
+        BILL = BILL + "                            Subtotal:" + "" + sbtotal + "\n";
+        BILL = BILL + "                            Discount:" + "" + dscount + "\n";
+        BILL = BILL + "                     " +
+                "       Total Value:" + "" + ttlcost + "\n";
+
+        BILL = BILL +
+                "-----------Thank you for your visit-----------\n";
+        BILL = BILL + "\n";
+        //Log.e("BILLFORMAT",BILL);
     }
 
     private void setUpItemAddAlert() {
@@ -691,7 +767,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
     }
 
     private void setTotalCost() {
-        db.collection(PARCELS).document(DOC_ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection(Constants.PARCELS).document(DOC_ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -768,7 +844,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
     }
 
     private void confirmFinalBill() {
-        db.collection(PARCELS).document(DOC_ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection(Constants.PARCELS).document(DOC_ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -794,7 +870,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
             private void saveToHistory(String Bill_NO) {
                 ParcelHistoryModel model = new ParcelHistoryModel(Bill_NO, customer_name, customer_contact, ishomedelivery, cust_address,
                         final_confirmed_cost, discount_final, total_cost_final, date_arrived, date_completed, time_arrived, time_completed, payment_mode);
-                db.collection(PARCEL_HISTORY).add(model).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                db.collection(Constants.PARCEL_HISTORY).add(model).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
                         if (task.isSuccessful()) {
@@ -805,7 +881,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot snapshot : task.getResult()) {
                                             FinalBillModel model = snapshot.toObject(FinalBillModel.class);
-                                            db.collection(PARCEL_HISTORY).document(history_doc_id).collection(CONFIRMED_KOT)
+                                            db.collection(Constants.PARCEL_HISTORY).document(history_doc_id).collection(Constants.CONFIRMED_KOT)
                                                     .add(model);
                                         }
 
@@ -819,19 +895,19 @@ public class ConfirmedCartParcelFragment extends Fragment {
                                                 }
                                             }
                                         });
-                                        db.collection(PARCELS).document(DOC_ID).collection(Constants.CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        db.collection(Constants.PARCELS).document(DOC_ID).collection(Constants.CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                                                        db.collection(PARCELS).document(DOC_ID).collection(Constants.CURRENT_KOT)
+                                                        db.collection(Constants.PARCELS).document(DOC_ID).collection(Constants.CURRENT_KOT)
                                                                 .document(snapshot.getId()).delete();
                                                     }
                                                 }
                                             }
                                         });
 
-                                        db.collection(PARCELS).document(DOC_ID).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        db.collection(Constants.PARCELS).document(DOC_ID).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
@@ -861,13 +937,13 @@ public class ConfirmedCartParcelFragment extends Fragment {
         final String date_only = date_completed;
         final String month_only = date_completed.substring(3, 8);
 
-        tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        tallyRef.document(DAILY).collection(Constants.ONLINETOTAL).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     if (task.getResult().exists()) {
 
-                        final DocumentReference reference = tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only);
+                        final DocumentReference reference = tallyRef.document(DAILY).collection(Constants.ONLINETOTAL).document(date_only);
                         db.runTransaction(new Transaction.Function<Void>() {
                             @Nullable
                             @Override
@@ -886,7 +962,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                         });
                     } else {
                         OnlineTotalModel model = new OnlineTotalModel(total_cost_final, date_only);
-                        tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        tallyRef.document(DAILY).collection(Constants.ONLINETOTAL).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
@@ -899,13 +975,13 @@ public class ConfirmedCartParcelFragment extends Fragment {
             }
 
             private void addtoOnlineMonthly() {
-                tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                tallyRef.document(MONTHLY).collection(Constants.ONLINETOTAL).document(month_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             if (task.getResult().exists()) {
 
-                                final DocumentReference reference = tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only);
+                                final DocumentReference reference = tallyRef.document(MONTHLY).collection(Constants.ONLINETOTAL).document(month_only);
                                 //exists
                                 db.runTransaction(new Transaction.Function<Void>() {
                                     @Nullable
@@ -922,7 +998,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                             } else {
                                 //doesn't exist
                                 OnlineTotalModel model = new OnlineTotalModel(total_cost_final, month_only);
-                                tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only).set(model);
+                                tallyRef.document(MONTHLY).collection(Constants.ONLINETOTAL).document(month_only).set(model);
                             }
                         }
                     }
@@ -937,12 +1013,12 @@ public class ConfirmedCartParcelFragment extends Fragment {
         final String date_only = date_completed;
         final String month_only = date_completed.substring(3, 8);
 
-        tallyRef.document(DAILY).collection(PARCELS).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        tallyRef.document(DAILY).collection(Constants.PARCELS).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     if (task.getResult().exists()) {
-                        final DocumentReference reference = tallyRef.document(DAILY).collection(PARCELS).document(date_only);
+                        final DocumentReference reference = tallyRef.document(DAILY).collection(Constants.PARCELS).document(date_only);
                         db.runTransaction(new Transaction.Function<Void>() {
                             @Nullable
                             @Override
@@ -962,7 +1038,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
 
                     } else {
                         ParcelTotalModel model = new ParcelTotalModel(total_cost_final, date_only);
-                        tallyRef.document(DAILY).collection(PARCELS).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        tallyRef.document(DAILY).collection(Constants.PARCELS).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
@@ -975,12 +1051,12 @@ public class ConfirmedCartParcelFragment extends Fragment {
             }
 
             private void addtoParcelMonthly() {
-                tallyRef.document(MONTHLY).collection(PARCELS).document(month_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                tallyRef.document(MONTHLY).collection(Constants.PARCELS).document(month_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             if (task.getResult().exists()) {
-                                final DocumentReference reference = tallyRef.document(MONTHLY).collection(PARCELS).document(month_only);
+                                final DocumentReference reference = tallyRef.document(MONTHLY).collection(Constants.PARCELS).document(month_only);
                                 //exists
                                 db.runTransaction(new Transaction.Function<Void>() {
                                     @Nullable
@@ -996,7 +1072,7 @@ public class ConfirmedCartParcelFragment extends Fragment {
                             } else {
                                 //doesn't exist
                                 ParcelTotalModel model = new ParcelTotalModel(total_cost_final, month_only);
-                                tallyRef.document(MONTHLY).collection(PARCELS).document(month_only).set(model);
+                                tallyRef.document(MONTHLY).collection(Constants.PARCELS).document(month_only).set(model);
                             }
                         }
                     }
@@ -1152,4 +1228,54 @@ public class ConfirmedCartParcelFragment extends Fragment {
 
     }
 
+    @Override
+    public void run() {
+        try {
+            socket = bluetoothDevice
+                    .createRfcommSocketToServiceRecord(applicationUUID);
+            bluetoothAdapter.cancelDiscovery();
+            socket.connect();
+            mmOutputStream = socket.getOutputStream();
+            printReceipt();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void printReceipt() {
+        try {
+            mmOutputStream.write(BILL.getBytes());//Charset.forName("UTF-8")
+            mmOutputStream.write(new byte[]{0x1D, 0x56, 66, 0x00});
+
+        } catch (Exception e) {
+            //  Toast.makeText(getContext(), "Printer is still loading, try again...", Toast.LENGTH_SHORT).show();
+            //Log.e("MainActivity", "Exe ", e);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
+            Toast.makeText(getContext(), "Bluetooth turned on successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Denied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (bluetoothAdapter != null) {
+            bluetoothAdapter.cancelDiscovery();
+        }
+        try {
+            if (socket != null)
+                socket.close();
+        } catch (Exception e) {
+            Log.e("Tag", "Exe ", e);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.Adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -38,6 +40,12 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
         double roundedDouble = Math.round(model.getConfirmed_cost() * 100.0) / 100.0;
         holder.cost.setText("" + roundedDouble);
         holder.table_no.setText("" + model.getTable_no());
+        Context context = holder.itemView.getContext();
+        if (model.isIsconfirmed()) {
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.tomatored));
+        } else {
+            holder.cardView.setCardBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+        }
 
     }
 
@@ -90,12 +98,14 @@ public class CustomerFirestoreAdapter extends FirestoreRecyclerAdapter<customerc
         private TextView table_no;
         private TextView table_type;
         private TextView cost;
+        private CardView cardView;
 
         public CustomerHolder(@NonNull View itemView) {
             super(itemView);
             table_no = itemView.findViewById(R.id.tableno);
             cost = itemView.findViewById(R.id.cost);
             table_type = itemView.findViewById(R.id.tabletype);
+            cardView = itemView.findViewById(R.id.cardview);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

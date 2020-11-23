@@ -21,8 +21,8 @@ import com.google.firebase.firestore.Query;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelHistoryModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ConfirmedCartParcelFragment.PARCEL_HISTORY;
 
 public class ParcelHistoryFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -37,7 +37,7 @@ public class ParcelHistoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.parcel_history_fragment, container, false);
         recyclerView = view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(getContext());
-        phistoryRef = db.collection(PARCEL_HISTORY);
+        phistoryRef = db.collection(Constants.PARCEL_HISTORY);
         ((Manager) getActivity()).toolbar.setTitle("Parcel History");
         return view;
     }
@@ -59,8 +59,8 @@ public class ParcelHistoryFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        Query query = phistoryRef.orderBy("date_completed", Query.Direction.DESCENDING)//.orderBy(
-                //"time_completed", Query.Direction.DESCENDING)
+        Query query = phistoryRef.orderBy("date_completed", Query.Direction.DESCENDING).orderBy(
+                "time_completed", Query.Direction.DESCENDING)
                 ;
         FirestoreRecyclerOptions<ParcelHistoryModel> phistory = new FirestoreRecyclerOptions.Builder<ParcelHistoryModel>()
                 .setQuery(query, ParcelHistoryModel.class)

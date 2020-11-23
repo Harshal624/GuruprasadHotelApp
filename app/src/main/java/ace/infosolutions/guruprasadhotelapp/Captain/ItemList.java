@@ -36,10 +36,6 @@ import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 public class ItemList extends AppCompatActivity implements ItemAlertDialog.ItemAlertDialogListener {
-    /*    public static final String CURRENT_KOT = "CURRENT_KOT";
-        public static final String PREF_DOCID = "PREF_DOCID";
-        public static final String DOC_ID_KEY = "DOC_ID_KEY";
-        private final String CUSTOMERS = "CUSTOMERS";*/
     private LinearLayoutManager linearLayoutManager;
     private RecyclerView recyclerView;
     private String type;

@@ -3,7 +3,6 @@
     package="ace.infosolutions.guruprasadhotelapp">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -13,18 +12,17 @@
 
     <application
         android:allowBackup="true"
-        android:largeHeap="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Manager.NavFragments.TallyExcel.CalculateTallyExcel"></activity>
+        <activity android:name=".Manager.NavFragments.TallyExcel.CalcTallyMonthDay"></activity>
+        <activity android:name=".Manager.NavFragments.TallyExcel.CalculateTallyExcel" />
         <activity android:name=".Manager.NavFragments.UpdateFoodMenu.UpdateFoodItemList" />
         <activity android:name=".Manager.NavFragments.ParcelHistory.ParcelHistoryItemList" />
         <activity android:name=".Manager.NavFragments.History.HistoryItems" />
-        <activity android:name=".Printing.PrintingMain" />
-        <activity android:name=".Printing.DeviceListActivity" />
         <activity
             android:name=".Captain.Parcel.ViewCartParcel.ViewCartParcel"
             android:label="@string/title_activity_view_cart_parcel"

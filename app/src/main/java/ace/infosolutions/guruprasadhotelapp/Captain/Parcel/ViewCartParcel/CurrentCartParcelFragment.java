@@ -1,10 +1,15 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel;
 
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,32 +39,29 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
-import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ParcelFragment;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartFirestoreAdapter;
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartModel;
 import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.ParcelKOTPOJO;
-import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.SP_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PrintingPOJOConstant;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.SP_PRINT_TYPE;
 
-public class CurrentCartParcelFragment extends Fragment {
-    private static final String PARCELS = "PARCELS";
-    private static final String CURRENT_KOT = "CURRENT_KOT";
-    private static final String CONFIRMED_KOT = "CONFIRMED_KOT";
+public class CurrentCartParcelFragment extends Fragment implements Runnable {
+    private final String DEVICE_ADDRESS = "02:3D:EE:0D:CF:E8";
+    OutputStream mmOutputStream;
     private SharedPreferences sharedPreferences, sharedPreferences2;
     private String DOC_ID = "";
     private RecyclerView recyclerView;
@@ -74,16 +76,23 @@ public class CurrentCartParcelFragment extends Fragment {
     private EditText editQtyET;
     private Button printOnly;
     private ProgressBar progressBar;
-
     private GenerateNumber number = new GenerateNumber();
     private String kot_no;
+    //
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothDevice bluetoothDevice;
+    private BluetoothSocket socket;
+    private UUID applicationUUID = UUID
+            .fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private String BILL;
+    //
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.currentcart_fragment, container, false);
-        sharedPreferences = getContext().getSharedPreferences(SP_KEY, Context.MODE_PRIVATE);
-        DOC_ID = sharedPreferences.getString(PARCEL_ID_KEY, "");
+        sharedPreferences = getContext().getSharedPreferences(Constants.SP_KEY, Context.MODE_PRIVATE);
+        DOC_ID = sharedPreferences.getString(Constants.PARCEL_ID_KEY, "");
         recyclerView = view.findViewById(R.id.currentcart_recycler);
         sharedPreferences2 = getContext().getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
         layoutManager = new LinearLayoutManager(getContext());
@@ -92,13 +101,17 @@ public class CurrentCartParcelFragment extends Fragment {
         printOnly = view.findViewById(R.id.pribtonly);
         progressBar = view.findViewById(R.id.progressbar);
         printKOT = view.findViewById(R.id.printkot);
-        parcelRef = db.collection(PARCELS);
-        currentRef = db.collection(PARCELS).document(DOC_ID).collection(CURRENT_KOT);
+        parcelRef = db.collection(Constants.PARCELS);
+        currentRef = db.collection(Constants.PARCELS).document(DOC_ID).collection(Constants.CURRENT_KOT);
         builder = new AlertDialog.Builder(getContext());
         alertDialog = builder.create();
         editQtyView = inflater.inflate(R.layout.editqtycurrentcart_alertdialog, null);
         editQtyET = editQtyView.findViewById(R.id.edit_qty);
         alertdialogEditQty = builder.create();
+        //
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothDevice = bluetoothAdapter.getRemoteDevice(DEVICE_ADDRESS);
+        //
         return view;
     }
 
@@ -146,13 +159,21 @@ public class CurrentCartParcelFragment extends Fragment {
                                         if (!arrayList.isEmpty()) {
                                             ParcelKOTPOJO parcelKOTPOJO = new ParcelKOTPOJO(kot_no
                                                     , date_current, time_current, arrayList, cust_name);
-                                            SharedPreferences.Editor editor = sharedPreferences2.edit();
-                                            Gson gson = new Gson();
-                                            String json = gson.toJson(parcelKOTPOJO);
-                                            editor.putString(PrintingPOJOConstant, json);
-                                            editor.putString(SP_PRINT_TYPE, "parcel_kot");
-                                            editor.commit();
-                                            startActivity(new Intent(getContext(), PrintingMain.class));
+                                            setupBillString(arrayList, parcelKOTPOJO);
+                                            if (bluetoothAdapter == null) {
+                                                Toast.makeText(getContext(), "Unavailable", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                if (!bluetoothAdapter.isEnabled()) {
+                                                    Intent enableBtIntent = new Intent(
+                                                            BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                                    startActivityForResult(enableBtIntent,
+                                                            2);
+                                                } else {
+                                                    // Toast.makeText(getContext(), "Already accepted", Toast.LENGTH_SHORT).show();
+                                                    Thread thread = new Thread(CurrentCartParcelFragment.this);
+                                                    thread.start();
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -182,15 +203,15 @@ public class CurrentCartParcelFragment extends Fragment {
                                 InternetConn conn = new InternetConn(getContext());
                                 if (conn.haveNetworkConnection()) {
                                     final WriteBatch batch = db.batch();
-                                    parcelRef.document(DOC_ID).collection(CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    parcelRef.document(DOC_ID).collection(Constants.CURRENT_KOT).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                             if (task.isSuccessful()) {
                                                 ParcelFragment.isconfirmed = true;
                                                 for (QueryDocumentSnapshot snapshot : task.getResult()) {
                                                     FoodItemModel model = snapshot.toObject(FoodItemModel.class);
-                                                    DocumentReference reference = parcelRef.document(DOC_ID).collection(CURRENT_KOT).document(snapshot.getId());
-                                                    DocumentReference reference1 = parcelRef.document(DOC_ID).collection(CONFIRMED_KOT).document();
+                                                    DocumentReference reference = parcelRef.document(DOC_ID).collection(Constants.CURRENT_KOT).document(snapshot.getId());
+                                                    DocumentReference reference1 = parcelRef.document(DOC_ID).collection(Constants.CONFIRMED_KOT).document();
                                                     batch.set(reference1, model);
                                                     batch.delete(reference);
                                                 }
@@ -334,7 +355,7 @@ public class CurrentCartParcelFragment extends Fragment {
             private void deleteCurrentItem(final DocumentSnapshot documentSnapshot, int position) {
                 progressBar.setVisibility(View.VISIBLE);
                 String current_kotdocid = documentSnapshot.getId();
-                final DocumentReference currentKOTRef = parcelRef.document(DOC_ID).collection(CURRENT_KOT).document(current_kotdocid);
+                final DocumentReference currentKOTRef = parcelRef.document(DOC_ID).collection(Constants.CURRENT_KOT).document(current_kotdocid);
                 final DocumentReference parentRef = parcelRef.document(DOC_ID);
                 //
                 db.runTransaction(new Transaction.Function<Void>() {
@@ -363,8 +384,42 @@ public class CurrentCartParcelFragment extends Fragment {
         });
     }
 
+    private void setupBillString(ArrayList<ViewCartModel> arrayList, ParcelKOTPOJO print) {
+        String time = print.getTime().substring(0, 5);
+        BILL = "              GURPRASAD HOTEL\n" +
+                "                    Date&Time:" + print.getDate() + " " + time + "\n " +
+                "                   KOT NO:" + print.getKot_no() + "\n " +
+                "                   Parcel - " + print.getCustomer_name() + "\n ";
+        BILL = BILL +
+                "-------------------------------------------\n";
+
+        BILL = BILL + String.format("%1$-10s %2$5s %3$10s", "Item", "               ", "Qty" + "\n");
+        BILL = BILL +
+                "---------------------------------------------\n";
+
+        for (int i = 0; i < arrayList.size(); i++) {
+            String title = arrayList.get(i).getItem_title();
+            if (title.length() > 11) {
+                title = title.substring(0, 11);
+            } else {
+                int length = title.length();
+                int flength = 11 - length;
+                for (int j = 0; j < flength; j++) {
+                    title = title + " ";
+                }
+            }
+            BILL = BILL + String.format("%1$-5s %2$5s %3$10s", title, "               ", arrayList.get(i).getItem_qty() + "\n");
+        }
+
+
+        BILL = BILL +
+                "---------------------------------------------\n";
+        BILL = BILL + "\n\n";
+        //Log.e("BILLFORMAT",BILL);
+    }
+
     private void setUpRecyclerView() {
-        Query query = parcelRef.document(DOC_ID).collection(CURRENT_KOT);
+        Query query = parcelRef.document(DOC_ID).collection(Constants.CURRENT_KOT);
         FirestoreRecyclerOptions<ViewCartModel> viewcart = new FirestoreRecyclerOptions.Builder<ViewCartModel>()
                 .setQuery(query, ViewCartModel.class)
                 .build();
@@ -384,5 +439,54 @@ public class CurrentCartParcelFragment extends Fragment {
     public void onStop() {
         super.onStop();
         adapter.stopListening();
+    }
+
+    @Override
+    public void run() {
+        try {
+            socket = bluetoothDevice
+                    .createRfcommSocketToServiceRecord(applicationUUID);
+            bluetoothAdapter.cancelDiscovery();
+            socket.connect();
+            mmOutputStream = socket.getOutputStream();
+            printReceipt();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void printReceipt() {
+        try {
+            mmOutputStream.write(BILL.getBytes());//Charset.forName("UTF-8")
+            mmOutputStream.write(new byte[]{0x1D, 0x56, 66, 0x00});
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (bluetoothAdapter != null) {
+            bluetoothAdapter.cancelDiscovery();
+        }
+        try {
+            if (socket != null)
+                socket.close();
+        } catch (Exception e) {
+            Log.e("Tag", "Exe ", e);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
+            Toast.makeText(getContext(), "Bluetooth turned on successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Denied", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -31,15 +31,11 @@ import ace.infosolutions.guruprasadhotelapp.Captain.Fish.FoodMenuModel;
 import ace.infosolutions.guruprasadhotelapp.Captain.ItemAlertDialog;
 import ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ViewCartParcel;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.SP_KEY;
 
 public class FishListParcel extends AppCompatActivity implements ItemAlertDialog.ItemAlertDialogListener {
-    private static final String FISH = "FISH";
-    private static final String CURRENT_KOT = "CURRENT_KOT";
-    private static final String PARCELS = "PARCELS";
     private RecyclerView recyclerView;
     private FishFirestoreAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -58,13 +54,13 @@ public class FishListParcel extends AppCompatActivity implements ItemAlertDialog
         check_cart = (FloatingActionButton) findViewById(R.id.check_cart);
         db = FirebaseFirestore.getInstance();
         progressBar = (ProgressBar) findViewById(R.id.progressbar_fish);
-        fishRef = db.collection(FISH);
+        fishRef = db.collection(Constants.FISH);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_fishmain);
         layoutManager = new LinearLayoutManager(this);
-        sharedPreferences = getSharedPreferences(SP_KEY, Context.MODE_PRIVATE);
-        doc_id = sharedPreferences.getString(PARCEL_ID_KEY, "");
-        currentRef = db.collection(PARCELS).document(doc_id).collection(CURRENT_KOT);
-        parcelRef = db.collection(PARCELS);
+        sharedPreferences = getSharedPreferences(Constants.SP_KEY, Context.MODE_PRIVATE);
+        doc_id = sharedPreferences.getString(Constants.PARCEL_ID_KEY, "");
+        currentRef = db.collection(Constants.PARCELS).document(doc_id).collection(Constants.CURRENT_KOT);
+        parcelRef = db.collection(Constants.PARCELS);
 
         setUpRecyclerView();
         hideViewCartButton();

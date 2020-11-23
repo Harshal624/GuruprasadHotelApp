@@ -31,6 +31,13 @@ public interface Constants {
     String SpringRolls = "SpringRolls";
 
     String PARCELS = "PARCELS";
+    String TABLES = "Tables";
+    String SP_KEY = "SP_KEY";
+    String PARCEL_ID_KEY = "PARCEL_ID_KEY";
+    String ONLINETOTAL = "ONLINETOTAL";
+    String PARCEL_HISTORY = "PARCEL_HISTORY";
+    String DEVICE_ADDRESS = "02:3D:EE:0D:CF:E8";
+
 
 
     String SP_PRINTER_NAME = "SP_PRINTER_NAME";

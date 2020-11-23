@@ -26,8 +26,6 @@ public class CaptainMainFragment extends AppCompatActivity {
     private String currentUID;
     private long backPressedTime;
     private Toast backToast;
-    //  private SharedPreferences printerSharedPref;
-    //  private String printerString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

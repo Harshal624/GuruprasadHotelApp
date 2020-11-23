@@ -36,8 +36,6 @@ import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.PARCEL_ID_KEY;
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.AddParcel.SP_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.CURRENT_KOT;
 
 public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog.ItemAlertDialogListener {
@@ -73,8 +71,8 @@ public class ItemListParcel extends AppCompatActivity implements ItemAlertDialog
         check_cart = findViewById(R.id.check_cart);
 
         //Getting document id from sharedpref
-        sharedPreferences = getSharedPreferences(SP_KEY, Context.MODE_PRIVATE);
-        PARCEL_ID = sharedPreferences.getString(PARCEL_ID_KEY, "");
+        sharedPreferences = getSharedPreferences(Constants.SP_KEY, Context.MODE_PRIVATE);
+        PARCEL_ID = sharedPreferences.getString(Constants.PARCEL_ID_KEY, "");
         currentRef = db.collection(Constants.PARCELS).document(PARCEL_ID).collection(CURRENT_KOT);
         parcelRef = db.collection(Constants.PARCELS);
         //

@@ -1,10 +1,15 @@
 package ace.infosolutions.guruprasadhotelapp.Captain.ViewCart;
 
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,15 +39,16 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
-import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.Adapters.FoodItemModel;
 import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.OrderKOTPOJO;
-import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
@@ -50,11 +56,9 @@ import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.DOC_ID_KEY;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PrintingPOJOConstant;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.SP_PRINT_TYPE;
 
 
-public class CurrentCartFragment extends Fragment {
+public class CurrentCartFragment extends Fragment implements Runnable {
 
     private SharedPreferences sharedPreferences;
     private String DOC_ID = "";
@@ -71,6 +75,16 @@ public class CurrentCartFragment extends Fragment {
     private EditText editQtyET;
 
     private ProgressBar progressBar;
+
+    private final String DEVICE_ADDRESS = "02:3D:EE:0D:CF:E8";
+    OutputStream mmOutputStream;
+    //
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothDevice bluetoothDevice;
+    private BluetoothSocket socket;
+    private UUID applicationUUID = UUID
+            .fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private String BILL;
 
     @Nullable
     @Override
@@ -91,8 +105,14 @@ public class CurrentCartFragment extends Fragment {
         editQtyView = inflater.inflate(R.layout.editqtycurrentcart_alertdialog, null);
         editQtyET = editQtyView.findViewById(R.id.edit_qty);
         alertdialogEditQty = builder.create();
+        //
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothDevice = bluetoothAdapter.getRemoteDevice(DEVICE_ADDRESS);
+        //
         return view;
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -137,13 +157,29 @@ public class CurrentCartFragment extends Fragment {
                                         }
                                         if (!arrayList.isEmpty()) {
                                             OrderKOTPOJO orderKOTPOJO = new OrderKOTPOJO(kot_no, date, time, arrayList, table_no, table_type);
+                                            setupBillString(arrayList, orderKOTPOJO);
+                                            if (bluetoothAdapter == null) {
+                                                Toast.makeText(getContext(), "Unavailable", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                if (!bluetoothAdapter.isEnabled()) {
+                                                    Intent enableBtIntent = new Intent(
+                                                            BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                                    startActivityForResult(enableBtIntent,
+                                                            2);
+                                                } else {
+                                                    // Toast.makeText(getContext(), "Already accepted", Toast.LENGTH_SHORT).show();
+                                                    Thread thread = new Thread(CurrentCartFragment.this);
+                                                    thread.start();
+                                                }
+                                            }
+                                           /* OrderKOTPOJO orderKOTPOJO = new OrderKOTPOJO(kot_no, date, time, arrayList, table_no, table_type);
                                             SharedPreferences.Editor editor = sharedPreferences.edit();
                                             Gson gson = new Gson();
                                             String json = gson.toJson(orderKOTPOJO);
                                             editor.putString(PrintingPOJOConstant, json);
                                             editor.putString(SP_PRINT_TYPE, "order_kot");
                                             editor.commit();
-                                            startActivity(new Intent(getContext(), PrintingMain.class));
+                                            startActivity(new Intent(getContext(), PrintingMain.class));*/
                                         }
                                     }
                                 }
@@ -204,7 +240,7 @@ public class CurrentCartFragment extends Fragment {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
                                                             progressBar.setVisibility(View.GONE);
-                                                            Toast.makeText(getContext(), "Confirmed", Toast.LENGTH_SHORT).show();
+                                                            //Toast.makeText(getContext(), "Confirmed", Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
 
@@ -318,6 +354,40 @@ public class CurrentCartFragment extends Fragment {
         });
     }
 
+    private void setupBillString(ArrayList<ViewCartModel> arrayList, OrderKOTPOJO print) {
+        String time = print.getTime().substring(0, 5);
+        BILL = "              GURPRASAD HOTEL\n" +
+                "                    Date&Time:" + print.getDate() + " " + time + "\n " +
+                "                   KOT NO:" + print.getKot_no() + "\n " +
+                "                   Table No:" + print.getTable_no() + " (" + print.getTable_type() + ")" + "\n ";
+        BILL = BILL +
+                "-------------------------------------------\n";
+
+        BILL = BILL + String.format("%1$-10s %2$5s %3$10s", "Item", "               ", "Qty" + "\n");
+        BILL = BILL +
+                "---------------------------------------------\n";
+
+        for (int i = 0; i < arrayList.size(); i++) {
+            String title = arrayList.get(i).getItem_title();
+            if (title.length() > 11) {
+                title = title.substring(0, 11);
+            } else {
+                int length = title.length();
+                int flength = 11 - length;
+                for (int j = 0; j < flength; j++) {
+                    title = title + " ";
+                }
+            }
+            BILL = BILL + String.format("%1$-5s %2$5s %3$10s", title, "             ", arrayList.get(i).getItem_qty() + "\n");
+        }
+
+
+        BILL = BILL +
+                "---------------------------------------------\n";
+        BILL = BILL + "\n\n";
+        Log.e("BILLFORMAT", BILL);
+    }
+
     private void deleteCurrentItem(final DocumentSnapshot documentSnapshot, final int position) {
         String current_kotdocid = documentSnapshot.getId();
         final DocumentReference currentKotRef = currentRef.document(current_kotdocid);
@@ -370,5 +440,55 @@ public class CurrentCartFragment extends Fragment {
     public void onStop() {
         super.onStop();
         adapter.stopListening();
+    }
+
+    @Override
+    public void run() {
+        try {
+            socket = bluetoothDevice
+                    .createRfcommSocketToServiceRecord(applicationUUID);
+            bluetoothAdapter.cancelDiscovery();
+            socket.connect();
+            mmOutputStream = socket.getOutputStream();
+            printReceipt();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void printReceipt() {
+        try {
+            mmOutputStream.write(BILL.getBytes());//Charset.forName("UTF-8")
+            mmOutputStream.write(new byte[]{0x1D, 0x56, 66, 0x00});
+
+        } catch (Exception e) {
+            //  Toast.makeText(getContext(), "Printer is still loading, try again...", Toast.LENGTH_SHORT).show();
+            //Log.e("MainActivity", "Exe ", e);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
+            Toast.makeText(getContext(), "Bluetooth turned on successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Denied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (bluetoothAdapter != null) {
+            bluetoothAdapter.cancelDiscovery();
+        }
+        try {
+            if (socket != null)
+                socket.close();
+        } catch (Exception e) {
+            Log.e("Tag", "Exe ", e);
+        }
     }
 }

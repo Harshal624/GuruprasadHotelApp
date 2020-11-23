@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +61,8 @@ public class CalculateTallyExcel extends AppCompatActivity {
     private double onlinetotal_sum = 0.0;
     private ImageButton downloadExcel;
 
+    private LinearLayout calc_parcel_month, calc_cash_month, calc_online_month, calc_discount_month, calc_grand_month;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,12 @@ public class CalculateTallyExcel extends AppCompatActivity {
         layoutManager2 = new LinearLayoutManager(this);
         dailyOrderarray = new ArrayList<>();
         parcelTallyarray = new ArrayList<>();
+
+        calc_parcel_month = findViewById(R.id.calc_parcel_month);
+        calc_cash_month = findViewById(R.id.calc_cash_month);
+        calc_online_month = findViewById(R.id.calc_online_month);
+        calc_discount_month = findViewById(R.id.calc_discount_month);
+        calc_grand_month = findViewById(R.id.calc_grand_month);
 
         downloadExcel = findViewById(R.id.downloadExcel);
 
@@ -122,6 +131,64 @@ public class CalculateTallyExcel extends AppCompatActivity {
                 }
             }, 3000);
         }
+
+        calc_discount_month.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (type.equals("Monthly")) {
+                    Intent intent = new Intent(getApplicationContext(), CalcTallyMonthDay.class);
+                    intent.putExtra("DATEMON", date);
+                    intent.putExtra("TYPE", "DISCOUNT");
+                    startActivity(intent);
+                }
+            }
+        });
+        calc_cash_month.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (type.equals("Monthly")) {
+                    Intent intent = new Intent(getApplicationContext(), CalcTallyMonthDay.class);
+                    intent.putExtra("DATEMON", date);
+                    intent.putExtra("TYPE", "cash");
+                    startActivity(intent);
+                }
+            }
+        });
+        calc_grand_month.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (type.equals("Monthly")) {
+                    Intent intent = new Intent(getApplicationContext(), CalcTallyMonthDay.class);
+                    intent.putExtra("DATEMON", date);
+                    intent.putExtra("TYPE", "GRANDTOTAL");
+                    startActivity(intent);
+                }
+            }
+        });
+        calc_online_month.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (type.equals("Monthly")) {
+                    Intent intent = new Intent(getApplicationContext(), CalcTallyMonthDay.class);
+                    intent.putExtra("DATEMON", date);
+                    intent.putExtra("TYPE", "ONLINETOTAL");
+                    startActivity(intent);
+                }
+            }
+        });
+        calc_parcel_month.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (type.equals("Monthly")) {
+                    Intent intent = new Intent(getApplicationContext(), CalcTallyMonthDay.class);
+                    intent.putExtra("DATEMON", date);
+                    intent.putExtra("TYPE", "PARCELS");
+                    startActivity(intent);
+                }
+            }
+        });
+
+
     }
 
 

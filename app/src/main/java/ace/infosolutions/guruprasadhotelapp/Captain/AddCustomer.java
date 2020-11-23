@@ -29,14 +29,11 @@ import java.util.Map;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.CustomerInfo;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 public class AddCustomer extends AppCompatActivity {
-    public static final String PREF_DOCID = "PREF_DOCID";
-    public static final String DOC_ID_KEY = "DOC_ID_KEY";
-    public static final String TABLES = "Tables";
-    public static final String CUSTOMERS = "CUSTOMERS";
     private Button confirm_button, cancel_button;
     private NumberPicker table_noNP, noofcustNP;
     private RadioGroup table_typeRG;
@@ -66,9 +63,9 @@ public class AddCustomer extends AppCompatActivity {
         cost = new HashMap<>();
         cost.put("cost", 0);
 
-        preferences = getSharedPreferences(PREF_DOCID, Context.MODE_PRIVATE);
-        customerRef = db.collection(CUSTOMERS);
-        tableRef = db.collection(TABLES);
+        preferences = getSharedPreferences(Constants.PREF_DOCID, Context.MODE_PRIVATE);
+        customerRef = db.collection(Constants.CUSTOMERS);
+        tableRef = db.collection(Constants.TABLES);
 
         table_noNP.setMaxValue(20);
         table_noNP.setMinValue(1);
@@ -162,7 +159,7 @@ public class AddCustomer extends AppCompatActivity {
     }
 
     private void checkIfTableisAvail(final String table_type, final int table_no) {
-        db.collection(TABLES).document(table_type).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection(Constants.TABLES).document(table_type).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -196,7 +193,7 @@ public class AddCustomer extends AppCompatActivity {
         int no_cust = noofcustNP.getValue();
         CustomerInfo customerInfo = new CustomerInfo(table_noInt, no_cust, date_arrived, arrived_time, table_typeString, final_cost, current_cost, BILL_NO, 0.0, 0.0, false);
 
-        final DocumentReference reference = db.collection(CUSTOMERS).document();
+        final DocumentReference reference = db.collection(Constants.CUSTOMERS).document();
         WriteBatch batch = db.batch();
         batch.set(reference, customerInfo);
         DocumentReference tableRef = db.collection("Tables").document(table_typeString);
@@ -205,7 +202,7 @@ public class AddCustomer extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putString(DOC_ID_KEY, reference.getId());
+                editor.putString(Constants.DOC_ID_KEY, reference.getId());
                 editor.commit();
                 Toast.makeText(AddCustomer.this, "Added", Toast.LENGTH_SHORT).show();
                 finishAffinity();

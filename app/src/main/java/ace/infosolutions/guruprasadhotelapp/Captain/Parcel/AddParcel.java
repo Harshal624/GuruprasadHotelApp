@@ -33,9 +33,6 @@ import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
 public class AddParcel extends AppCompatActivity {
-    public static final String SP_KEY = "SP_KEY";
-    public static final String PARCEL_ID_KEY = "PARCEL_ID_KEY";
-    private static final String PARCELS = "PARCELS";
     private EditText cust_name, cust_contact, cust_address;
     private RadioGroup radioGroup;
     private Button confirm_parcel;
@@ -63,8 +60,8 @@ public class AddParcel extends AppCompatActivity {
         confirm_parcel = findViewById(R.id.confirm_parcel);
         progressBar = findViewById(R.id.progress_bar);
         db = FirebaseFirestore.getInstance();
-        parcelRef = db.collection(PARCELS);
-        preferences = getSharedPreferences(SP_KEY, Context.MODE_PRIVATE);
+        parcelRef = db.collection(Constants.PARCELS);
+        preferences = getSharedPreferences(Constants.SP_KEY, Context.MODE_PRIVATE);
         if (ParcelFragment.ismanager) {
             Alertbuilder = new androidx.appcompat.app.AlertDialog.Builder(this);
             pinView = LayoutInflater.from(this).inflate(R.layout.pin_alertdialog, null);
@@ -129,7 +126,7 @@ public class AddParcel extends AppCompatActivity {
                         String bill_no = generateNumber.generateBillNo();
                         String date_arrived = generateNumber.generateDateOnly();
                         String time_arrived = generateNumber.generateTimeOnly();
-                        ParcelModel model = new ParcelModel(customerName, customerContact, ishomedelivery, customerAddress, 0.0, 0.0, 0.0, 0.0, date_arrived, time_arrived, bill_no);
+                        ParcelModel model = new ParcelModel(customerName, customerContact, ishomedelivery, customerAddress, 0.0, 0.0, 0.0, 0.0, date_arrived, time_arrived, bill_no, false);
                         confirmParcel(model);
                     }
                 }
@@ -186,7 +183,7 @@ public class AddParcel extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 String parcel_id = reference.getId();
                                                 SharedPreferences.Editor editor = preferences.edit();
-                                                editor.putString(PARCEL_ID_KEY, parcel_id);
+                                                editor.putString(Constants.PARCEL_ID_KEY, parcel_id);
                                                 editor.commit();
                                                 progressBar.setVisibility(View.GONE);
                                                 Toast.makeText(AddParcel.this, "Parcel Added", Toast.LENGTH_SHORT).show();
@@ -224,7 +221,7 @@ public class AddParcel extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         String parcel_id = reference.getId();
                         SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString(PARCEL_ID_KEY, parcel_id);
+                        editor.putString(Constants.PARCEL_ID_KEY, parcel_id);
                         editor.commit();
                         progressBar.setVisibility(View.GONE);
                         Toast.makeText(AddParcel.this, "Parcel Added", Toast.LENGTH_SHORT).show();

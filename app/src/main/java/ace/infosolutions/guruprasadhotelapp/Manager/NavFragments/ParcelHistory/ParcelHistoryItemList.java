@@ -15,7 +15,6 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ConfirmedCartParcelFragment.PARCEL_HISTORY;
 
 public class ParcelHistoryItemList extends AppCompatActivity {
     private String DOC_ID;
@@ -38,7 +37,7 @@ public class ParcelHistoryItemList extends AppCompatActivity {
 
     private void setUpRecyclerView() {
 
-        Query query = db.collection(PARCEL_HISTORY).document(DOC_ID).collection(Constants.CONFIRMED_KOT);
+        Query query = db.collection(Constants.PARCEL_HISTORY).document(DOC_ID).collection(Constants.CONFIRMED_KOT);
         FirestoreRecyclerOptions<FinalBillModel> viewcart = new FirestoreRecyclerOptions.Builder<FinalBillModel>()
                 .setQuery(query, FinalBillModel.class)
                 .build();

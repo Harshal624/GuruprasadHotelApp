@@ -38,14 +38,12 @@ import ace.infosolutions.guruprasadhotelapp.R;
 import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
-import static ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer.CUSTOMERS;
-import static ace.infosolutions.guruprasadhotelapp.Captain.AddCustomer.TABLES;
 
 
 public class OrderFragment extends Fragment {
     private FloatingActionButton add_customer;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference collectionReference = db.collection(CUSTOMERS);
+    private CollectionReference collectionReference = db.collection(Constants.CUSTOMERS);
     private CustomerFirestoreAdapter adapter;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
@@ -113,8 +111,8 @@ public class OrderFragment extends Fragment {
                                     final String tableNo = String.valueOf(customerclass.getTable_no());
                                     progressBar.setVisibility(View.VISIBLE);
                                     // add_customer.setEnabled(false);
-                                    final DocumentReference custRef = db.collection(CUSTOMERS).document(doc_id);
-                                    final DocumentReference tableRef = db.collection(TABLES).document(customerclass.getTable_type());
+                                    final DocumentReference custRef = db.collection(Constants.CUSTOMERS).document(doc_id);
+                                    final DocumentReference tableRef = db.collection(Constants.TABLES).document(customerclass.getTable_type());
 
                                     custRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                         @Override
@@ -198,7 +196,7 @@ public class OrderFragment extends Fragment {
                         String doc_id = documentSnapshot.getId();
                         customerclass customerclass = documentSnapshot.toObject(ace.infosolutions.guruprasadhotelapp.Captain.ModelClasses.customerclass.class);
                         final String tablestring = customerclass.getTable_no() + " (" + customerclass.getTable_type() + ")";
-                        db.collection(CUSTOMERS).document(doc_id).update("isconfirmed", true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        db.collection(Constants.CUSTOMERS).document(doc_id).update("isconfirmed", true).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Toast.makeText(getContext(), tablestring + " " + "confirmed", Toast.LENGTH_SHORT).show();

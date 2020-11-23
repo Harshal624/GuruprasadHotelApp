@@ -478,6 +478,7 @@
             android:background="@color/grey" />
 
         <LinearLayout
+            android:id="@+id/calc_parcel_month"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
@@ -509,6 +510,7 @@
             android:background="@color/grey" />
 
         <LinearLayout
+            android:id="@+id/calc_cash_month"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
@@ -540,6 +542,7 @@
             android:background="@color/grey" />
 
         <LinearLayout
+            android:id="@+id/calc_online_month"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
@@ -565,6 +568,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/calc_discount_month"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
@@ -596,6 +600,7 @@
             android:background="@color/grey" />
 
         <LinearLayout
+            android:id="@+id/calc_grand_month"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"

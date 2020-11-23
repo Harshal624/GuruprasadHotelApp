@@ -1,9 +1,14 @@
 package ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList;
 
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -37,11 +42,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
-import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import ace.infosolutions.guruprasadhotelapp.Captain.ViewCart.ViewCartModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.Manager;
@@ -51,18 +58,15 @@ import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.Mo
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.OnlineTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Manager.NavFragments.CustomerList.ModelClasses.TableTotalModel;
 import ace.infosolutions.guruprasadhotelapp.Printing.POJOs.OrderFinalBillPOJO;
-import ace.infosolutions.guruprasadhotelapp.Printing.PrintingMain;
 import ace.infosolutions.guruprasadhotelapp.R;
+import ace.infosolutions.guruprasadhotelapp.Utils.Constants;
 import ace.infosolutions.guruprasadhotelapp.Utils.GenerateNumber;
 import ace.infosolutions.guruprasadhotelapp.Utils.InternetConn;
 
-import static ace.infosolutions.guruprasadhotelapp.Captain.Parcel.ViewCartParcel.ConfirmedCartParcelFragment.ONLINETOTAL;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.DISCOUNT_TALLY;
 import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PREF_DOCID;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.PrintingPOJOConstant;
-import static ace.infosolutions.guruprasadhotelapp.Utils.Constants.SP_PRINT_TYPE;
 
-public class ConfirmFinalBill extends AppCompatActivity {
+public class ConfirmFinalBill extends AppCompatActivity implements Runnable {
     //Strings for Tally
     public static final String TALLY = "TALLY";
     public static final String DAILY = "Daily";
@@ -70,18 +74,25 @@ public class ConfirmFinalBill extends AppCompatActivity {
     public static final String HISTORY = "HISTORY";
     public static final String TABLETALLYDAILY = "TABLETALLYDAILY";
     public static final String GRANDTOTAL = "GRANDTOTAL";
-    public static final String TOTALONLINEBILL = "TOTALONLINEBILL";
-    public static final String PARCEHOMEDELIVERY = "PARCEHOMEDELIVERY";
     public static final String TABLETALLYMONTHLY = "TABLETALLYMONTHLY";
+    private static final int MAX_NO_OF_CHAR = 11;
     private static final String CUSTOMERS = "CUSTOMERS";
     private static final String TABLES = "Tables";
     private static final String CONFIRMED_KOT = "CONFIRMED_KOT";
     private static final String CURRENT_KOT = "CURRENT_KOT";
+    private final String DEVICE_ADDRESS = "02:3D:EE:0D:CF:E8";
+    OutputStream mmOutputStream;
     GenerateNumber number = new GenerateNumber();
-    private String completed_date;
     //
     RadioButton type;
     String discount_type = "Amount";
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothDevice bluetoothDevice;
+    private BluetoothSocket socket;
+    private UUID applicationUUID = UUID
+            .fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private String BILL;
+    private String completed_date;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private ConfirmFinalBillFirestoreAdapter adapter;
@@ -114,6 +125,11 @@ public class ConfirmFinalBill extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_final_bill);
         db = FirebaseFirestore.getInstance();
+        //
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothDevice = bluetoothAdapter.getRemoteDevice(DEVICE_ADDRESS);
+        //
+
         sharedPreferences = getSharedPreferences(PREF_DOCID, MODE_PRIVATE);
         recyclerView = findViewById(R.id.final_bill_recycler);
         doc_id = getIntent().getStringExtra("FinalDOCID");
@@ -305,13 +321,31 @@ public class ConfirmFinalBill extends AppCompatActivity {
                                             OrderFinalBillPOJO orderFinalBillPOJO = new
                                                     OrderFinalBillPOJO(bill_no, date
                                                     , time, table_no, table_type, subtotal, discount, total_cost_string, arrayList);
+                                            setUpBillString(arrayList, orderFinalBillPOJO);
+                                            if (bluetoothAdapter == null) {
+                                                Toast.makeText(ConfirmFinalBill.this, "Unavailable", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                if (!bluetoothAdapter.isEnabled()) {
+                                                    Intent enableBtIntent = new Intent(
+                                                            BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                                    startActivityForResult(enableBtIntent,
+                                                            2);
+                                                } else {
+                                                    Thread thread = new Thread(ConfirmFinalBill.this);
+                                                    thread.start();
+                                                }
+                                            }
+
+                                            /*OrderFinalBillPOJO orderFinalBillPOJO = new
+                                                    OrderFinalBillPOJO(bill_no, date
+                                                    , time, table_no, table_type, subtotal, discount, total_cost_string, arrayList);
                                             SharedPreferences.Editor editor = sharedPreferences.edit();
                                             Gson gson = new Gson();
                                             String json = gson.toJson(orderFinalBillPOJO);
                                             editor.putString(PrintingPOJOConstant,json);
                                             editor.putString(SP_PRINT_TYPE, "order_bill");
                                             editor.commit();
-                                            startActivity(new Intent(ConfirmFinalBill.this, PrintingMain.class));
+                                            startActivity(new Intent(ConfirmFinalBill.this, PrintingMain.class));*/
                                         }
                                     }
                                 }
@@ -558,6 +592,58 @@ public class ConfirmFinalBill extends AppCompatActivity {
             }
         });
     }
+
+    private void setUpBillString(ArrayList<ViewCartModel> arrayList, OrderFinalBillPOJO print) {
+        double sbtotal = Math.round(Double.parseDouble(print.getSubtotal()) * 100.0) / 100.0;
+        double dscount = Math.round(Double.parseDouble(print.getDiscount()) * 100.0) / 100.0;
+        double ttlcost = Math.round(Double.parseDouble(print.getTotal_cost()) * 100.0) / 100.0;
+        String time = print.getTime().substring(0, 5);
+        BILL = "              GURPRASAD HOTEL\n" +
+                "             Mahadevnagar,Islampur\n" +
+                "             Contact: 9890845408\n\n" +
+                "                    Date&Time:" + print.getDate() + " " + time + "\n " +
+                "                   BILL NO:" + print.getBill_no() + "\n " +
+                "                   Table No:" + print.getTable_no() + " (" + print.getTable_type() + ")" + "\n ";
+        BILL = BILL +
+                "-------------------------------------------\n";
+
+        BILL = BILL + String.format("%1$-10s %2$10s %3$10s %4$10s", "Item", "Qty", "Rate", "Total\n");
+        BILL = BILL +
+                "---------------------------------------------\n";
+
+        for (int i = 0; i < arrayList.size(); i++) {
+            String title = arrayList.get(i).getItem_title();
+            double rate = arrayList.get(i).getItem_cost() / arrayList.get(i).getItem_qty();
+            double roundedRate = Math.round(rate * 100.0) / 100.0;
+            double itemcst = Math.round(arrayList.get(i).getItem_cost() * 100.0) / 100.0;
+            if (title.length() > 11) {
+                title = title.substring(0, 11);
+            } else {
+                int length = title.length();
+                int flength = MAX_NO_OF_CHAR - length;
+                for (int j = 0; j < flength; j++) {
+                    title = title + " ";
+                }
+            }
+            BILL = BILL + String.format("%1$-10s %2$10s %3$10s %4$10s", title, arrayList.get(i).getItem_qty(), roundedRate
+                    , itemcst + "\n");
+        }
+
+
+        BILL = BILL +
+                "---------------------------------------------\n";
+
+        BILL = BILL + "                            Subtotal:" + "" + sbtotal + "\n";
+        BILL = BILL + "                            Discount:" + "" + dscount + "\n";
+        BILL = BILL + "                     " +
+                "       Total Value:" + "" + ttlcost + "\n";
+
+        BILL = BILL +
+                "-----------Thank you for your visit-----------\n";
+        BILL = BILL + "\n";
+        // Log.e("BILLFORMAT",BILL);
+    }
+
 
     private void addToFinalBill(final FinalBillModel model) {
         progressBar.setVisibility(View.VISIBLE);
@@ -938,12 +1024,12 @@ public class ConfirmFinalBill extends AppCompatActivity {
         final String date_only = completed_date;
         final String month_only = completed_date.substring(3, 8);
 
-        tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        tallyRef.document(DAILY).collection(Constants.ONLINETOTAL).document(date_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     if (task.getResult().exists()) {
-                        final DocumentReference reference = tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only);
+                        final DocumentReference reference = tallyRef.document(DAILY).collection(Constants.ONLINETOTAL).document(date_only);
 
                         db.runTransaction(new Transaction.Function<Void>() {
                             @Nullable
@@ -964,7 +1050,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
 
                     } else {
                         OnlineTotalModel model = new OnlineTotalModel(total_cost_final, date_only);
-                        tallyRef.document(DAILY).collection(ONLINETOTAL).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        tallyRef.document(DAILY).collection(Constants.ONLINETOTAL).document(date_only).set(model).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
@@ -977,12 +1063,12 @@ public class ConfirmFinalBill extends AppCompatActivity {
             }
 
             private void addtoOnlineMonthly() {
-                tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                tallyRef.document(MONTHLY).collection(Constants.ONLINETOTAL).document(month_only).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             if (task.getResult().exists()) {
-                                final DocumentReference reference = tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only);
+                                final DocumentReference reference = tallyRef.document(MONTHLY).collection(Constants.ONLINETOTAL).document(month_only);
                                 db.runTransaction(new Transaction.Function<Void>() {
                                     @Nullable
                                     @Override
@@ -999,7 +1085,7 @@ public class ConfirmFinalBill extends AppCompatActivity {
                             } else {
                                 //doesn't exist
                                 OnlineTotalModel model = new OnlineTotalModel(total_cost_final, month_only);
-                                tallyRef.document(MONTHLY).collection(ONLINETOTAL).document(month_only).set(model);
+                                tallyRef.document(MONTHLY).collection(Constants.ONLINETOTAL).document(month_only).set(model);
                             }
                         }
                     }
@@ -1155,6 +1241,59 @@ public class ConfirmFinalBill extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == 2 && requestCode == Activity.RESULT_OK) {
+            Toast.makeText(this, "Bluetooth turned on successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Denied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void run() {
+        try {
+            socket = bluetoothDevice
+                    .createRfcommSocketToServiceRecord(applicationUUID);
+            bluetoothAdapter.cancelDiscovery();
+            socket.connect();
+            mmOutputStream = socket.getOutputStream();
+            printReceipt();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void printReceipt() throws IOException {
+        try {
+            mmOutputStream.write(BILL.getBytes());//Charset.forName("UTF-8")
+            mmOutputStream.write(new byte[]{0x1D, 0x56, 66, 0x00});
+
+
+        } catch (Exception e) {
+            //Toast.makeText(getContext(), "Printer is still loading, try again...", Toast.LENGTH_SHORT).show();
+            //Log.e("MainActivity", "Exe ", e);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (bluetoothAdapter != null) {
+            bluetoothAdapter.cancelDiscovery();
+        }
+        try {
+            if (socket != null)
+                socket.close();
+        } catch (Exception e) {
+            Log.e("Tag", "Exe ", e);
+        }
     }
 }
 

@@ -12,6 +12,9 @@ public class ParcelModel {
     private String date_arrived;
     private String time_arrived;
     private String bill_no;
+    private boolean isconfirmed;
+
+
 
     ParcelModel() {
     }
@@ -40,7 +43,7 @@ public class ParcelModel {
         return confirmed_cost;
     }
 
-    public ParcelModel(String customer_name, String customer_contact, boolean ishomedelivery, String customer_address, double current_cost, double confirmed_cost, double discount, double total_cost, String date_arrived, String time_arrived, String bill_no) {
+    public ParcelModel(String customer_name, String customer_contact, boolean ishomedelivery, String customer_address, double current_cost, double confirmed_cost, double discount, double total_cost, String date_arrived, String time_arrived, String bill_no, boolean isconfirmed) {
         this.customer_name = customer_name;
         this.customer_contact = customer_contact;
         this.ishomedelivery = ishomedelivery;
@@ -52,6 +55,11 @@ public class ParcelModel {
         this.date_arrived = date_arrived;
         this.time_arrived = time_arrived;
         this.bill_no = bill_no;
+        this.isconfirmed = isconfirmed;
+    }
+
+    public boolean isIsconfirmed() {
+        return isconfirmed;
     }
 
     public double getDiscount() {
